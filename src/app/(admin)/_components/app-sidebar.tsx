@@ -1,0 +1,67 @@
+"use client"
+
+import * as React from "react"
+
+
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarRail,
+} from "@/components/ui/sidebar"
+import { NavMain } from "@/app/(admin)/_components/nav-main"
+import { NavUser } from "@/app/(admin)/_components/nav-user"
+import { ChartPie, Package } from "lucide-react"
+
+// This is sample data.
+const data = {
+  user: {
+    name: "shadcn",
+    email: "m@example.com",
+    avatar: "/avatars/shadcn.jpg",
+  },
+  navMain: [
+    {
+      title: "Overviews",
+      icon: <ChartPie />,
+      items: [
+        {
+          title: "Dashboard",
+          url: "/overviews/dashboard",
+        },
+        {
+          title: "Reports",
+          url: "/overviews/reports",
+        },
+      ],
+    },
+    {
+      title: "Products",
+      icon: <Package />,
+      items: [
+        {
+          title: "View Products",
+          url: "/products/view-products",
+        },
+        {
+          title: "Create Product",
+          url: "/products/create-product",
+        },
+      ],
+    },
+  ],
+}
+
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  return (
+    <Sidebar collapsible="icon" {...props}>
+      <SidebarContent>
+        <NavMain items={data.navMain} />
+      </SidebarContent>
+      <SidebarFooter>
+        <NavUser user={data.user} />
+      </SidebarFooter>
+      <SidebarRail />
+    </Sidebar>
+  )
+}
