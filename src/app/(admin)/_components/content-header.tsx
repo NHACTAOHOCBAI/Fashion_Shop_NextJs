@@ -1,5 +1,5 @@
 'use client'
-import urlToName from "@/_lib/urlToName"
+import urlToName from "@/lib/urlToName"
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
 import { usePathname } from "next/navigation"
 
