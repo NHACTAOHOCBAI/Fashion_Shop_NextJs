@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation"
 const ContentHeader = () => {
     const pathname = usePathname()
     const urls = pathname.split('/')
-    console.log(urls)
     return (
         <Breadcrumb>
             <BreadcrumbList>
