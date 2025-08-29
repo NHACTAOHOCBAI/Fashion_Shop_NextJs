@@ -9,8 +9,8 @@ import {
   SidebarFooter,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { NavMain } from "@/app/(admin)/_components/nav-main"
-import { NavUser } from "@/app/(admin)/_components/nav-user"
+import { NavMain } from "@/app/admin/_components/nav-main"
+import { NavUser } from "@/app/admin/_components/nav-user"
 import { ChartPie, UsersRound } from "lucide-react"
 
 // This is sample data.
@@ -27,11 +27,11 @@ const data = {
       items: [
         {
           title: "Dashboard",
-          url: "/overviews/dashboard",
+          url: "/admin/overviews/dashboard",
         },
         {
           title: "Reports",
-          url: "/overviews/reports",
+          url: "/admin/overviews/reports",
         },
       ],
     },
@@ -41,11 +41,15 @@ const data = {
       items: [
         {
           title: "View Users",
-          url: "/users/view-users",
+          url: "/admin/users/view-users",
         },
         {
           title: "Create User",
-          url: "/users/create-user",
+          url: "/admin/users/create-user",
+        },
+        {
+          title: "Update User",
+          url: "/admin/users/update-user",
         },
       ],
     },

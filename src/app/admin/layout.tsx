@@ -1,5 +1,5 @@
-import { AppSidebar } from "@/app/(admin)/_components/app-sidebar"
-import ContentHeader from "@/app/(admin)/_components/content-header"
+import { AppSidebar } from "@/app/admin/_components/app-sidebar"
+import ContentHeader from "@/app/admin/_components/content-header"
 import { Separator } from "@/components/ui/separator"
 import {
     SidebarInset,

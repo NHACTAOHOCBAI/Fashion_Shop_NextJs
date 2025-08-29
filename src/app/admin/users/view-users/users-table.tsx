@@ -9,9 +9,11 @@ import { useDeleteUser, useUsers } from "@/hooks/queries/useUser"
 import useTable from "@/hooks/useTable"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
-import { userColumns } from "@/app/(admin)/users/view-users/user-columns"
+import { userColumns } from "@/app/admin/users/view-users/user-columns"
+import { useRouter } from "next/navigation"
 
 export function UserTable() {
+    const router = useRouter()
     const { mutate: deleteUser } = useDeleteUser()
     const handleDeleteUser = useCallback((id: number) => {
         deleteUser({ id: id }, {
@@ -42,6 +44,7 @@ export function UserTable() {
                 />
                 <DataTableViewOptions table={table} />
                 <Button
+                    onClick={() => router.push('/admin/users/create-user')}
                     variant="outline"
                     size="sm"
                     className=" hidden h-8 lg:flex ml-2"

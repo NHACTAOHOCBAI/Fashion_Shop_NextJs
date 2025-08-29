@@ -14,6 +14,8 @@ import {
 import { Checkbox } from "@/components/ui/checkbox"
 
 import { DataTableColumnHeader } from "@/components/table/data-table-column-header"
+import Link from "next/link"
+import { Badge } from "@/components/ui/badge"
 
 export const userColumns = (handleDeletUser: (id: number) => void): ColumnDef<User>[] => {
     return [
@@ -60,6 +62,15 @@ export const userColumns = (handleDeletUser: (id: number) => void): ColumnDef<Us
             ),
         },
         {
+            accessorKey: "role",
+            cell: ({ row }) => {
+                const user = row.original
+                return (
+                    <Badge variant="outline">{user.role}</Badge>
+                )
+            },
+        },
+        {
             id: "actions",
             cell: ({ row }) => {
                 const user = row.original
@@ -79,7 +90,7 @@ export const userColumns = (handleDeletUser: (id: number) => void): ColumnDef<Us
                                 Copy ID
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem>Update User</DropdownMenuItem>
+                            <Link href={`/admin/users/update-user/${user.id}`}>   <DropdownMenuItem>Update User</DropdownMenuItem></Link>
                             <DropdownMenuItem className="focus:text-red-500" onClick={() => handleDeletUser(user.id)}>
                                 Delete User
                             </DropdownMenuItem>
