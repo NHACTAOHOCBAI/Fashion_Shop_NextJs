@@ -107,7 +107,7 @@ export function UpdateUserForm({ closeDialog, updatedUser }: UpdateUserFormProps
                             <FormLabel>Role</FormLabel>
                             <FormControl>
                                 <Select  {...field}>
-                                    <SelectTrigger className="w-[180px]">
+                                    <SelectTrigger className="w-full">
                                         <SelectValue placeholder={Placeholder.Role} />
                                     </SelectTrigger>
                                     <SelectContent>

@@ -106,7 +106,7 @@ export function CreateUserForm({ closeDialog }: CreateUserFormProps) {
                             <FormLabel>Role</FormLabel>
                             <FormControl>
                                 <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                    <SelectTrigger className="w-[180px]">
+                                    <SelectTrigger className="w-full">
                                         <SelectValue placeholder={Placeholder.Role} />
                                     </SelectTrigger>
                                     <SelectContent>

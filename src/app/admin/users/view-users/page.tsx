@@ -3,23 +3,12 @@ import React from "react"
 import { UserTable } from "./users-table"
 import { UpdateUserDialog } from "@/app/admin/users/update-user/update-user-dialog"
 import { CreateUserDialog } from "@/app/admin/users/create-user/create-user-dialog"
+import useUpdateUser from "@/app/admin/users/update-user/hooks/use-update-user"
+import useCreateUser from "@/app/admin/users/create-user/hooks/use-create-user"
 
-export default function DemoPage() {
-    const [openUpdate, setOpenUpdate] = React.useState(false)
-    const [updatedUser, setUpdatedUser] = React.useState<User>()
-    const openUpdateDialog = (user: User) => {
-        setOpenUpdate(true)
-        setUpdatedUser(user)
-    }
-    const closeUpdateDialog = () => {
-        setOpenUpdate(false)
-        setUpdatedUser(undefined)
-    }
-
-    const [openCreate, setOpenCreate] = React.useState(false)
-    const openCreateDialog = () => {
-        setOpenCreate(true)
-    }
+export default function Users() {
+    const { closeUpdateDialog, openUpdate, openUpdateDialog, updatedUser, setOpenUpdate } = useUpdateUser()
+    const { openCreate, openCreateDialog, setOpenCreate } = useCreateUser()
     return (
         <div className="container mx-auto py-10">
             <UserTable

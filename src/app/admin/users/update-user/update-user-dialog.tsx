@@ -21,9 +21,9 @@ export function UpdateUserDialog({ open, unChooseUpdatedUser, updatedUser, setOp
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                    <DialogTitle>Add User</DialogTitle>
+                    <DialogTitle>Update User</DialogTitle>
                     <DialogDescription>
-                        Enter information of user below to add user to table.
+                        Enter information of user below to update user to table.
                     </DialogDescription>
                 </DialogHeader>
                 <UpdateUserForm
