@@ -10,7 +10,7 @@ export default function Users() {
     const { closeUpdateDialog, openUpdate, openUpdateDialog, updatedUser, setOpenUpdate } = useUpdateUser()
     const { openCreate, openCreateDialog, setOpenCreate } = useCreateUser()
     return (
-        <div className="container mx-auto py-10">
+        <div className="container mx-auto py-10  ">
             <UserTable
                 openUpdateDialog={openUpdateDialog}
                 openCreateDialog={openCreateDialog}

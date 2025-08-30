@@ -16,8 +16,8 @@ interface CreateUserDialogProps {
 }
 export function CreateUserDialog({ open, setOpen }: CreateUserDialogProps) {
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
-            <DialogContent className="sm:max-w-md">
+        <Dialog open={open} onOpenChange={setOpen} >
+            <DialogContent className="sm:max-w-md max-h-[98vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>Add User</DialogTitle>
                     <DialogDescription>

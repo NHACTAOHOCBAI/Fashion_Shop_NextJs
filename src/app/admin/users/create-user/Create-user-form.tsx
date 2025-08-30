@@ -19,6 +19,7 @@ import { useCreateUser } from "@/hooks/queries/useUser"
 import { Placeholder } from "@/constants/placeholder.num"
 import { toast } from "sonner"
 import { formatDateTimeWithAt } from "@/lib/formatDate"
+import { ImageUpload } from "@/components/image-upload/image-upload"
 interface CreateUserFormProps {
     closeDialog: () => void
 }
@@ -32,7 +33,8 @@ export function CreateUserForm({ closeDialog }: CreateUserFormProps) {
             email: values.email,
             fullName: values.fullName,
             password: values.password,
-            role: values.role
+            role: values.role,
+            image: values.avatar && values.avatar[0]
         }, {
             onSuccess: () => {
                 toast.success("User has been created", {
@@ -55,6 +57,13 @@ export function CreateUserForm({ closeDialog }: CreateUserFormProps) {
     return (
         <Form {...form} >
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" >
+                <FormField
+                    control={form.control}
+                    name="avatar"
+                    render={({ field }) => (
+                        <ImageUpload field={field} label="Upload Images" numOfImage={3} />
+                    )}
+                />
                 <FormField
                     disabled={isPending}
                     control={form.control}

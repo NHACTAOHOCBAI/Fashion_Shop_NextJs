@@ -19,7 +19,7 @@ interface UpdateUserDialog {
 export function UpdateUserDialog({ open, unChooseUpdatedUser, updatedUser, setOpen }: UpdateUserDialog) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="sm:max-w-md  max-h-[98vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>Update User</DialogTitle>
                     <DialogDescription>
