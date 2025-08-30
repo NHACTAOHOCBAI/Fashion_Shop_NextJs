@@ -16,12 +16,14 @@ interface ImageUploadProps {
     }
     label?: string
     numOfImage: number
+    disabled?: boolean
 }
 
-export function ImageUpload({ field, label, numOfImage }: ImageUploadProps) {
+export function ImageUpload({ field, label, numOfImage, disabled }: ImageUploadProps) {
     const files = useMemo(() => field.value || [], [field])
 
     const onDrop = (acceptedFiles: File[]) => {
+        if (disabled) return
         const remain = numOfImage - files.length
         field.onChange([...files, ...acceptedFiles.slice(0, remain)])
     }
@@ -30,7 +32,7 @@ export function ImageUpload({ field, label, numOfImage }: ImageUploadProps) {
         onDrop,
         accept: { "image/*": [] },
         multiple: true,
-        disabled: files.length >= numOfImage,
+        disabled: disabled || files.length >= numOfImage,
     })
 
     const previews = useMemo(
@@ -49,6 +51,7 @@ export function ImageUpload({ field, label, numOfImage }: ImageUploadProps) {
     }, [previews])
 
     const removeFile = (file: File) => {
+        if (disabled) return
         field.onChange(files.filter(f => f !== file))
     }
 
@@ -57,12 +60,12 @@ export function ImageUpload({ field, label, numOfImage }: ImageUploadProps) {
             {label && <FormLabel>{label}</FormLabel>}
             <FormControl>
                 <div className="space-y-6">
-                    {/* Dropzone (always visible but disabled if max reached) */}
+                    {/* Dropzone */}
                     <Card
                         {...getRootProps()}
                         className={`border-2 border-dashed rounded-2xl p-8 text-center transition-all
             ${isDragActive ? "border-blue-500 bg-blue-50 shadow-md scale-[1.02]" : "border-gray-300 hover:border-blue-400 hover:bg-gray-50"}
-            ${files.length >= numOfImage ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+            ${files.length >= numOfImage || disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
                     >
                         <input {...getInputProps()} />
                         <div className="flex flex-col items-center justify-center space-y-3">
@@ -78,8 +81,7 @@ export function ImageUpload({ field, label, numOfImage }: ImageUploadProps) {
                                     <span className="text-blue-600 font-medium">Drop images here...</span>
                                 ) : (
                                     <>
-                                        <span className="font-medium text-blue-600">Click to select</span> or drag &
-                                        drop
+                                        <span className="font-medium text-blue-600">Click to select</span> or drag & drop
                                     </>
                                 )}
                             </p>
@@ -105,6 +107,7 @@ export function ImageUpload({ field, label, numOfImage }: ImageUploadProps) {
                                         variant="outline"
                                         className="absolute top-2 right-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow"
                                         onClick={() => removeFile(file)}
+                                        disabled={disabled}
                                     >
                                         <X />
                                     </Button>

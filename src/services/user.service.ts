@@ -24,8 +24,17 @@ const createUser = async (data: { fullName: string, email: string, password: str
     const response = await axiosInstance.post('/users', temp)
     return response
 }
-const updateUser = async ({ id, data }: { id: number, data: { fullName: string, email: string, role: Role } }) => {
-    const response = await axiosInstance.patch(`/users/${id}`, data)
+const updateUser = async ({ id, data }: { id: number, data: { fullName: string, email: string, role: Role, image?: File } }) => {
+    let imageUrl = undefined
+    if (data.image)
+        imageUrl = (await uploadImage({ image: data.image })).secure_url
+    const temp = {
+        fullName: data.fullName,
+        email: data.email,
+        role: data.role,
+        ...(imageUrl && { avatar: imageUrl })
+    }
+    const response = await axiosInstance.patch(`/users/${id}`, temp)
     return response
 }
 export { getUsers, deleteUser, createUser, updateUser }

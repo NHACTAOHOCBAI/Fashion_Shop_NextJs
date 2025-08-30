@@ -19,13 +19,16 @@ import { Placeholder } from "@/constants/placeholder.num"
 import { toast } from "sonner"
 import { formatDateTimeWithAt } from "@/lib/formatDate"
 import UpdateUserSchema from "@/app/admin/users/update-user/update-user-schema"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
+import { ImageUpload } from "@/components/image-upload/image-upload"
+import { UpdateUserSkeleton } from "@/app/admin/users/update-user/update-user-skeleton"
 interface UpdateUserFormProps {
     closeDialog: () => void,
     updatedUser: User | undefined
 }
 export function UpdateUserForm({ closeDialog, updatedUser }: UpdateUserFormProps) {
     const { mutate: UpdateUser, isPending } = useUpdateUser()
+    const [isImageLoading, setIsImageLoading] = useState(false)
     const form = useForm<z.infer<typeof UpdateUserSchema>>({
         resolver: zodResolver(UpdateUserSchema),
     })
@@ -36,7 +39,8 @@ export function UpdateUserForm({ closeDialog, updatedUser }: UpdateUserFormProps
                 data: {
                     email: values.email,
                     fullName: values.fullName,
-                    role: values.role
+                    role: values.role,
+                    image: values.avatar && values.avatar[0]
                 }
             }, {
                 onSuccess: () => {
@@ -59,17 +63,42 @@ export function UpdateUserForm({ closeDialog, updatedUser }: UpdateUserFormProps
         closeDialog()
     }
     useEffect(() => {
-        if (updatedUser) {
+        async function resetForm() {
+            if (!updatedUser) return;
+
+            let fileArray: File[] = [];
+            if (updatedUser.avatar) {
+                setIsImageLoading(true)
+                const response = await fetch(updatedUser.avatar)
+                const blob = await response.blob()
+                const file = new File([blob], "avatar.jpg", { type: blob.type })
+                fileArray = [file]
+                setIsImageLoading(false)
+            }
             form.reset({
                 email: updatedUser.email,
                 fullName: updatedUser.fullName,
-                role: updatedUser.role
+                role: updatedUser.role,
+                avatar: fileArray
             })
         }
+
+        resetForm()
     }, [updatedUser, form])
+    if (isImageLoading)
+        return (
+            <UpdateUserSkeleton />
+        )
     return (
         <Form {...form} >
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" >
+                <FormField
+                    control={form.control}
+                    name="avatar"
+                    render={({ field }) => (
+                        <ImageUpload disabled={isPending} field={field} label="Upload Images" numOfImage={1} />
+                    )}
+                />
                 <FormField
                     disabled={isPending}
                     control={form.control}
