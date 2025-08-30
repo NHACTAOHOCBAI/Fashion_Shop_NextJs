@@ -3,7 +3,7 @@ interface User {
     fullName: string;
     email: string;
     password: string;
-    role: string;
+    role: Role;
     isActive: boolean;
     createdAt: string;
     updatedAt: string;

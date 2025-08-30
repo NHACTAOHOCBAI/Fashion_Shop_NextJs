@@ -2,16 +2,19 @@ import axiosInstance from "@/config/axios"
 import { Role } from "@/constants/role.enum"
 
 const getUsers = async (params: QueryParams) => {
-    const data = await axiosInstance.get('/users', { params }) as GetAllResponse<User>
-    return data.data
+    const response = await axiosInstance.get('/users', { params }) as GetAllResponse<User>
+    return response.data
 }
 const deleteUser = async ({ id }: { id: number }) => {
-    const data = await axiosInstance.delete(`/users/${id}`)
-    return data
+    const response = await axiosInstance.delete(`/users/${id}`)
+    return response
 }
-const createUser = async (input: { fullName: string, email: string, password: string, role: Role }) => {
-    const data = await axiosInstance.post('/users', input)
-    console.log(data)
-    return data
+const createUser = async (data: { fullName: string, email: string, password: string, role: Role }) => {
+    const response = await axiosInstance.post('/users', data)
+    return response
 }
-export { getUsers, deleteUser, createUser }
+const updateUser = async ({ id, data }: { id: number, data: { fullName: string, email: string, role: Role } }) => {
+    const response = await axiosInstance.patch(`/users/${id}`, data)
+    return response
+}
+export { getUsers, deleteUser, createUser, updateUser }

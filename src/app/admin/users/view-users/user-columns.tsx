@@ -1,7 +1,6 @@
 "use client"
 import { ColumnDef } from "@tanstack/react-table"
 import { MoreHorizontal } from "lucide-react"
-
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
@@ -12,12 +11,10 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Checkbox } from "@/components/ui/checkbox"
-
 import { DataTableColumnHeader } from "@/components/table/data-table-column-header"
-import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 
-export const userColumns = (handleDeletUser: (id: number) => void): ColumnDef<User>[] => {
+export const userColumns = (handleDeletUser: (id: number) => void, handleUpdate: (user: User) => void): ColumnDef<User>[] => {
     return [
         {
             id: "select",
@@ -90,7 +87,7 @@ export const userColumns = (handleDeletUser: (id: number) => void): ColumnDef<Us
                                 Copy ID
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <Link href={`/admin/users/update-user/${user.id}`}>   <DropdownMenuItem>Update User</DropdownMenuItem></Link>
+                            <DropdownMenuItem onClick={() => handleUpdate(user)}>Update User</DropdownMenuItem>
                             <DropdownMenuItem className="focus:text-red-500" onClick={() => handleDeletUser(user.id)}>
                                 Delete User
                             </DropdownMenuItem>
