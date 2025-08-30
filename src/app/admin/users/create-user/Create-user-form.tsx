@@ -35,7 +35,7 @@ export function CreateUserForm({ closeDialog }: CreateUserFormProps) {
             role: values.role
         }, {
             onSuccess: () => {
-                toast("User has been created", {
+                toast.success("User has been created", {
                     description: formatDateTimeWithAt(new Date()),
                 })
             },

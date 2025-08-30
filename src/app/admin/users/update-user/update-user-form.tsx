@@ -40,7 +40,7 @@ export function UpdateUserForm({ closeDialog, updatedUser }: UpdateUserFormProps
                 }
             }, {
                 onSuccess: () => {
-                    toast("User has been updated", {
+                    toast.success("User has been updated", {
                         description: formatDateTimeWithAt(new Date()),
                     })
                 },

@@ -10,6 +10,8 @@ import useTable from "@/hooks/useTable"
 import { userColumns } from "@/app/admin/users/view-users/user-columns"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
+import { toast } from "sonner"
+import { formatDateTimeWithAt } from "@/lib/formatDate"
 
 interface UserTableProps {
     openUpdateDialog: (user: User) => void
@@ -20,10 +22,14 @@ export function UserTable({ openUpdateDialog, openCreateDialog }: UserTableProps
     const handleDeleteUser = useCallback((id: number) => {
         deleteUser({ id: id }, {
             onSuccess: () => {
-                console.log("success")
+                toast.success("User has been deleted", {
+                    description: formatDateTimeWithAt(new Date()),
+                })
             },
             onError: (error) => {
-                console.log(error)
+                toast.error(`Ohh!!! ${error.message}`, {
+                    description: formatDateTimeWithAt(new Date()),
+                })
             },
         },)
     }, [deleteUser])
