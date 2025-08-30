@@ -1,9 +1,10 @@
+import { Role } from "@/constants/role.enum";
 import z from "zod";
 
 const CreateUserSchema = z.object({
-    fullName: z.string().trim().min(1, "Full name is required"),
+    fullName: z.string("Full name is required"),
     email: z.email("Invalid email address"),
-    password: z.string().trim().min(1, "Password is required"),
-    role: z.string().trim().min(1, "Role is required"),
+    password: z.string("Password is required"),
+    role: z.enum(Role, "Invalid role")
 })
 export default CreateUserSchema

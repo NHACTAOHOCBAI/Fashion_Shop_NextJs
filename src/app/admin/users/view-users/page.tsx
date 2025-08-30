@@ -1,4 +1,3 @@
-'use client'
 import { UserTable } from "./users-table"
 
 export default function DemoPage() {

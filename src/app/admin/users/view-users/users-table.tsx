@@ -7,13 +7,10 @@ import { DataTableViewOptions } from "@/components/table/data-table-view-options
 import CustomTable from "@/components/table/custom-table"
 import { useDeleteUser, useUsers } from "@/hooks/queries/useUser"
 import useTable from "@/hooks/useTable"
-import { Button } from "@/components/ui/button"
-import { Plus } from "lucide-react"
 import { userColumns } from "@/app/admin/users/view-users/user-columns"
-import { useRouter } from "next/navigation"
+import { CreateUserDialog } from "@/app/admin/users/create-user/create-user-dialog"
 
 export function UserTable() {
-    const router = useRouter()
     const { mutate: deleteUser } = useDeleteUser()
     const handleDeleteUser = useCallback((id: number) => {
         deleteUser({ id: id }, {
@@ -43,15 +40,7 @@ export function UserTable() {
                     }}
                 />
                 <DataTableViewOptions table={table} />
-                <Button
-                    onClick={() => router.push('/admin/users/create-user')}
-                    variant="outline"
-                    size="sm"
-                    className=" hidden h-8 lg:flex ml-2"
-                >
-                    <Plus />
-                    Add User
-                </Button>
+                <CreateUserDialog />
             </div>
             <div className="overflow-hidden rounded-md border">
                 <CustomTable columns={columns} table={table} />

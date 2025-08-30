@@ -43,14 +43,6 @@ const data = {
           title: "View Users",
           url: "/admin/users/view-users",
         },
-        {
-          title: "Create User",
-          url: "/admin/users/create-user",
-        },
-        {
-          title: "Update User",
-          url: "/admin/users/update-user",
-        },
       ],
     },
   ],
