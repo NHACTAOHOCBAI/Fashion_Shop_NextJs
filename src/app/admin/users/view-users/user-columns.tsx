@@ -13,6 +13,8 @@ import {
 import { Checkbox } from "@/components/ui/checkbox"
 import { DataTableColumnHeader } from "@/components/table/data-table-column-header"
 import { Badge } from "@/components/ui/badge"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import convertAlias from "@/lib/convertAlias"
 
 export const userColumns = (handleDeletUser: (id: number) => void, handleUpdate: (user: User) => void): ColumnDef<User>[] => {
     return [
@@ -45,6 +47,18 @@ export const userColumns = (handleDeletUser: (id: number) => void, handleUpdate:
             ),
         },
         {
+            accessorKey: "Avatar",
+            cell: ({ row }) => {
+                const user = row.original
+                return (
+                    <Avatar>
+                        <AvatarImage src="https://github.com/shadcn.png" />
+                        <AvatarFallback>{convertAlias(user.fullName)}</AvatarFallback>
+                    </Avatar>
+                )
+            },
+        },
+        {
             accessorKey: "fullName",
             enableSorting: false,
             header: ({ column }) => (
@@ -59,7 +73,7 @@ export const userColumns = (handleDeletUser: (id: number) => void, handleUpdate:
             ),
         },
         {
-            accessorKey: "role",
+            accessorKey: "Role",
             cell: ({ row }) => {
                 const user = row.original
                 return (
