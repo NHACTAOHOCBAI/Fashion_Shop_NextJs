@@ -1,7 +1,13 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { ColumnDef, flexRender } from "@tanstack/react-table"
+import { Loader } from "lucide-react"
 
-const CustomTable = <TData,>({ table, columns }: { table: import("@tanstack/table-core").Table<TData>, columns: ColumnDef<TData>[] }) => {
+interface CustomTableProps<TData> {
+    table: import("@tanstack/table-core").Table<TData>,
+    columns: ColumnDef<TData>[],
+    onLoading?: boolean
+}
+const CustomTable = <TData,>({ table, columns, onLoading = false }: CustomTableProps<TData>) => {
     return (
         <Table>
             <TableHeader>
@@ -23,26 +29,38 @@ const CustomTable = <TData,>({ table, columns }: { table: import("@tanstack/tabl
                 ))}
             </TableHeader>
             <TableBody>
-                {table.getRowModel().rows?.length ? (
-                    table.getRowModel().rows.map((row) => (
-                        <TableRow
-                            key={row.id}
-                            data-state={row.getIsSelected() && "selected"}
-                        >
-                            {row.getVisibleCells().map((cell) => (
-                                <TableCell key={cell.id}>
-                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                </TableCell>
-                            ))}
-                        </TableRow>
-                    ))
-                ) : (
-                    <TableRow>
+                {
+                    onLoading ? <TableRow>
                         <TableCell colSpan={columns.length} className="h-24 text-center">
-                            No results.
+                            <div className="flex justify-center items-center gap-2">
+                                <Loader className="h-5 w-5 animate-spin" />
+                                Loading...
+                            </div>
                         </TableCell>
                     </TableRow>
-                )}
+                        :
+                        table.getRowModel().rows?.length ? (
+                            table.getRowModel().rows.map((row) => (
+                                <TableRow
+                                    key={row.id}
+                                    data-state={row.getIsSelected() && "selected"}
+                                >
+                                    {row.getVisibleCells().map((cell) => (
+                                        <TableCell key={cell.id}>
+                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                        </TableCell>
+                                    ))}
+                                </TableRow>
+                            ))
+                        ) : (
+                            <TableRow>
+                                <TableCell colSpan={columns.length} className="h-24 text-center">
+                                    No results.
+                                </TableCell>
+                            </TableRow>
+                        )
+
+                }
             </TableBody>
         </Table>
     )

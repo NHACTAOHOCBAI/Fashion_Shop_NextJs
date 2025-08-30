@@ -28,7 +28,7 @@ export function UserTable({ openUpdateDialog, openCreateDialog }: UserTableProps
         },)
     }, [deleteUser])
     const columns = userColumns(handleDeleteUser, openUpdateDialog)
-    const { table, filter, setFilter, setPagination } = useTable<User>({
+    const { table, filter, setFilter, setPagination, isFetching } = useTable<User>({
         use: useUsers,
         columns: columns,
     })
@@ -56,7 +56,7 @@ export function UserTable({ openUpdateDialog, openCreateDialog }: UserTableProps
                 </Button>
             </div>
             <div className="overflow-hidden rounded-md border">
-                <CustomTable columns={columns} table={table} />
+                <CustomTable onLoading={isFetching} columns={columns} table={table} />
             </div>
             <div className="space-x-2 py-4">
                 <DataTablePagination table={table} />

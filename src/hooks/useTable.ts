@@ -23,7 +23,7 @@ const useTable = <T>({ use, columns }: UseTableProps<T>) => {
     const [filter, setFilter] = React.useState("")
     const [sorting, setSorting] = React.useState<SortingState>([]);
 
-    const { data } = use({
+    const { data, isFetching } = use({
         page: pagination.pageIndex + 1,
         limit: pagination.pageSize,
         search: filter,
@@ -57,7 +57,7 @@ const useTable = <T>({ use, columns }: UseTableProps<T>) => {
         filter,
         setFilter,
         setPagination,
-        setSorting
+        isFetching
     }
 }
 export default useTable
