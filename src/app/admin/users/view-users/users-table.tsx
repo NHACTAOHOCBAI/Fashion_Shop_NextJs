@@ -8,12 +8,14 @@ import CustomTable from "@/components/table/custom-table"
 import { useDeleteUser, useUsers } from "@/hooks/queries/useUser"
 import useTable from "@/hooks/useTable"
 import { userColumns } from "@/app/admin/users/view-users/user-columns"
-import { CreateUserDialog } from "@/app/admin/users/create-user/create-user-dialog"
+import { Button } from "@/components/ui/button"
+import { Plus } from "lucide-react"
 
 interface UserTableProps {
     openUpdateDialog: (user: User) => void
+    openCreateDialog: () => void
 }
-export function UserTable({ openUpdateDialog }: UserTableProps) {
+export function UserTable({ openUpdateDialog, openCreateDialog }: UserTableProps) {
     const { mutate: deleteUser } = useDeleteUser()
     const handleDeleteUser = useCallback((id: number) => {
         deleteUser({ id: id }, {
@@ -43,7 +45,15 @@ export function UserTable({ openUpdateDialog }: UserTableProps) {
                     }}
                 />
                 <DataTableViewOptions table={table} />
-                <CreateUserDialog />
+                <Button
+                    onClick={openCreateDialog}
+                    variant="outline"
+                    size="sm"
+                    className="h-8 flex ml-2"
+                >
+                    <Plus />
+                    Add User
+                </Button>
             </div>
             <div className="overflow-hidden rounded-md border">
                 <CustomTable columns={columns} table={table} />
