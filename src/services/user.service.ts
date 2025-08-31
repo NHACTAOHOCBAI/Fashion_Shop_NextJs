@@ -10,6 +10,11 @@ const deleteUser = async ({ id }: { id: number }) => {
     const response = await axiosInstance.delete(`/users/${id}`)
     return response
 }
+const deleteUsers = async (ids: { ids: number[] }) => {
+    const response = await axiosInstance.post('/users/remove-mutiple', ids)
+    console.log(response)
+    return response
+}
 const createUser = async (data: { fullName: string, email: string, password: string, role: Role, image?: File }) => {
     let imageUrl = undefined
     if (data.image)
@@ -37,4 +42,4 @@ const updateUser = async ({ id, data }: { id: number, data: { fullName: string, 
     const response = await axiosInstance.patch(`/users/${id}`, temp)
     return response
 }
-export { getUsers, deleteUser, createUser, updateUser }
+export { getUsers, deleteUser, createUser, updateUser, deleteUsers }

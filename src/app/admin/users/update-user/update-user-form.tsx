@@ -1,8 +1,5 @@
 "use client"
 
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import {
     Form,
@@ -14,80 +11,19 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useUpdateUser } from "@/hooks/queries/useUser"
 import { Placeholder } from "@/constants/placeholder.num"
-import { toast } from "sonner"
-import { formatDateTimeWithAt } from "@/lib/formatDate"
-import UpdateUserSchema from "@/app/admin/users/update-user/update-user-schema"
-import { useEffect, useState } from "react"
 import { ImageUpload } from "@/components/image-upload/image-upload"
-import { UpdateUserSkeleton } from "@/app/admin/users/update-user/update-user-skeleton"
+import { DialogSkeleton } from "@/components/skeleton/dialog-skeleton"
+import useLocalUpdateUser from "@/app/admin/users/update-user/hooks/use-local-update-user"
 interface UpdateUserFormProps {
     closeDialog: () => void,
     updatedUser: User | undefined
 }
 export function UpdateUserForm({ closeDialog, updatedUser }: UpdateUserFormProps) {
-    const { mutate: UpdateUser, isPending } = useUpdateUser()
-    const [isImageLoading, setIsImageLoading] = useState(false)
-    const form = useForm<z.infer<typeof UpdateUserSchema>>({
-        resolver: zodResolver(UpdateUserSchema),
-    })
-    function onSubmit(values: z.infer<typeof UpdateUserSchema>) {
-        if (updatedUser) {
-            UpdateUser({
-                id: updatedUser.id,
-                data: {
-                    email: values.email,
-                    fullName: values.fullName,
-                    role: values.role,
-                    image: values.avatar && values.avatar[0]
-                }
-            }, {
-                onSuccess: () => {
-                    toast.success("User has been updated", {
-                        description: formatDateTimeWithAt(new Date()),
-                    })
-                },
-                onError: (error) => {
-                    toast.error(`Ohh!!! ${error.message}`, {
-                        description: formatDateTimeWithAt(new Date()),
-                    })
-                },
-                onSettled: () => {
-                    handleCancel()
-                }
-            })
-        }
-    }
-    const handleCancel = () => {
-        closeDialog()
-    }
-    useEffect(() => {
-        async function resetForm() {
-            if (!updatedUser) return;
-
-            let fileArray: File[] = [];
-            if (updatedUser.avatar) {
-                setIsImageLoading(true)
-                const response = await fetch(updatedUser.avatar)
-                const blob = await response.blob()
-                const file = new File([blob], "avatar.jpg", { type: blob.type })
-                fileArray = [file]
-                setIsImageLoading(false)
-            }
-            form.reset({
-                email: updatedUser.email,
-                fullName: updatedUser.fullName,
-                role: updatedUser.role,
-                avatar: fileArray
-            })
-        }
-
-        resetForm()
-    }, [updatedUser, form])
+    const { form, isImageLoading, isPending, onSubmit, handleCancel } = useLocalUpdateUser(updatedUser, closeDialog)
     if (isImageLoading)
         return (
-            <UpdateUserSkeleton />
+            <DialogSkeleton />
         )
     return (
         <Form {...form} >

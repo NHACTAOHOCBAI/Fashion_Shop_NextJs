@@ -1,8 +1,5 @@
 "use client"
 
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import {
     Form,
@@ -14,46 +11,14 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import CreateUserSchema from "@/app/admin/users/create-user/create-user-schema"
-import { useCreateUser } from "@/hooks/queries/useUser"
 import { Placeholder } from "@/constants/placeholder.num"
-import { toast } from "sonner"
-import { formatDateTimeWithAt } from "@/lib/formatDate"
 import { ImageUpload } from "@/components/image-upload/image-upload"
+import useLocalCreateUser from "@/app/admin/users/create-user/hooks/use-local-create-user"
 interface CreateUserFormProps {
     closeDialog: () => void
 }
 export function CreateUserForm({ closeDialog }: CreateUserFormProps) {
-    const { mutate: createUser, isPending } = useCreateUser()
-    const form = useForm<z.infer<typeof CreateUserSchema>>({
-        resolver: zodResolver(CreateUserSchema),
-    })
-    function onSubmit(values: z.infer<typeof CreateUserSchema>) {
-        createUser({
-            email: values.email,
-            fullName: values.fullName,
-            password: values.password,
-            role: values.role,
-            image: values.avatar && values.avatar[0]
-        }, {
-            onSuccess: () => {
-                toast.success("User has been created", {
-                    description: formatDateTimeWithAt(new Date()),
-                })
-            },
-            onError: (error) => {
-                toast.error(`Ohh!!! ${error.message}`, {
-                    description: formatDateTimeWithAt(new Date()),
-                })
-            },
-            onSettled: () => {
-                handleCancel()
-            }
-        })
-    }
-    const handleCancel = () => {
-        closeDialog()
-    }
+    const { form, handleCancel, isPending, onSubmit } = useLocalCreateUser(closeDialog)
     return (
         <Form {...form} >
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" >

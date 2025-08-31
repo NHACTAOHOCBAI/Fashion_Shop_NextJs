@@ -5,16 +5,24 @@ import { Input } from "@/components/ui/input"
 import { DataTablePagination } from "@/components/table/data-table-pagination"
 import { DataTableViewOptions } from "@/components/table/data-table-view-options"
 import CustomTable from "@/components/table/custom-table"
-import useUser from "@/app/admin/users/view-users/hooks/use-user"
 import { Button } from "@/components/ui/button"
 import { Plus, Trash2 } from "lucide-react"
+import { ColumnDef, RowModel, Table } from "@tanstack/react-table"
 
 interface UserTableProps {
-    openUpdateDialog: (user: User) => void
-    openCreateDialog: () => void
+    openDeleteDialog: (data: RowModel<User>) => void
+    openCreateDialog: () => void,
+    filter: string,
+    setFilter: (value: string) => void
+    isFetching: boolean,
+    setPagination: React.Dispatch<React.SetStateAction<{
+        pageIndex: number;
+        pageSize: number;
+    }>>
+    table: Table<User>,
+    columns: ColumnDef<User>[]
 }
-export function UserTable({ openUpdateDialog, openCreateDialog }: UserTableProps) {
-    const { filter, isFetching, setFilter, setPagination, table, columns } = useUser(openUpdateDialog)
+export function UserTable({ openCreateDialog, columns, filter, isFetching, setFilter, setPagination, table, openDeleteDialog }: UserTableProps) {
     return (
         <div>
             <div className="flex items-center py-4">
@@ -34,7 +42,8 @@ export function UserTable({ openUpdateDialog, openCreateDialog }: UserTableProps
                         <Button
                             variant="destructive"
                             size="sm"
-                            className="h-8 flex mr-2"
+                            className="h-8 flex  ml-2"
+                            onClick={() => openDeleteDialog(table.getFilteredSelectedRowModel())}
                         >
                             <Trash2 />
                             Delete
