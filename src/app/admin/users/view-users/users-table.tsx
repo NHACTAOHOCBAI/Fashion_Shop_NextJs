@@ -7,7 +7,7 @@ import { DataTableViewOptions } from "@/components/table/data-table-view-options
 import CustomTable from "@/components/table/custom-table"
 import useUser from "@/app/admin/users/view-users/hooks/use-user"
 import { Button } from "@/components/ui/button"
-import { Plus } from "lucide-react"
+import { Plus, Trash2 } from "lucide-react"
 
 interface UserTableProps {
     openUpdateDialog: (user: User) => void
@@ -27,16 +27,30 @@ export function UserTable({ openUpdateDialog, openCreateDialog }: UserTableProps
                         setPagination((prev) => ({ ...prev, pageIndex: 0 }))
                     }}
                 />
-                <DataTableViewOptions table={table} />
-                <Button
-                    onClick={openCreateDialog}
-                    variant="outline"
-                    size="sm"
-                    className="h-8 flex ml-2"
-                >
-                    <Plus />
-                    Add User
-                </Button>
+                <div className="flex items-center ml-auto">
+                    {
+                        table.getFilteredSelectedRowModel().rows.length > 0
+                        &&
+                        <Button
+                            variant="destructive"
+                            size="sm"
+                            className="h-8 flex mr-2"
+                        >
+                            <Trash2 />
+                            Delete
+                        </Button>
+                    }
+                    <DataTableViewOptions table={table} />
+                    <Button
+                        onClick={openCreateDialog}
+                        variant="outline"
+                        size="sm"
+                        className="h-8 flex ml-2"
+                    >
+                        <Plus />
+                        Add User
+                    </Button>
+                </div>
             </div>
             <div className="overflow-hidden rounded-md border">
                 <CustomTable onLoading={isFetching} columns={columns} table={table} />
