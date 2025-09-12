@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import UpdateCategorySchema from "@/app/admin/categories/update-category/update-category-schema"
 import { useUpdateCategory } from "@/hooks/queries/useCategory"
 import { formatDateTimeWithAt } from "@/lib/formatDate"
@@ -12,6 +13,7 @@ const useLocalUpdateCategory = (updatedCategory: Category | undefined, closeDial
     const [isImageLoading, setIsImageLoading] = useState(false)
     const form = useForm<z.infer<typeof UpdateCategorySchema>>({
         resolver: zodResolver(UpdateCategorySchema),
+        defaultValues: { name: "", description: "", parentId: undefined, image: [] }
     })
     function onSubmit(values: z.infer<typeof UpdateCategorySchema>) {
         if (updatedCategory) {
@@ -42,25 +44,31 @@ const useLocalUpdateCategory = (updatedCategory: Category | undefined, closeDial
     }
     const handleCancel = () => {
         closeDialog()
+        form.reset()
     }
-    const resetForm = useCallback(async () => {
-        if (!updatedCategory) return;
-
+    const initializeImage = async (updatedCategory: Category) => {
         let fileArray: File[] = [];
         if (updatedCategory.imageUrl) {
             setIsImageLoading(true)
-            const response = await fetch(updatedCategory.imageUrl)
+            const response = await fetch(updatedCategory.imageUrl);
             const blob = await response.blob()
-            const file = new File([blob], "avatar.jpg", { type: blob.type })
+            const file = new File([blob], "image", { type: blob.type });
+            (file as any).preview = updatedCategory.imageUrl;
             fileArray = [file]
             setIsImageLoading(false)
         }
+        return fileArray
+    }
+    const resetForm = useCallback(async () => {
+        if (!updatedCategory) return;
+        const fileArray = await initializeImage(updatedCategory)
         form.reset({
-            description: updatedCategory.description,
+            description: updatedCategory.description ?? undefined,
             image: fileArray,
             name: updatedCategory.name,
-            parentId: updatedCategory.parentId
-        })
+            parentId: updatedCategory.parentId ?? undefined,
+        });
+
     }, [form, updatedCategory])
     useEffect(() => {
         resetForm()

@@ -11,6 +11,7 @@ const useLocalCreateCategory = (closeDialog: () => void) => {
     const { mutate: createCategory, isPending } = useCreateCategory()
     const form = useForm<z.infer<typeof CreateCategorySchema>>({
         resolver: zodResolver(CreateCategorySchema),
+        defaultValues: { name: "", description: "", parentId: undefined, image: [] }
     })
     function onSubmit(values: z.infer<typeof CreateCategorySchema>) {
         createCategory({
@@ -36,6 +37,7 @@ const useLocalCreateCategory = (closeDialog: () => void) => {
     }
     const handleCancel = () => {
         closeDialog()
+        form.reset()
     }
     return {
         form,

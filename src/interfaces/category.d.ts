@@ -2,8 +2,9 @@ interface Category {
     id: number;
     name: string;
     imageUrl: string;
-    description?: string;
+    publicId: string;
     createdAt: string;
     updatedAt: string;
-    parentId?: number
+    description: string | null;
+    parentId: number | null;
 } 

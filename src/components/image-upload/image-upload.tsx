@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
 import { useMemo, useEffect } from "react"
@@ -39,10 +40,11 @@ export function ImageUpload({ field, label, numOfImage, disabled }: ImageUploadP
         () =>
             files.map(file => ({
                 file,
-                url: URL.createObjectURL(file),
+                url: (file as any).preview || URL.createObjectURL(file), // 👈 ưu tiên preview có sẵn
             })),
         [files]
     )
+
 
     useEffect(() => {
         return () => {
