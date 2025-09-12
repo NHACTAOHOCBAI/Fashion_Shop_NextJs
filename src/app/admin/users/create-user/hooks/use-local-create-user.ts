@@ -10,6 +10,7 @@ const useLocalCreateUser = (closeDialog: () => void) => {
     const { mutate: createUser, isPending } = useCreateUser()
     const form = useForm<z.infer<typeof CreateUserSchema>>({
         resolver: zodResolver(CreateUserSchema),
+        defaultValues: { fullName: "", email: "", password: "", role: undefined, avatar: [] }
     })
     function onSubmit(values: z.infer<typeof CreateUserSchema>) {
         createUser({
@@ -36,6 +37,7 @@ const useLocalCreateUser = (closeDialog: () => void) => {
     }
     const handleCancel = () => {
         closeDialog()
+        form.reset()
     }
     return {
         form,

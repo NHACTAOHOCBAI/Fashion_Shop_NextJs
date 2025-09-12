@@ -78,8 +78,8 @@ export function CreateCategoryDialog({ open, setOpen }: CreateCategoryDialogProp
                                     <FormLabel>Parent</FormLabel>
                                     <FormControl>
                                         <Select
-                                            onValueChange={value => field.onChange(value)}
-                                            defaultValue={field.value !== undefined ? String(field.value) : undefined}
+                                            value={field.value !== undefined && field.value !== null ? String(field.value) : undefined}
+                                            onValueChange={(value) => field.onChange(Number(value))}
                                         >
                                             <SelectTrigger className="w-full">
                                                 <SelectValue placeholder={Placeholder.CategoryParent} />
@@ -95,6 +95,7 @@ export function CreateCategoryDialog({ open, setOpen }: CreateCategoryDialogProp
                                 </FormItem>
                             )}
                         />
+
                         <div className="flex flex-col gap-3">
                             <Button onLoading={isPending} type="submit" className="w-full">
                                 Create
