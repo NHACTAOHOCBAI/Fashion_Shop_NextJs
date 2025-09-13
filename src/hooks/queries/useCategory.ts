@@ -1,9 +1,14 @@
-import { createCategory, deleteCategories, deleteCategory, getCategories, updateCategory } from '@/services/category.service';
+import { createCategory, deleteCategories, deleteCategory, getCategories, getCategorySelection, updateCategory } from '@/services/category.service';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 const useCategories = (params: QueryParams) =>
     useQuery({
         queryKey: ['categories', params],
         queryFn: () => getCategories(params),
+    });
+const useCategorySelections = () =>
+    useQuery({
+        queryKey: ['category-selection'],
+        queryFn: () => getCategorySelection(),
     });
 const useDeleteCategory = () => {
     const queryClient = useQueryClient();
@@ -41,4 +46,4 @@ const useUpdateCategory = () => {
         },
     });
 }
-export { useCategories, useCreateCategory, useDeleteCategories, useDeleteCategory, useMutation, useUpdateCategory }
+export { useCategories, useCreateCategory, useDeleteCategories, useDeleteCategory, useMutation, useUpdateCategory, useCategorySelections }

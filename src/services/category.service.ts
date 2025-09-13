@@ -4,6 +4,10 @@ const getCategories = async (params: QueryParams) => {
     const response = await axiosInstance.get('/categories', { params }) as GetAllResponse<Category>
     return response.data
 }
+const getCategorySelection = async () => {
+    const response = await axiosInstance.get('/categories') as GetAllResponse<Category>
+    return response.data.data
+}
 const deleteCategory = async ({ id }: { id: number }) => {
     const response = await axiosInstance.delete(`/categories/${id}`)
     return response
@@ -46,4 +50,4 @@ const updateCategory = async ({ id, data }: { id: number, data: { name: string, 
     })
     return response;
 }
-export { createCategory, deleteCategories, deleteCategory, getCategories, updateCategory }
+export { createCategory, deleteCategories, deleteCategory, getCategories, updateCategory, getCategorySelection }

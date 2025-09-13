@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import UpdateCategorySchema from "@/app/admin/categories/update-category/update-category-schema"
-import { useUpdateCategory } from "@/hooks/queries/useCategory"
+import { useCategorySelections, useUpdateCategory } from "@/hooks/queries/useCategory"
 import { formatDateTimeWithAt } from "@/lib/formatDate"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useCallback, useEffect, useState } from "react"
@@ -10,6 +10,14 @@ import z from "zod"
 
 const useLocalUpdateCategory = (updatedCategory: Category | undefined, closeDialog: () => void,) => {
     const { mutate: updateCategory, isPending } = useUpdateCategory()
+    const { data } = useCategorySelections()
+    const categorySelections = data
+        ?.filter(category => category.id !== updatedCategory?.id)
+        .map(category => ({
+            value: category.id,
+            label: category.name,
+        }))
+
     const [isImageLoading, setIsImageLoading] = useState(false)
     const form = useForm<z.infer<typeof UpdateCategorySchema>>({
         resolver: zodResolver(UpdateCategorySchema),
@@ -78,7 +86,8 @@ const useLocalUpdateCategory = (updatedCategory: Category | undefined, closeDial
         form,
         isPending,
         onSubmit,
-        handleCancel
+        handleCancel,
+        categorySelections
     }
 }
 export default useLocalUpdateCategory

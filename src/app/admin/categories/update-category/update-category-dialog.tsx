@@ -26,7 +26,7 @@ interface UpdateCategoryDialogProps {
     unChooseUpdatedCategory: () => void
 }
 export function UpdateCategoryDialog({ open, unChooseUpdatedCategory, updatedCategory, setOpen }: UpdateCategoryDialogProps) {
-    const { form, isImageLoading, isPending, onSubmit, handleCancel } = useLocalUpdateCategory(updatedCategory, unChooseUpdatedCategory)
+    const { form, isImageLoading, isPending, onSubmit, handleCancel, categorySelections } = useLocalUpdateCategory(updatedCategory, unChooseUpdatedCategory)
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogContent className="sm:max-w-md  max-h-[98vh] overflow-y-auto">
@@ -84,16 +84,18 @@ export function UpdateCategoryDialog({ open, unChooseUpdatedCategory, updatedCat
                                         <FormLabel>Parent</FormLabel>
                                         <FormControl>
                                             <Select
-                                                onValueChange={value => field.onChange(value)}
-                                                defaultValue={field.value !== undefined ? String(field.value) : undefined}
+                                                value={field.value !== undefined && field.value !== null ? String(field.value) : undefined}
+                                                onValueChange={(value) => field.onChange(Number(value))}
                                             >
                                                 <SelectTrigger className="w-full">
                                                     <SelectValue placeholder={Placeholder.CategoryParent} />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    <SelectItem value="1">Summer</SelectItem>
-                                                    <SelectItem value="2">Spring</SelectItem>
-                                                    <SelectItem value="3">Autumn</SelectItem>
+                                                    {
+                                                        categorySelections?.map((option) => {
+                                                            return <SelectItem key={option?.value} value={String(option?.value) || ""}>{option?.label}</SelectItem>
+                                                        })
+                                                    }
                                                 </SelectContent>
                                             </Select>
                                         </FormControl>
