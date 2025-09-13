@@ -1,41 +1,41 @@
-import { userColumns } from "@/app/admin/users/view-users/user-columns"
-import { useDeleteUser, useUsers } from "@/hooks/queries/useUser"
+import { brandColumns } from "@/app/admin/brands/view-brands/brand-columns"
+import { useBrands, useDeleteBrand } from "@/hooks/queries/useBrand"
 import useTable from "@/hooks/useTable"
 import { formatDateTimeWithAt } from "@/lib/formatDate"
 import { RowModel } from "@tanstack/react-table"
 import React, { useCallback } from "react"
 import { toast } from "sonner"
 
-const useUser = () => {
+const useBrand = () => {
     const [openCreate, setOpenCreate] = React.useState(false)
     const [openUpdate, setOpenUpdate] = React.useState(false)
-    const [updatedUser, setUpdatedUser] = React.useState<User>()
+    const [updatedBrand, setUpdatedBrand] = React.useState<Brand>()
     const [openDelete, setOpenDelete] = React.useState(false)
-    const [deletedUsers, setDeletedUsers] = React.useState<number[]>([])
-    const { mutate: deleteUser } = useDeleteUser()
+    const [deletedBrands, setDeletedBrands] = React.useState<number[]>([])
+    const { mutate: deleteBrand } = useDeleteBrand()
 
     const openCreateDialog = () => {
         setOpenCreate(true)
     }
-    const openUpdateDialog = (user: User) => {
+    const openUpdateDialog = (brand: Brand) => {
         setOpenUpdate(true)
-        setUpdatedUser(user)
+        setUpdatedBrand(brand)
     }
     const closeUpdateDialog = () => {
         setOpenUpdate(false)
-        setUpdatedUser(undefined)
+        setUpdatedBrand(undefined)
     }
-    const openDeleteDialog = (data: RowModel<User>) => {
-        const users = data.rows.map((row) => {
+    const openDeleteDialog = (data: RowModel<Brand>) => {
+        const brands = data.rows.map((row) => {
             return row.original.id
         })
-        setDeletedUsers(users)
+        setDeletedBrands(brands)
         setOpenDelete(true)
     }
-    const handleDeleteUser = useCallback((id: number) => {
-        deleteUser({ id: id }, {
+    const handleDeleteBrand = useCallback((id: number) => {
+        deleteBrand({ id: id }, {
             onSuccess: () => {
-                toast.success("User has been deleted", {
+                toast.success("Brand has been deleted", {
                     description: formatDateTimeWithAt(new Date()),
                 })
             },
@@ -45,17 +45,17 @@ const useUser = () => {
                 })
             },
         },)
-    }, [deleteUser])
-    const columns = userColumns(handleDeleteUser, openUpdateDialog)
-    const { table, filter, setFilter, setPagination, isFetching } = useTable<User>({
-        use: useUsers,
+    }, [deleteBrand])
+    const columns = brandColumns(handleDeleteBrand, openUpdateDialog)
+    const { table, filter, setFilter, setPagination, isFetching } = useTable<Brand>({
+        use: useBrands,
         columns: columns,
     })
     return {
         table, filter, setFilter, setPagination, isFetching, columns,
-        openUpdate, updatedUser, closeUpdateDialog, setOpenUpdate,
+        openUpdate, updatedBrand, closeUpdateDialog, setOpenUpdate,
         openCreate, openCreateDialog, setOpenCreate,
-        openDelete, deletedUsers, openDeleteDialog, setOpenDelete
+        openDelete, deletedBrands, openDeleteDialog, setOpenDelete
     }
 }
-export default useUser
+export default useBrand

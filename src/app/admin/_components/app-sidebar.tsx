@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/sidebar"
 import { NavMain } from "@/app/admin/_components/nav-main"
 import { NavUser } from "@/app/admin/_components/nav-user"
-import { Archive, ChartPie, UsersRound } from "lucide-react"
+import { Archive, ChartPie, Store, UsersRound } from "lucide-react"
 
 // This is sample data.
 const data = {
@@ -52,6 +52,16 @@ const data = {
         {
           title: "View Categories",
           url: "/admin/categories/view-categories",
+        },
+      ],
+    },
+    {
+      title: "Brands",
+      icon: <Store />,
+      items: [
+        {
+          title: "View Brands",
+          url: "/admin/brands/view-brands",
         },
       ],
     },
