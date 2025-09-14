@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 
-import CreateProductSchema from "@/app/admin/products/create-product/create-product-schema"
+import useLocalCreateProduct from "@/app/admin/products/create-product/hooks/use-local-create-product"
 import { ImageUpload } from "@/components/image-upload/image-upload"
 import { Button } from "@/components/ui/button"
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -10,83 +9,10 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { Placeholder } from "@/constants/placeholder.num"
-import { useBrandSelections } from "@/hooks/queries/useBrand"
-import { useCategorySelections } from "@/hooks/queries/useCategory"
-import { useCreateProduct } from "@/hooks/queries/useProduct"
-import { formatDateTimeWithAt } from "@/lib/formatDate"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm, useFieldArray } from "react-hook-form"
-import { toast } from "sonner"
-import z from "zod"
+import { X } from "lucide-react"
 
 const CreateProduct = () => {
-    const { mutate: createProduct, isPending } = useCreateProduct()
-    const { data: categoryData } = useCategorySelections()
-    const { data: brandData } = useBrandSelections()
-
-    const categorySelections = categoryData?.map((category) => ({
-        value: category.id,
-        label: category.name,
-    }))
-    const brandSelections = brandData?.map((brand) => ({
-        value: brand.id,
-        label: brand.name,
-    }))
-
-    type CreateProductFormType = z.infer<typeof CreateProductSchema>;
-
-    const form = useForm<CreateProductFormType>({
-        resolver: zodResolver(CreateProductSchema),
-        defaultValues: {
-            brandId: 0,
-            categoryId: 0,
-            description: "",
-            image: [],
-            name: "",
-            price: 0,
-            variants: []
-        }
-    })
-
-    const { fields, append, remove } = useFieldArray<CreateProductFormType>({
-        control: form.control,
-        name: "variants",
-    })
-
-    function onSubmit(values: z.infer<typeof CreateProductSchema>) {
-        const variants = values.variants.map(({ image, ...rest }) => rest)
-
-        const variantImages = values.variants.map((variant) => variant.image[0])
-        createProduct({
-            brandId: values.brandId,
-            categoryId: values.categoryId,
-            images: values.image,
-            name: values.name,
-            price: values.price,
-            variants: variants,
-            description: values.description,
-            variantImages: variantImages,
-        }, {
-            onSuccess: () => {
-                toast.success("Category has been updated", {
-                    description: formatDateTimeWithAt(new Date()),
-                })
-            },
-            onError: (error) => {
-                toast.error(`Ohh!!! ${error.message}`, {
-                    description: formatDateTimeWithAt(new Date()),
-                })
-            },
-            onSettled: () => {
-                handleCancel()
-            }
-        })
-    }
-
-    const handleCancel = () => {
-        form.reset()
-    }
-
+    const { form, onSubmit, isPending, categorySelections, brandSelections, handleCancel, fields, remove, append } = useLocalCreateProduct()
     return (
         <Card>
             <CardHeader>
@@ -132,6 +58,7 @@ const CreateProduct = () => {
                                             <FormLabel>Price</FormLabel>
                                             <FormControl>
                                                 <Input
+                                                    placeholder="1"
                                                     type="number"
                                                     {...field}
                                                     value={field.value ?? ""}
@@ -153,6 +80,7 @@ const CreateProduct = () => {
                                             <FormLabel>Category</FormLabel>
                                             <FormControl>
                                                 <Select
+                                                    disabled={isPending}
                                                     value={
                                                         field.value !== undefined && field.value !== null
                                                             ? String(field.value)
@@ -190,6 +118,7 @@ const CreateProduct = () => {
                                             <FormLabel>Brand</FormLabel>
                                             <FormControl>
                                                 <Select
+                                                    disabled={isPending}
                                                     value={
                                                         field.value !== undefined && field.value !== null
                                                             ? String(field.value)
@@ -244,13 +173,15 @@ const CreateProduct = () => {
                                     <Card key={field.id}>
                                         <CardHeader>
                                             <CardTitle>{`Variant ${index + 1}`}</CardTitle>
-                                            <CardAction>  <Button
-                                                type="button"
-                                                variant="destructive"
-                                                onClick={() => remove(index)}
-                                            >
-                                                Remove
-                                            </Button></CardAction>
+                                            <CardAction>
+                                                <Button
+                                                    type="button"
+                                                    variant={"ghost"}
+                                                    onClick={() => remove(index)}
+                                                >
+                                                    <X />
+                                                </Button>
+                                            </CardAction>
                                         </CardHeader>
                                         <CardContent className="space-y-4">
                                             <FormField
@@ -298,9 +229,10 @@ const CreateProduct = () => {
                                                 name={`variants.${index}.quantity`}
                                                 render={({ field }) => (
                                                     <FormItem>
-                                                        <FormLabel>Price</FormLabel>
+                                                        <FormLabel>Quantity</FormLabel>
                                                         <FormControl>
                                                             <Input
+                                                                min={1}
                                                                 type="number"
                                                                 {...field}
                                                                 value={field.value ?? ""}
@@ -319,6 +251,7 @@ const CreateProduct = () => {
                                                         <FormLabel>Price</FormLabel>
                                                         <FormControl>
                                                             <Input
+                                                                min={1}
                                                                 type="number"
                                                                 {...field}
                                                                 value={field.value ?? ""}
@@ -344,8 +277,8 @@ const CreateProduct = () => {
 
                         </div>
                         {/* Actions */}
-                        <div className="flex flex-col gap-3 mt-6">
-                            <Button onLoading={isPending} type="submit" className="w-full">
+                        <div className="flex justify-end gap-3 mt-6">
+                            <Button onLoading={isPending} type="submit" >
                                 Create
                             </Button>
                             <Button
@@ -353,7 +286,6 @@ const CreateProduct = () => {
                                 type="button"
                                 onClick={handleCancel}
                                 variant={"outline"}
-                                className="w-full"
                             >
                                 Cancel
                             </Button>

@@ -15,7 +15,7 @@ const CreateProductSchema = z.object({
     categoryId: z.number().min(1, "Category is required"),
     brandId: z.number().min(1, "Brand is required"),
     // 👇 sửa chỗ này: không để z.string() nữa
-    variants: z.array(VariantSchema).min(1, "Must have at least one variant"),
+    variants: z.array(VariantSchema),
     image: z.array(z.instanceof(File)).min(1, { message: "You must choose an image at least" })
 })
 
