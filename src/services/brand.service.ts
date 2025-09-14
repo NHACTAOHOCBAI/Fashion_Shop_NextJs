@@ -4,6 +4,10 @@ const getBrands = async (params: QueryParams) => {
     const response = await axiosInstance.get('/brands', { params }) as GetAllResponse<Brand>
     return response.data
 }
+const getBrandSelection = async () => {
+    const response = await axiosInstance.get('/brands') as GetAllResponse<Brand>
+    return response.data.data
+}
 const deleteBrand = async ({ id }: { id: number }) => {
     const response = await axiosInstance.delete(`/brands/${id}`)
     return response
@@ -41,4 +45,4 @@ const updateBrand = async ({ id, data }: { id: number, data: { name: string, ima
     })
     return response;
 }
-export { createBrand, deleteBrand, deleteBrands, getBrands, updateBrand, }
+export { createBrand, deleteBrand, deleteBrands, getBrands, updateBrand, getBrandSelection }

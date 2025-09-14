@@ -73,6 +73,14 @@ const data = {
           title: "View Products",
           url: "/admin/products/view-products",
         },
+        {
+          title: "Create Product",
+          url: "/admin/products/create-product",
+        },
+        {
+          title: "Update Product",
+          url: "/admin/products/update-product",
+        },
       ],
     },
   ],

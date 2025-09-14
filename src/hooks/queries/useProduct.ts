@@ -1,4 +1,4 @@
-
+'use client'
 import { createProduct, deleteProduct, deleteProducts, getProducts } from '@/services/product.service';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 const useProducts = (params: QueryParams) =>
