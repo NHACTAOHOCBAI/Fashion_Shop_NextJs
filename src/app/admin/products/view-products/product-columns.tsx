@@ -58,7 +58,7 @@ export const productColumns = (handleDeleteProduct: (id: number) => void, handle
             },
         },
         {
-            accessorKey: "Name",
+            accessorKey: "name",
             enableSorting: false,
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title="Name" />
