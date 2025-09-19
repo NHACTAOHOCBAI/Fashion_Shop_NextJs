@@ -1,5 +1,4 @@
 'use client'
-import { useApp } from "@/app/(client)/_components/AppContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, ShoppingCart } from "lucide-react";
