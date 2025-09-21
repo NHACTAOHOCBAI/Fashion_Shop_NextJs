@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import UpdateBrandSchema from "@/app/admin/(brands)/update-brands/update-brand-shema"
+import UpdateBrandSchema from "@/app/admin/brands/update-brand/update-brand-schema"
 import { useUpdateBrand } from "@/hooks/queries/useBrand"
 import { formatDateTimeWithAt } from "@/lib/formatDate"
 import { zodResolver } from "@hookform/resolvers/zod"

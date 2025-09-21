@@ -1,6 +1,6 @@
 'use client'
 
-import useLocalCreateBrand from "@/app/admin/(brands)/create-brands/hooks/use-local-create-brand"
+import useLocalCreateBrand from "@/app/admin/brands/create-brand/use-local-create-brand"
 import { ImageUpload } from "@/components/image-upload/image-upload"
 import { Button } from "@/components/ui/button"
 import {

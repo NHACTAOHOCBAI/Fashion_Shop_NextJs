@@ -40,7 +40,7 @@ export default function Brands() {
                 columns={brandColumns(handleUpdateBtn, handleDeleteItem)}
                 useQuery={useBrands}
                 useDelete={useDeleteBrands}
-                filterPlaceholder="Filter emails..."
+                filterPlaceholder="Filter brand name..."
             >
                 <Button
                     onClick={() => setOpenCreate(true)}

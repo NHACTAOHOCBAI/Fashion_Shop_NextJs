@@ -1,5 +1,6 @@
 
-import CreateBrandSchema from "@/app/admin/(brands)/create-brands/create-brand-shema"
+
+import CreateBrandSchema from "@/app/admin/brands/create-brand/create-brand-schema"
 import { useCreateBrand } from "@/hooks/queries/useBrand"
 import { formatDateTimeWithAt } from "@/lib/formatDate"
 import { zodResolver } from "@hookform/resolvers/zod"
