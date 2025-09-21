@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useProducts } from "@/hooks/queries/useProduct";
 import { Eye } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const categories = ["All", "Shirts", "Jackets", "Knitwear", "Blazers", "Pants", "T-Shirts"];
@@ -26,6 +27,7 @@ const selectedProduct = {
     care: "Machine wash cold, tumble dry low"
 }
 function ProductListing() {
+    const route = useRouter()
     const { data: products } = useProducts({})
     const [filters, setFilters] = useState({
         category: "",
@@ -43,7 +45,8 @@ function ProductListing() {
 
 
 
-    const handleViewProduct = (product: any) => {
+    const handleViewProduct = (product: Product) => {
+        route.push(`products/${product.id}`)
     };
 
     const handleAddToCart = (product: any) => {

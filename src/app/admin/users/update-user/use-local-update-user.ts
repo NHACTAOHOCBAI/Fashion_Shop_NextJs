@@ -8,17 +8,17 @@ import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import z from "zod"
 
-const useLocalUpdateUser = (updatedUser: User | undefined, closeDialog: () => void,) => {
-    const { mutate: updateUser, isPending } = useUpdateUser()
+const useLocalUpdateUser = (updatedItem: User | undefined, closeDialog: () => void,) => {
+    const { mutate: updateItem, isPending } = useUpdateUser()
     const [isImageLoading, setIsImageLoading] = useState(false)
     const form = useForm<z.infer<typeof UpdateUserSchema>>({
         resolver: zodResolver(UpdateUserSchema),
         defaultValues: { fullName: "", email: "", role: undefined, avatar: [] }
     })
     function onSubmit(values: z.infer<typeof UpdateUserSchema>) {
-        if (updatedUser) {
-            updateUser({
-                id: updatedUser.id,
+        if (updatedItem) {
+            updateItem({
+                id: updatedItem.id,
                 data: {
                     email: values.email,
                     fullName: values.fullName,
@@ -46,30 +46,30 @@ const useLocalUpdateUser = (updatedUser: User | undefined, closeDialog: () => vo
         closeDialog()
         form.reset()
     }
-    const initializeImage = async (updatedUser: User) => {
+    const initializeImage = async (updatedItem: User) => {
         let fileArray: File[] = [];
-        if (updatedUser.avatar) {
+        if (updatedItem.avatar) {
             setIsImageLoading(true)
-            const response = await fetch(updatedUser.avatar);
+            const response = await fetch(updatedItem.avatar);
             const blob = await response.blob()
             const file = new File([blob], "image", { type: blob.type });
-            (file as any).preview = updatedUser.avatar;
+            (file as any).preview = updatedItem.avatar;
             fileArray = [file]
             setIsImageLoading(false)
         }
         return fileArray
     }
     const resetForm = useCallback(async () => {
-        if (!updatedUser) return;
+        if (!updatedItem) return;
 
-        const fileArray = await initializeImage(updatedUser)
+        const fileArray = await initializeImage(updatedItem)
         form.reset({
-            email: updatedUser.email,
-            fullName: updatedUser.fullName,
-            role: updatedUser.role,
+            email: updatedItem.email,
+            fullName: updatedItem.fullName,
+            role: updatedItem.role,
             avatar: fileArray
         })
-    }, [form, updatedUser])
+    }, [form, updatedItem])
     useEffect(() => {
         resetForm()
     }, [resetForm])

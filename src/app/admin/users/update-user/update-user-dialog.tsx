@@ -22,22 +22,26 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Placeholder } from "@/constants/placeholder.num"
 import { ImageUpload } from "@/components/image-upload/image-upload"
 import { DialogSkeleton } from "@/components/skeleton/dialog-skeleton"
-import useLocalUpdateUser from "@/app/admin/users/update-user/hooks/use-local-update-user"
+import useLocalUpdateUser from "@/app/admin/users/update-user/use-local-update-user"
 interface UpdateUserDialog {
     open: boolean,
     setOpen: (value: boolean) => void,
-    updatedUser: User | undefined,
-    unChooseUpdatedUser: () => void
+    updatedItem: User | undefined,
+    setUpdatedItem: React.Dispatch<React.SetStateAction<User | undefined>>
 }
-export function UpdateUserDialog({ open, unChooseUpdatedUser, updatedUser, setOpen }: UpdateUserDialog) {
-    const { form, isImageLoading, isPending, onSubmit, handleCancel } = useLocalUpdateUser(updatedUser, unChooseUpdatedUser)
+export function UpdateUserDialog({ open, setUpdatedItem, updatedItem, setOpen }: UpdateUserDialog) {
+    const closeDialog = () => {
+        setOpen(false)
+        setUpdatedItem(undefined)
+    }
+    const { form, isImageLoading, isPending, onSubmit, handleCancel } = useLocalUpdateUser(updatedItem, closeDialog)
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogContent className="sm:max-w-md  max-h-[98vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>Update User</DialogTitle>
                     <DialogDescription>
-                        Enter information of user below to update user to table.
+                        Enter information of item below to update item to table.
                     </DialogDescription>
                 </DialogHeader>
                 {isImageLoading ?

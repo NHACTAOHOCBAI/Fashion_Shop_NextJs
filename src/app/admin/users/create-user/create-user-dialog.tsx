@@ -21,7 +21,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Placeholder } from "@/constants/placeholder.num"
 import { ImageUpload } from "@/components/image-upload/image-upload"
-import useLocalCreateUser from "@/app/admin/users/create-user/hooks/use-local-create-user"
+import useLocalCreateUser from "@/app/admin/users/create-user/use-local-create-user"
 interface CreateUserDialogProps {
     open: boolean,
     setOpen: (value: boolean) => void,
@@ -34,7 +34,7 @@ export function CreateUserDialog({ open, setOpen }: CreateUserDialogProps) {
                 <DialogHeader>
                     <DialogTitle>Add User</DialogTitle>
                     <DialogDescription>
-                        Enter information of user below to add user to table.
+                        Enter information of item below to add item to table.
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form} >

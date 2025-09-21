@@ -1,22 +1,11 @@
-"use client"
-import { ColumnDef } from "@tanstack/react-table"
-import { MoreHorizontal } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Checkbox } from "@/components/ui/checkbox"
 import { DataTableColumnHeader } from "@/components/table/data-table-column-header"
-import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import convertAlias from "@/lib/convertAlias"
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import type { ColumnDef } from "@tanstack/react-table"
+import { MoreHorizontal } from "lucide-react"
 
-export const userColumns = (handleDeletUser: (id: number) => void, handleUpdate: (user: User) => void): ColumnDef<User>[] => {
+export const userColumns = (handleUpdateBtn: (item: User) => void, handleDeleteItem: (id: number) => void): ColumnDef<User>[] => {
     return [
         {
             id: "select",
@@ -47,18 +36,6 @@ export const userColumns = (handleDeletUser: (id: number) => void, handleUpdate:
             ),
         },
         {
-            accessorKey: "Avatar",
-            cell: ({ row }) => {
-                const user = row.original
-                return (
-                    <Avatar>
-                        <AvatarImage src="https://github.com/shadcn.png" />
-                        <AvatarFallback>{convertAlias(user.fullName)}</AvatarFallback>
-                    </Avatar>
-                )
-            },
-        },
-        {
             accessorKey: "fullName",
             enableSorting: false,
             header: ({ column }) => (
@@ -73,18 +50,9 @@ export const userColumns = (handleDeletUser: (id: number) => void, handleUpdate:
             ),
         },
         {
-            accessorKey: "Role",
-            cell: ({ row }) => {
-                const user = row.original
-                return (
-                    <Badge variant="outline">{user.role}</Badge>
-                )
-            },
-        },
-        {
             id: "actions",
             cell: ({ row }) => {
-                const user = row.original
+                const item = row.original
                 return (
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -96,13 +64,13 @@ export const userColumns = (handleDeletUser: (id: number) => void, handleUpdate:
                         <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
                             <DropdownMenuItem
-                                onClick={() => navigator.clipboard.writeText(String(user.id))}
+                                onClick={() => navigator.clipboard.writeText(String(item.id))}
                             >
                                 Copy ID
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => handleUpdate(user)}>Update User</DropdownMenuItem>
-                            <DropdownMenuItem className="focus:text-red-500" onClick={() => handleDeletUser(user.id)}>
+                            <DropdownMenuItem onClick={() => handleUpdateBtn(item)}>Update User</DropdownMenuItem>
+                            <DropdownMenuItem className="focus:text-red-500" onClick={() => handleDeleteItem(item.id)}>
                                 Delete User
                             </DropdownMenuItem>
                         </DropdownMenuContent>
