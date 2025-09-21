@@ -1,6 +1,6 @@
 'use client'
 
-import useLocalCreateBrand from "@/app/admin/brands/create-brands/hooks/use-local-create-brand"
+import useLocalCreateBrand from "@/app/admin/(brands)/create-brands/hooks/use-local-create-brand"
 import { ImageUpload } from "@/components/image-upload/image-upload"
 import { Button } from "@/components/ui/button"
 import {
@@ -28,7 +28,7 @@ export function CreateBrandDialog({ open, setOpen }: CreateBrandDialogProps) {
                 <DialogHeader>
                     <DialogTitle>Add Brand</DialogTitle>
                     <DialogDescription>
-                        Enter information of brand below to add brand to table.
+                        Enter information of item below to add item to table.
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form} >

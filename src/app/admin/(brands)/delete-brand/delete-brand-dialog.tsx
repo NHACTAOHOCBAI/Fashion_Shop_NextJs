@@ -1,5 +1,5 @@
 
-import useLocalDeleteBrand from "@/app/admin/brands/delete-brand/hooks/use-local-delete-brand"
+import useLocalDeleteBrand from "@/app/admin/(brands)/delete-brand/hooks/use-local-delete-brand"
 import {
     AlertDialog,
     AlertDialogAction,

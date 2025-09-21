@@ -1,6 +1,6 @@
 'use client'
 
-import useLocalUpdateBrand from "@/app/admin/brands/update-brands/hooks/use-local-update-brand"
+import useLocalUpdateBrand from "@/app/admin/(brands)/update-brands/hooks/use-local-update-brand"
 import { ImageUpload } from "@/components/image-upload/image-upload"
 import { DialogSkeleton } from "@/components/skeleton/dialog-skeleton"
 import { Button } from "@/components/ui/button"

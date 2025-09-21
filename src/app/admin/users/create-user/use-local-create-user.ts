@@ -7,13 +7,13 @@ import { toast } from "sonner"
 import z from "zod"
 
 const useLocalCreateUser = (closeDialog: () => void) => {
-    const { mutate: createUser, isPending } = useCreateUser()
+    const { mutate: createItem, isPending } = useCreateUser()
     const form = useForm<z.infer<typeof CreateUserSchema>>({
         resolver: zodResolver(CreateUserSchema),
         defaultValues: { fullName: "", email: "", password: "", role: undefined, avatar: [] }
     })
     function onSubmit(values: z.infer<typeof CreateUserSchema>) {
-        createUser({
+        createItem({
             email: values.email,
             fullName: values.fullName,
             password: values.password,

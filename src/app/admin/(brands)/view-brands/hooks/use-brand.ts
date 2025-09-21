@@ -1,4 +1,4 @@
-import { brandColumns } from "@/app/admin/brands/view-brands/brand-columns"
+import { brandColumns } from "@/app/admin/(brands)/view-brands/brand-columns"
 import { useBrands, useDeleteBrand } from "@/hooks/queries/useBrand"
 import useTable from "@/hooks/useTable"
 import { formatDateTimeWithAt } from "@/lib/formatDate"
