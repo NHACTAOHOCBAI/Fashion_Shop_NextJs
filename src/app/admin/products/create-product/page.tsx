@@ -21,7 +21,6 @@ const CreateProduct = () => {
             <CardContent>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} >
-                        {/* Image Upload */}
                         <div className="flex gap-[10px]">
                             <div className="flex-[2]  space-y-2">
                                 <FormField

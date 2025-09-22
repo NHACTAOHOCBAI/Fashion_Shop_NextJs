@@ -53,6 +53,10 @@ const data = {
           title: "View Categories",
           url: "/admin/categories/view-categories",
         },
+        {
+          title: "Create Category",
+          url: "/admin/categories/create-category",
+        },
       ],
     },
     {

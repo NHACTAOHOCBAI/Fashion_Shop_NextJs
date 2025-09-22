@@ -21,12 +21,15 @@ const createCategory = async (data: {
     image: File,
     departmentId: number,
     description?: string,
+    attributes: { attributeId: number, value: string }[],
 }) => {
+    console.log(data)
     const formData = new FormData();
 
     formData.append("name", data.name);
-    formData.append("parentId", data.departmentId.toString())
+    formData.append("departmentId", data.departmentId.toString())
     formData.append("image", data.image);
+    formData.append("attributes", JSON.stringify(data.attributes))
     if (data.description) formData.append("description", data.description)
     const response = await axiosInstance.post('/categories', formData, {
         headers: {
@@ -42,13 +45,15 @@ const updateCategory = async ({ id, data }: {
         image: File,
         departmentId: number,
         description?: string,
+        attributes: { attributeId: number, value: string }[]
     }
 }) => {
     const formData = new FormData();
 
     formData.append("name", data.name);
-    formData.append("parentId", data.departmentId.toString())
+    formData.append("departmentId", data.departmentId.toString())
     formData.append("image", data.image);
+    formData.append("attributes", JSON.stringify(data.attributes))
     if (data.description) formData.append("description", data.description)
     const response = await axiosInstance.patch(`/categories/${id}`, formData, {
         headers: {
