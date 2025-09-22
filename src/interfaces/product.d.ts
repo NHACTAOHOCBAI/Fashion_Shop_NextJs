@@ -17,11 +17,13 @@ interface ProductImage {
 }
 interface Variant {
     id: number;
-    size: number;
-    color: number;
     imageUrl: string;
     publicId: string;
     quantity: number;
     remaining: number;
-    price: number;
+    variantAttributeValues: VariantAttributeValue[]
+}
+interface VariantAttributeValue {
+    id: number;
+    attributeCategory: AttributeCategory
 }

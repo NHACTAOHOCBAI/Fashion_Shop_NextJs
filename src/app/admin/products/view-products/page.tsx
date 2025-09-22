@@ -1,35 +1,53 @@
-"use client"
-import DeleteProductDialog from "@/app/admin/products/delete-product/delete-user-dialog"
-import useProduct from "@/app/admin/products/view-products/hooks/use-product"
-import { ProductTable } from "@/app/admin/products/view-products/products-table"
-import React from "react"
+'use client'
 
+import { productColumns } from "@/app/admin/(products)/view-products/product-columns"
+import CrudTable from "@/components/crud_table/crud-table"
+import { Button } from "@/components/ui/button"
+import { useDeleteProduct, useDeleteProducts, useProducts } from "@/hooks/queries/useProduct"
+import { formatDateTimeWithAt } from "@/lib/formatDate"
+import { Plus } from "lucide-react"
+import { useRouter } from "next/navigation"
+import React from "react"
+import { toast } from "sonner"
 
 export default function Products() {
-    const {
-        filter, isFetching, setFilter, setPagination, table, columns,
-        closeUpdateDialog, openUpdate, updatedProduct, setOpenUpdate,
-        openCreate, openCreateDialog, setOpenCreate,
-        openDelete, deletedProducts, openDeleteDialog, setOpenDelete
-    } = useProduct()
+    const router = useRouter()
+    const { mutate: deleteItem } = useDeleteProduct()
+    const handleUpdateBtn = (item: Product) => {
+        router.push(`/admin/products/update-product/${item.id}`)
+    }
+    const handleDeleteItem = (id: number) => {
+        deleteItem({ id: id }, {
+            onSuccess: () => {
+                toast.success("Product has been deleted", {
+                    description: formatDateTimeWithAt(new Date()),
+                })
+            },
+            onError: (error) => {
+                toast.error(`Ohh!!! ${error.message}`, {
+                    description: formatDateTimeWithAt(new Date()),
+                })
+            },
+        },)
+    }
     return (
-        <div className="container mx-auto py-10  ">
-            <ProductTable
-                columns={columns}
-                filter={filter}
-                isFetching={isFetching}
-                openCreateDialog={openCreateDialog}
-                openDeleteDialog={openDeleteDialog}
-                setFilter={setFilter}
-                setPagination={setPagination}
-                table={table}
-            />
-            <DeleteProductDialog
-                table={table}
-                deletedProducts={deletedProducts}
-                open={openDelete}
-                setOpen={setOpenDelete}
-            />
-        </div>
+        <>
+            <CrudTable<Product>
+                columns={productColumns(handleDeleteItem, handleUpdateBtn)}
+                useQuery={useProducts}
+                useDelete={useDeleteProducts}
+                filterPlaceholder="Filter product name..."
+            >
+                <Button
+                    onClick={() => router.push('/admin/products/create-product')}
+                    variant="outline"
+                    size="sm"
+                    className="h-8 flex ml-2"
+                >
+                    <Plus />
+                    Add Product
+                </Button>
+            </CrudTable>
+        </>
     )
 }

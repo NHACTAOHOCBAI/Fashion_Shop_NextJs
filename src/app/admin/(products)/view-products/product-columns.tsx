@@ -1,13 +1,21 @@
+"use client"
+import { ColumnDef } from "@tanstack/react-table"
+import { MoreHorizontal } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Checkbox } from "@/components/ui/checkbox"
 import { DataTableColumnHeader } from "@/components/table/data-table-column-header"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import convertAlias from "@/lib/convertAlias"
-import type { ColumnDef } from "@tanstack/react-table"
-import { MoreHorizontal } from "lucide-react"
 
-export const productColumns = (handleUpdateBtn: (item: Product) => void, handleDeleteItem: (id: number) => void): ColumnDef<Product>[] => {
+export const productColumns = (handleDeleteProduct: (id: number) => void, handleUpdate: (product: Product) => void): ColumnDef<Product>[] => {
     return [
         {
             id: "select",
@@ -57,16 +65,9 @@ export const productColumns = (handleUpdateBtn: (item: Product) => void, handleD
             ),
         },
         {
-            accessorKey: "description",
-            enableSorting: false,
-            header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="Description" />
-            ),
-        },
-        {
             id: "actions",
             cell: ({ row }) => {
-                const item = row.original
+                const product = row.original
                 return (
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -78,13 +79,13 @@ export const productColumns = (handleUpdateBtn: (item: Product) => void, handleD
                         <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
                             <DropdownMenuItem
-                                onClick={() => navigator.clipboard.writeText(String(item.id))}
+                                onClick={() => navigator.clipboard.writeText(String(product.id))}
                             >
                                 Copy ID
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => handleUpdateBtn(item)}>Update Product</DropdownMenuItem>
-                            <DropdownMenuItem className="focus:text-red-500" onClick={() => handleDeleteItem(item.id)}>
+                            <DropdownMenuItem onClick={() => handleUpdate(product)}>Update Product</DropdownMenuItem>
+                            <DropdownMenuItem className="focus:text-red-500" onClick={() => handleDeleteProduct(product.id)}>
                                 Delete Product
                             </DropdownMenuItem>
                         </DropdownMenuContent>

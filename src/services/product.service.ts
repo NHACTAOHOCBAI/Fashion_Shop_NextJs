@@ -13,10 +13,8 @@ const createProduct = async (data: {
     images: File[],
     variantImages?: File[],
     variants?: {
-        size: string,
-        color: string,
         quantity: number;
-        price: number
+        attributes: { attributeCategoryId: number }[]
     }[]
 }) => {
     const formData = new FormData();
@@ -49,12 +47,10 @@ const updateProduct = async ({ id, data }: {
         brandId: number,
         images: File[],
         variantImages?: File[],
-        variants: {
-            size: string,
-            color: string,
+        variants?: {
             quantity: number;
-            price: number
-        }
+            attributes: { attributeCategoryId: number }[]
+        }[]
     }
 }) => {
     console.log(data)
