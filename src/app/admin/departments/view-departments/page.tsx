@@ -1,28 +1,28 @@
 'use client'
-import { CreateBrandDialog } from "@/app/admin/brands/create-brand/create-brand-dialog"
-import { UpdateBrandDialog } from "@/app/admin/brands/update-brand/update-brand-dialog"
-import { brandColumns } from "@/app/admin/brands/view-brands/user-columns"
+import { CreateDepartmentDialog } from "@/app/admin/departments/create-department/create-department-dialog"
+import { UpdateDepartmentDialog } from "@/app/admin/departments/update-department/update-department-dialog"
+import { departmentColumns } from "@/app/admin/departments/view-departments/department-columns"
 import CrudTable from "@/components/crud_table/crud-table"
 import { Button } from "@/components/ui/button"
-import { useBrands, useDeleteBrand, useDeleteBrands } from "@/hooks/queries/useBrand"
+import { useDeleteDepartment, useDeleteDepartments, useDepartments } from "@/hooks/queries/useDepartment"
 import { formatDateTimeWithAt } from "@/lib/formatDate"
 import { Plus } from "lucide-react"
 import React from "react"
 import { toast } from "sonner"
 
-export default function Brands() {
+export default function Departments() {
     const [openUpdate, setOpenUpdate] = React.useState(false)
-    const [updatedItem, setUpdatedItem] = React.useState<Brand>()
+    const [updatedItem, setUpdatedItem] = React.useState<Department>()
     const [openCreate, setOpenCreate] = React.useState(false)
-    const { mutate: deleteItem } = useDeleteBrand()
-    const handleUpdateBtn = (item: Brand) => {
+    const { mutate: deleteItem } = useDeleteDepartment()
+    const handleUpdateBtn = (item: Department) => {
         setOpenUpdate(true)
         setUpdatedItem(item)
     }
     const handleDeleteItem = (id: number) => {
         deleteItem({ id: id }, {
             onSuccess: () => {
-                toast.success("Brand has been deleted", {
+                toast.success("Department has been deleted", {
                     description: formatDateTimeWithAt(new Date()),
                 })
             },
@@ -35,11 +35,11 @@ export default function Brands() {
     }
     return (
         <>
-            <CrudTable<Brand>
-                columns={brandColumns(handleUpdateBtn, handleDeleteItem)}
-                useQuery={useBrands}
-                useDelete={useDeleteBrands}
-                filterPlaceholder="Filter brand name..."
+            <CrudTable<Department>
+                columns={departmentColumns(handleUpdateBtn, handleDeleteItem)}
+                useQuery={useDepartments}
+                useDelete={useDeleteDepartments}
+                filterPlaceholder="Filter department name..."
             >
                 <Button
                     onClick={() => setOpenCreate(true)}
@@ -48,14 +48,14 @@ export default function Brands() {
                     className="h-8 flex ml-2"
                 >
                     <Plus />
-                    Add Brand
+                    Add Department
                 </Button>
             </CrudTable>
-            <CreateBrandDialog
+            <CreateDepartmentDialog
                 open={openCreate}
                 setOpen={setOpenCreate}
             />
-            <UpdateBrandDialog
+            <UpdateDepartmentDialog
                 setOpen={setOpenUpdate}
                 open={openUpdate}
                 updatedItem={updatedItem}

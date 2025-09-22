@@ -1,21 +1,13 @@
-"use client"
-import { ColumnDef } from "@tanstack/react-table"
-import { MoreHorizontal } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Checkbox } from "@/components/ui/checkbox"
 import { DataTableColumnHeader } from "@/components/table/data-table-column-header"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import convertAlias from "@/lib/convertAlias"
+import type { ColumnDef } from "@tanstack/react-table"
+import { MoreHorizontal } from "lucide-react"
 
-export const categoryColumns = (handleDeleteCategory: (id: number) => void, handleUpdate: (category: Category) => void): ColumnDef<Category>[] => {
+export const departmentColumns = (handleUpdateBtn: (item: Department) => void, handleDeleteItem: (id: number) => void): ColumnDef<Department>[] => {
     return [
         {
             id: "select",
@@ -48,11 +40,11 @@ export const categoryColumns = (handleDeleteCategory: (id: number) => void, hand
         {
             accessorKey: "Image",
             cell: ({ row }) => {
-                const category = row.original
+                const brand = row.original
                 return (
-                    <Avatar className="rounded-lg">
-                        <AvatarImage src={category.imageUrl} />
-                        <AvatarFallback className="rounded-lg">{convertAlias(category.name)}</AvatarFallback>
+                    <Avatar>
+                        <AvatarImage src={brand.imageUrl} />
+                        <AvatarFallback>{convertAlias(brand.name)}</AvatarFallback>
                     </Avatar>
                 )
             },
@@ -65,13 +57,6 @@ export const categoryColumns = (handleDeleteCategory: (id: number) => void, hand
             ),
         },
         {
-            accessorKey: "parentId",
-            enableSorting: false,
-            header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="Parent" />
-            ),
-        },
-        {
             accessorKey: "description",
             enableSorting: false,
             header: ({ column }) => (
@@ -81,7 +66,7 @@ export const categoryColumns = (handleDeleteCategory: (id: number) => void, hand
         {
             id: "actions",
             cell: ({ row }) => {
-                const category = row.original
+                const item = row.original
                 return (
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -93,14 +78,14 @@ export const categoryColumns = (handleDeleteCategory: (id: number) => void, hand
                         <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
                             <DropdownMenuItem
-                                onClick={() => navigator.clipboard.writeText(String(category.id))}
+                                onClick={() => navigator.clipboard.writeText(String(item.id))}
                             >
                                 Copy ID
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => handleUpdate(category)}>Update Category</DropdownMenuItem>
-                            <DropdownMenuItem className="focus:text-red-500" onClick={() => handleDeleteCategory(category.id)}>
-                                Delete Category
+                            <DropdownMenuItem onClick={() => handleUpdateBtn(item)}>Update Department</DropdownMenuItem>
+                            <DropdownMenuItem className="focus:text-red-500" onClick={() => handleDeleteItem(item.id)}>
+                                Delete Department
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>

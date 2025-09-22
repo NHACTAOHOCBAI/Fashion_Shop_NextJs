@@ -1,10 +1,12 @@
 interface Category {
     id: number;
+    slug: string
     name: string;
     imageUrl: string;
     publicId: string;
     createdAt: string;
     updatedAt: string;
-    description: string | null;
-    parentId: number | null;
-} 
+    isActive: boolean
+    description?: string;
+    departmentId: number
+}

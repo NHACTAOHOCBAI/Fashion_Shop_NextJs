@@ -21,7 +21,7 @@ const createUser = async (data: { fullName: string, email: string, password: str
     formData.append("email", data.email);
     formData.append("password", data.password);
     formData.append("role", data.role);
-    if (data.image) formData.append("file", data.image);
+    if (data.image) formData.append("image", data.image);
     const response = await axiosInstance.post('/users', formData, {
         headers: {
             "Content-Type": "multipart/form-data",
@@ -35,7 +35,7 @@ const updateUser = async ({ id, data }: { id: number, data: { fullName: string, 
     formData.append("fullName", data.fullName);
     formData.append("email", data.email);
     formData.append("role", data.role);
-    if (data.image) formData.append("file", data.image);
+    if (data.image) formData.append("image", data.image);
     const response = await axiosInstance.patch(`/users/${id}`, formData, {
         headers: {
             "Content-Type": "multipart/form-data",

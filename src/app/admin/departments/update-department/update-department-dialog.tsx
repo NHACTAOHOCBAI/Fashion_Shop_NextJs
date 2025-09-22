@@ -1,9 +1,5 @@
 'use client'
 
-import useLocalUpdateCategory from "@/app/admin/categories/update-category/hooks/use-local-update-category"
-import { ImageUpload } from "@/components/image-upload/image-upload"
-import { DialogSkeleton } from "@/components/skeleton/dialog-skeleton"
-import { Button } from "@/components/ui/button"
 import {
     Dialog,
     DialogContent,
@@ -11,27 +7,39 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
-import { Placeholder } from "@/constants/placeholder.num"
-import { SelectValue } from "@radix-ui/react-select"
 import React from "react"
-
-interface UpdateCategoryDialogProps {
+import { Button } from "@/components/ui/button"
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Placeholder } from "@/constants/placeholder.num"
+import { ImageUpload } from "@/components/image-upload/image-upload"
+import { DialogSkeleton } from "@/components/skeleton/dialog-skeleton"
+import { Textarea } from "@/components/ui/textarea"
+import useLocalUpdateDepartment from "@/app/admin/departments/update-department/use-local-update-department"
+interface UpdateDepartmentDialogProps {
     open: boolean,
     setOpen: (value: boolean) => void,
-    updatedCategory: Category | undefined,
-    unChooseUpdatedCategory: () => void
+    updatedItem: Department | undefined,
+    setUpdatedItem: React.Dispatch<React.SetStateAction<Department | undefined>>
 }
-export function UpdateCategoryDialog({ open, unChooseUpdatedCategory, updatedCategory, setOpen }: UpdateCategoryDialogProps) {
-    const { form, isImageLoading, isPending, onSubmit, handleCancel, categorySelections } = useLocalUpdateCategory(updatedCategory, unChooseUpdatedCategory)
+export function UpdateDepartmentDialog({ open, setUpdatedItem, updatedItem, setOpen }: UpdateDepartmentDialogProps) {
+    const closeDialog = () => {
+        setOpen(false)
+        setUpdatedItem(undefined)
+    }
+    const { form, isImageLoading, isPending, onSubmit, handleCancel } = useLocalUpdateDepartment(updatedItem, closeDialog)
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogContent className="sm:max-w-md  max-h-[98vh] overflow-y-auto">
                 <DialogHeader>
-                    <DialogTitle>Update Category</DialogTitle>
+                    <DialogTitle>Update Department</DialogTitle>
                     <DialogDescription>
                         Enter information of user below to update user to table.
                     </DialogDescription>
@@ -70,34 +78,6 @@ export function UpdateCategoryDialog({ open, unChooseUpdatedCategory, updatedCat
                                         <FormLabel>Description</FormLabel>
                                         <FormControl>
                                             <Textarea placeholder={Placeholder.CategoryDescription} {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                disabled={isPending}
-                                control={form.control}
-                                name="parentId"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Parent</FormLabel>
-                                        <FormControl>
-                                            <Select
-                                                value={field.value !== undefined && field.value !== null ? String(field.value) : undefined}
-                                                onValueChange={(value) => field.onChange(Number(value))}
-                                            >
-                                                <SelectTrigger className="w-full">
-                                                    <SelectValue placeholder={Placeholder.CategoryParent} />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {
-                                                        categorySelections?.map((option) => {
-                                                            return <SelectItem key={option?.value} value={String(option?.value) || ""}>{option?.label}</SelectItem>
-                                                        })
-                                                    }
-                                                </SelectContent>
-                                            </Select>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>

@@ -1,6 +1,6 @@
 'use client'
 
-import useLocalCreateCategory from "@/app/admin/categories/create-category/hooks/use-local-create-category"
+import useLocalCreateDepartment from "@/app/admin/departments/create-department/use-local-create-department"
 import { ImageUpload } from "@/components/image-upload/image-upload"
 import { Button } from "@/components/ui/button"
 import {
@@ -12,24 +12,23 @@ import {
 } from "@/components/ui/dialog"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { Placeholder } from "@/constants/placeholder.num"
 import React from "react"
 
-interface CreateCategoryDialogProps {
+interface CreateDepartmentDialogProps {
     open: boolean,
     setOpen: (value: boolean) => void,
 }
-export function CreateCategoryDialog({ open, setOpen }: CreateCategoryDialogProps) {
-    const { form, handleCancel, isPending, onSubmit } = useLocalCreateCategory(() => setOpen(false))
+export function CreateDepartmentDialog({ open, setOpen }: CreateDepartmentDialogProps) {
+    const { form, handleCancel, isPending, onSubmit } = useLocalCreateDepartment(() => setOpen(false))
     return (
         <Dialog open={open} onOpenChange={setOpen} >
             <DialogContent className="sm:max-w-md max-h-[98vh] overflow-y-auto">
                 <DialogHeader>
-                    <DialogTitle>Add Category</DialogTitle>
+                    <DialogTitle>Add Department</DialogTitle>
                     <DialogDescription>
-                        Enter information of category below to add category to table.
+                        Enter information of item below to add item to table.
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form} >
@@ -64,32 +63,6 @@ export function CreateCategoryDialog({ open, setOpen }: CreateCategoryDialogProp
                                     <FormLabel>Description</FormLabel>
                                     <FormControl>
                                         <Textarea placeholder={Placeholder.CategoryDescription} {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            disabled={isPending}
-                            control={form.control}
-                            name="parentId"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Parent</FormLabel>
-                                    <FormControl>
-                                        <Select
-                                            value={field.value !== undefined && field.value !== null ? String(field.value) : undefined}
-                                            onValueChange={(value) => field.onChange(Number(value))}
-                                        >
-                                            <SelectTrigger className="w-full">
-                                                <SelectValue placeholder={Placeholder.CategoryParent} />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="1">Summer</SelectItem>
-                                                <SelectItem value="2">Spring</SelectItem>
-                                                <SelectItem value="3">Autumn</SelectItem>
-                                            </SelectContent>
-                                        </Select>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

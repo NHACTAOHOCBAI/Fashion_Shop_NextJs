@@ -24,7 +24,7 @@ const createBrand = async (data: {
     const formData = new FormData();
     formData.append("name", data.name);
     if (data.description) formData.append("description", data.description)
-    formData.append("file", data.image);
+    formData.append("image", data.image);
     const response = await axiosInstance.post('/brands', formData, {
         headers: {
             "Content-Type": "multipart/form-data",
@@ -37,7 +37,7 @@ const updateBrand = async ({ id, data }: { id: number, data: { name: string, ima
     const formData = new FormData();
     formData.append("name", data.name);
     if (data.description) formData.append("description", data.description)
-    formData.append("file", data.image);
+    formData.append("image", data.image);
     const response = await axiosInstance.patch(`/brands/${id}`, formData, {
         headers: {
             "Content-Type": "multipart/form-data",

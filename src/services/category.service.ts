@@ -18,16 +18,16 @@ const deleteCategories = async (ids: { ids: number[] }) => {
 }
 const createCategory = async (data: {
     name: string,
-    image?: File,
-    parentId?: number,
+    image: File,
+    departmentId: number,
     description?: string,
 }) => {
     const formData = new FormData();
 
     formData.append("name", data.name);
-    if (data.parentId) formData.append("parentId", data.parentId.toString())
+    formData.append("parentId", data.departmentId.toString())
+    formData.append("image", data.image);
     if (data.description) formData.append("description", data.description)
-    if (data.image) formData.append("file", data.image);
     const response = await axiosInstance.post('/categories', formData, {
         headers: {
             "Content-Type": "multipart/form-data",
@@ -36,13 +36,20 @@ const createCategory = async (data: {
     return response;
 };
 
-const updateCategory = async ({ id, data }: { id: number, data: { name: string, image?: File, parentId?: number | null, description?: string, } }) => {
+const updateCategory = async ({ id, data }: {
+    id: number, data: {
+        name: string,
+        image: File,
+        departmentId: number,
+        description?: string,
+    }
+}) => {
     const formData = new FormData();
 
     formData.append("name", data.name);
-    if (data.parentId) formData.append("parentId", data.parentId.toString())
+    formData.append("parentId", data.departmentId.toString())
+    formData.append("image", data.image);
     if (data.description) formData.append("description", data.description)
-    if (data.image) formData.append("file", data.image);
     const response = await axiosInstance.patch(`/categories/${id}`, formData, {
         headers: {
             "Content-Type": "multipart/form-data",

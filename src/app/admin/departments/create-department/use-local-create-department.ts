@@ -1,27 +1,26 @@
 
-import CreateCategorySchema from "@/app/admin/categories/create-category/create-category-schema"
-import { useCreateCategory } from "@/hooks/queries/useCategory"
+import CreateDepartmentSchema from "@/app/admin/departments/create-department/create-department-schema"
+import { useCreateDepartment } from "@/hooks/queries/useDepartment"
 import { formatDateTimeWithAt } from "@/lib/formatDate"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import z from "zod"
 
-const useLocalCreateCategory = (closeDialog: () => void) => {
-    const { mutate: createCategory, isPending } = useCreateCategory()
-    const form = useForm<z.infer<typeof CreateCategorySchema>>({
-        resolver: zodResolver(CreateCategorySchema),
-        defaultValues: { name: "", description: "", parentId: undefined, image: [] }
+const useLocalCreateDepartment = (closeDialog: () => void) => {
+    const { mutate: createItem, isPending } = useCreateDepartment()
+    const form = useForm<z.infer<typeof CreateDepartmentSchema>>({
+        resolver: zodResolver(CreateDepartmentSchema),
+        defaultValues: { image: [] }
     })
-    function onSubmit(values: z.infer<typeof CreateCategorySchema>) {
-        createCategory({
+    function onSubmit(values: z.infer<typeof CreateDepartmentSchema>) {
+        createItem({
             name: values.name,
             description: values.description,
-            parentId: values.parentId,
             image: values.image && values.image[0]
         }, {
             onSuccess: () => {
-                toast.success("Category has been created", {
+                toast.success("Department has been created", {
                     description: formatDateTimeWithAt(new Date()),
                 })
             },
@@ -46,4 +45,4 @@ const useLocalCreateCategory = (closeDialog: () => void) => {
         handleCancel
     }
 }
-export default useLocalCreateCategory
+export default useLocalCreateDepartment
