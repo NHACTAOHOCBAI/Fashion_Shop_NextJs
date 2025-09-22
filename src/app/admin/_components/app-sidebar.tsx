@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/sidebar"
 import { NavMain } from "@/app/admin/_components/nav-main"
 import { NavUser } from "@/app/admin/_components/nav-user"
-import { Archive, ChartPie, Newspaper, Shirt, Store, UsersRound } from "lucide-react"
+import { ICONS } from "@/constants/icon.enum"
 
 // This is sample data.
 const data = {
@@ -23,7 +23,7 @@ const data = {
   navMain: [
     {
       title: "Overviews",
-      icon: <ChartPie />,
+      icon: ICONS.OVERVIEWS,
       items: [
         {
           title: "Dashboard",
@@ -37,7 +37,7 @@ const data = {
     },
     {
       title: "Users",
-      icon: <UsersRound />,
+      icon: ICONS.USERS,
       items: [
         {
           title: "View Users",
@@ -47,7 +47,7 @@ const data = {
     },
     {
       title: "Categories",
-      icon: <Archive />,
+      icon: ICONS.CATEGORIES,
       items: [
         {
           title: "View Categories",
@@ -57,7 +57,7 @@ const data = {
     },
     {
       title: "Departments",
-      icon: <Newspaper />,
+      icon: ICONS.DEPARTMENTS,
       items: [
         {
           title: "View Departments",
@@ -67,7 +67,7 @@ const data = {
     },
     {
       title: "Brands",
-      icon: <Store />,
+      icon: ICONS.BRANDS,
       items: [
         {
           title: "View Brands",
@@ -76,8 +76,18 @@ const data = {
       ],
     },
     {
+      title: "Attributes",
+      icon: ICONS.ATTRIBUTES,
+      items: [
+        {
+          title: "View Attributes",
+          url: "/admin/attributes/view-attributes",
+        },
+      ],
+    },
+    {
       title: "Products",
-      icon: <Shirt />,
+      icon: ICONS.PRODUCTS,
       items: [
         {
           title: "View Products",
