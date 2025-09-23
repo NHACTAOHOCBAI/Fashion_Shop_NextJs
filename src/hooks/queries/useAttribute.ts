@@ -1,5 +1,5 @@
 
-import { createAttribute, deleteAttribute, deleteAttributes, getAttributes, getAttributeSelection, updateAttribute } from '@/services/attribute.service';
+import { createAttribute, deleteAttribute, deleteAttributes, getAttributeCategoryByCategory, getAttributes, getAttributeSelection, updateAttribute } from '@/services/attribute.service';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 const useAttributes = (params: QueryParams) =>
     useQuery({
@@ -47,4 +47,9 @@ const useUpdateAttribute = () => {
         },
     });
 }
-export { useAttributes, useCreateAttribute, useDeleteAttribute, useDeleteAttributes, useUpdateAttribute, useAttributeSelections }
+const useGetAttributeCategoryByCategory = (id: number) =>
+    useQuery({
+        queryKey: ['attributes', id],
+        queryFn: () => getAttributeCategoryByCategory(id),
+    });
+export { useAttributes, useCreateAttribute, useDeleteAttribute, useDeleteAttributes, useUpdateAttribute, useAttributeSelections, useGetAttributeCategoryByCategory }
