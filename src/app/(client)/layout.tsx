@@ -6,7 +6,7 @@ function Layout({ children }: { children: React.ReactNode }) {
     return (
         <>
             <Header />
-            <main>
+            <main className="mx-auto w-[1200px] py-[20px] h-[2000px]">
                 {children}
             </main>
             <Footer />
