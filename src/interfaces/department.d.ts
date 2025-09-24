@@ -7,4 +7,5 @@ interface Department {
     isActive: boolean
     createdAt: string;
     updatedAt: string;
+    categories: Category[]
 }
