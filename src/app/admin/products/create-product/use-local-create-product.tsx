@@ -4,9 +4,11 @@ import { useBrandSelections } from "@/hooks/queries/useBrand";
 import { useCategorySelections } from "@/hooks/queries/useCategory";
 import { useCreateProduct } from "@/hooks/queries/useProduct";
 import convertAttributeCategories from "@/lib/convertAttributeCategories";
+import { formatDateTimeWithAt } from "@/lib/formatDate";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import z from "zod";
 
 const useLocalCreateProduct = () => {
@@ -40,7 +42,6 @@ const useLocalCreateProduct = () => {
             categoryId: 0,
             description: "",
             images: [],
-            variantImages: [],
             name: "",
             price: undefined,
             variants: [],
@@ -65,24 +66,28 @@ const useLocalCreateProduct = () => {
                 })
             }
         })
-        console.log({
-            ...values,
-            variants
+        const variantImages = values.variants.map((variant) => {
+            return variant.image[0]
         })
-        // createProduct(values, {
-        //     onSuccess: () => {
-        //         toast.success("Product created", {
-        //             description: formatDateTimeWithAt(new Date()),
-        //         });
-        //         form.reset();
-        //         setStep("info");
-        //     },
-        //     onError: (err) => {
-        //         toast.error(`Ohh!!! ${err.message}`, {
-        //             description: formatDateTimeWithAt(new Date()),
-        //         });
-        //     },
-        // });
+        const data = {
+            ...values,
+            variants,
+            variantImages
+        }
+        createProduct(data, {
+            onSuccess: () => {
+                toast.success("Product created", {
+                    description: formatDateTimeWithAt(new Date()),
+                });
+                form.reset();
+                setStep("info");
+            },
+            onError: (err) => {
+                toast.error(`Ohh!!! ${err.message}`, {
+                    description: formatDateTimeWithAt(new Date()),
+                });
+            },
+        });
     }
     return {
         form, onSubmit, step, setSelectedCategory, categorySelections, brandSelections, setStep, fields, remove, attributes, append, isPending

@@ -235,6 +235,17 @@ export default function CreateProduct() {
                                             </CardHeader>
 
                                             <CardContent className="space-y-4">
+                                                <FormField
+                                                    control={form.control}
+                                                    name={`variants.${index}.image`}
+                                                    render={({ field }) => (
+                                                        <ImageUpload
+                                                            field={field}
+                                                            label="Upload Product Images"
+                                                            numOfImage={1}
+                                                        />
+                                                    )}
+                                                />
                                                 {/* Quantity */}
                                                 <FormField
                                                     control={form.control}
@@ -331,7 +342,7 @@ export default function CreateProduct() {
                                         variant="outline"
                                         className="w-full"
                                         onClick={() =>
-                                            append({ quantity: 0, attributes: [] })
+                                            append({ quantity: 0, attributes: [], image: [] })
                                         }
                                     >
                                         + Add Variant

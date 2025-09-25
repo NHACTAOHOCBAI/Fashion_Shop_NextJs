@@ -1,6 +1,6 @@
 'use client'
 
-import { productColumns } from "@/app/admin/(products)/view-products/product-columns"
+import { productColumns } from "@/app/admin/products/view-products/product-columns"
 import CrudTable from "@/components/crud_table/crud-table"
 import { Button } from "@/components/ui/button"
 import { useDeleteProduct, useDeleteProducts, useProducts } from "@/hooks/queries/useProduct"
@@ -33,7 +33,7 @@ export default function Products() {
     return (
         <>
             <CrudTable<Product>
-                columns={productColumns(handleDeleteItem, handleUpdateBtn)}
+                columns={productColumns(handleUpdateBtn, handleDeleteItem)}
                 useQuery={useProducts}
                 useDelete={useDeleteProducts}
                 filterPlaceholder="Filter product name..."

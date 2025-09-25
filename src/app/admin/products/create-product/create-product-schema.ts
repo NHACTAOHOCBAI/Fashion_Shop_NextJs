@@ -8,6 +8,9 @@ const createProductSchemaFn = (attributes: {
 }[]) => {
     const VariantSchema = z.object({
         quantity: z.number().min(1, "Quantity must be at least 1"),
+        image: z
+            .array(z.instanceof(File))
+            .min(1, { message: "You must upload at least one image" }),
         attributes: z
             .array(
                 z.object({
@@ -39,7 +42,6 @@ const createProductSchemaFn = (attributes: {
         images: z
             .array(z.instanceof(File))
             .min(1, { message: "You must upload at least one image" }),
-        variantImages: z.array(z.instanceof(File)).optional(),
         variants: z
             .array(VariantSchema)
             .min(1, "At least one variant is required"), // ✅ phải có ít nhất 1 variant
