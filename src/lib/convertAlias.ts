@@ -11,4 +11,5 @@ const convertAlias = (fullName: string): string => {
 
     return alias;
 };
+
 export default convertAlias

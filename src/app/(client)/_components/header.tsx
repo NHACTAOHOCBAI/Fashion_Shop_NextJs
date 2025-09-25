@@ -67,7 +67,7 @@ export default function Header() {
                                         {department.categories.map((category) => (
                                             <ListItem
                                                 key={category.id}
-                                                href={`/products/${category.slug}`}
+                                                href={`/products/${department.slug}/${category.slug}`}
                                                 title={category.name}
                                             >
                                                 {category.description}

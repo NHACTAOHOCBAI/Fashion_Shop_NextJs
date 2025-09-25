@@ -52,4 +52,9 @@ const useGetAttributeCategoryByCategory = (id: number) =>
         queryKey: ['attributes', id],
         queryFn: () => getAttributeCategoryByCategory(id),
     });
+const useGetAttributeCategoryByCategorySlug = (id: number) =>
+    useQuery({
+        queryKey: ['attributes', id],
+        queryFn: () => getAttributeCategoryByCategory(id),
+    });
 export { useAttributes, useCreateAttribute, useDeleteAttribute, useDeleteAttributes, useUpdateAttribute, useAttributeSelections, useGetAttributeCategoryByCategory }
