@@ -1,96 +1,199 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { ICONS } from "@/constants/icon.enum";
-import { useAddToCart } from "@/hooks/queries/useCart";
-import { useGetProductById, useProducts } from "@/hooks/queries/useProduct";
-import convertAttributeCategories from "@/lib/convertAttributeCategories";
-import { formatMoney } from "@/lib/formatMoney";
-import { use } from "react";
+
+import { use, useState, useMemo } from "react";
 import ImageGallery from "react-image-gallery";
 import "react-image-gallery/styles/css/image-gallery.css";
+import { Button } from "@/components/ui/button";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { useGetProductById } from "@/hooks/queries/useProduct";
+import convertAttributeCategories from "@/lib/convertAttributeCategories";
+import { formatMoney } from "@/lib/formatMoney";
+import { useAddToCart } from "@/hooks/queries/useCart";
+import { toast } from "sonner";
+import { formatDateTimeWithAt } from "@/lib/formatDate";
 
-const images = [
-    { original: "https://res.cloudinary.com/dtkbbwmg4/image/upload/v1758528483/aykczmqebhswngvlk0pb.jpg", thumbnail: "https://res.cloudinary.com/dtkbbwmg4/image/upload/v1758528483/aykczmqebhswngvlk0pb.jpg" },
-    { original: "https://res.cloudinary.com/dtkbbwmg4/image/upload/v1758528483/aykczmqebhswngvlk0pb.jpg", thumbnail: "https://res.cloudinary.com/dtkbbwmg4/image/upload/v1758528483/aykczmqebhswngvlk0pb.jpg" },
-    { original: "https://res.cloudinary.com/dtkbbwmg4/image/upload/v1758528483/aykczmqebhswngvlk0pb.jpg", thumbnail: "https://res.cloudinary.com/dtkbbwmg4/image/upload/v1758528483/aykczmqebhswngvlk0pb.jpg" },
-    { original: "https://res.cloudinary.com/dtkbbwmg4/image/upload/v1758528483/aykczmqebhswngvlk0pb.jpg", thumbnail: "https://res.cloudinary.com/dtkbbwmg4/image/upload/v1758528483/aykczmqebhswngvlk0pb.jpg" }
-]
 export default function ProductDetail({
     params,
 }: {
-    params: Promise<{ product: string }>
+    params: Promise<{ product: string }>;
 }) {
-    const { product } = use(params)
-    const { data: productDetail } = useGetProductById(Number(product))
-    const attributeCategories = productDetail?.variants.flatMap(
-        v => v.variantAttributeValues.map(vav => vav.attributeCategory)
-    );
-    const options = convertAttributeCategories(attributeCategories || [])
-    const { mutate: addToCart } = useAddToCart()
-    const handleAddItemToCart = () => {
+    // ===== Data =====
+    const { product } = use(params);
+    const { data: productDetail } = useGetProductById(Number(product));
+    const { mutate: addItemToCart } = useAddToCart()
+    // ===== State =====
+    const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string>>({});
 
+    // ===== Derived data =====
+    const options = useMemo(() => {
+        if (!productDetail) return [];
+        return convertAttributeCategories(
+            productDetail.variants.flatMap((v) =>
+                v.variantAttributeValues.map((vav) => vav.attributeCategory)
+            )
+        );
+    }, [productDetail]);
+
+    const images = useMemo(() => getAllImageUrls(productDetail), [productDetail]);
+
+    const selectedVariant = useMemo(() => {
+        if (!productDetail) return undefined;
+        if (Object.keys(selectedAttributes).length !== options.length) return undefined;
+        return productDetail.variants.find((variant) =>
+            variant.variantAttributeValues.every((vav) => {
+                const name = vav.attributeCategory.attribute.name;
+                const value = vav.attributeCategory.value;
+                return selectedAttributes[name] === value;
+            })
+        );
+    }, [productDetail, selectedAttributes, options]);
+
+    if (!productDetail) return <p>Loading...</p>;
+
+    // ===== Handlers =====
+    function handleSelect(attributeName: string, value: string) {
+        setSelectedAttributes((prev) => {
+            const current = prev[attributeName];
+            // cho phép bỏ chọn (click lại value cũ)
+            if (current === value) {
+                const { [attributeName]: _, ...rest } = prev;
+                return rest;
+            }
+            return { ...prev, [attributeName]: value };
+        });
     }
+
+    function getAvailableVariants(ignoreAttr?: string) {
+        return productDetail?.variants.filter((variant) =>
+            variant.variantAttributeValues.every((vav) => {
+                const name = vav.attributeCategory.attribute.name;
+                if (name === ignoreAttr) return true;
+                const selected = selectedAttributes[name];
+                return !selected || vav.attributeCategory.value === selected;
+            })
+        );
+    }
+
+    function getEnabledValues(attributeName: string) {
+        const filtered = getAvailableVariants(attributeName);
+        return new Set(
+            filtered?.flatMap((v) =>
+                v.variantAttributeValues
+                    .filter((vav) => vav.attributeCategory.attribute.name === attributeName)
+                    .map((vav) => vav.attributeCategory.value)
+            )
+        );
+    }
+
+    const handleAddItemToCart = () => {
+        if (!selectedVariant)
+            return;
+        addItemToCart({
+            quantity: 1,
+            variantId: selectedVariant.id
+        }, {
+            onSuccess: () => {
+                console.log("thanh congf")
+                toast.success(`Add ${productDetail.name}`, {
+                    description: formatDateTimeWithAt(new Date()),
+                });
+            },
+            onError: (err) => {
+                toast.error(`Ohh!!! ${err.message}`, {
+                    description: formatDateTimeWithAt(new Date()),
+                });
+            },
+        })
+    }
+    // ===== Render =====
     return (
-        <>
-            <div className="flex gap-[80px]">
-                <div className="max-w-[500px]">
-                    <ImageGallery
-                        items={images}
-                        showPlayButton={false}
-                        showFullscreenButton={false}
-                        showNav={false}
-                        showBullets={false}
-                        thumbnailPosition="bottom"
-                    />
-                </div>
-                <div className="flex-[10] ">
-                    <div className="gap-[15px] flex flex-col">
-                        <p className="text-text-secondary font-medium text-xl">{productDetail?.brand.name}</p>
-                        <p className="font-bold text-4xl ">{productDetail?.name}</p>
-                        <p>Introducing the Nike Alpha All-Purpose Gen Z, the latest evolution in athletic footwear designed to meet the dynamic needs of the modern generation. </p>
-                        <div className="flex gap-[10px] items-center">
-                            <p className="font-medium"><span className=" text-2xl">4K+</span> <span className="text-text-secondary text-[12px]">sold</span></p>
-                            <div className="w-[1px] bg-text-secondary h-[20px]"></div>
-                            <div className="font-medium flex items-end  gap-[5px]">
-                                <div className="flex items-center text-2xl gap-[4px]" >{ICONS.STAR} <p> 4.8</p></div>
-                                <span className="text-text-secondary text-[12px]">(156 reviews)</span>
-                            </div>
-                        </div>
-                        <p className="font-medium text-2xl">{formatMoney(90)}</p>
-                        {
-                            options.map((field) =>
-                                <div key={field.attributeName}>
-                                    <p className="mb-[10px] font-bold">{field.attributeName}</p>
-                                    <ToggleGroup type="single" >
-                                        <div className="flex gap-[10px]">
-                                            {field.values.map((value) => (
+        <div className="flex gap-[80px]">
+            {/* === Left: Image Gallery === */}
+            <div className="w-[500px]">
+                <ImageGallery
+                    items={images}
+                    showPlayButton={false}
+                    showFullscreenButton={false}
+                    showNav={false}
+                    showBullets={false}
+                    thumbnailPosition="bottom"
+                />
+            </div>
+
+            {/* === Right: Product Info === */}
+            <div className="flex-1">
+                <div className="flex flex-col gap-4">
+                    <p className="text-text-secondary font-medium text-xl">
+                        {productDetail.brand.name}
+                    </p>
+                    <p className="font-bold text-4xl">{productDetail.name}</p>
+
+                    <p className="font-medium text-2xl">
+                        {formatMoney(Number(productDetail.price))}
+                    </p>
+
+                    {/* === Attribute Groups === */}
+                    {options.map((field) => {
+                        const enabledValues = getEnabledValues(field.attributeName);
+                        return (
+                            <div key={field.attributeName}>
+                                <p className="mb-[10px] font-bold">{field.attributeName}</p>
+                                <ToggleGroup type="single">
+                                    <div className="flex gap-[10px] flex-wrap">
+                                        {field.values.map((value) => {
+                                            const isDisabled = !enabledValues.has(value.value);
+                                            const isActive =
+                                                selectedAttributes[field.attributeName] === value.value;
+                                            return (
                                                 <ToggleGroupItem
                                                     key={value.id}
                                                     value={value.value}
+                                                    disabled={isDisabled}
+                                                    data-state={isActive ? "on" : "off"}
+                                                    onClick={() =>
+                                                        handleSelect(field.attributeName, value.value)
+                                                    }
                                                     className="w-[60px] h-[36px] border rounded-md text-center
-                     data-[state=on]:bg-black data-[state=on]:text-white"
+                                                        data-[state=on]:bg-black data-[state=on]:text-white
+                                                        disabled:opacity-30 disabled:cursor-not-allowed"
                                                 >
                                                     <p>{value.value}</p>
                                                 </ToggleGroupItem>
-                                            ))}
-                                        </div>
-                                    </ToggleGroup>
-                                </div>
-                            )
-                        }
-                        <Button
-                            className="text-[20px] h-[40px] bg-app-primary"
-                        >
-                            Add to Cart
-                        </Button>
-                    </div>
+                                            );
+                                        })}
+                                    </div>
+                                </ToggleGroup>
+                            </div>
+                        );
+                    })}
+
+                    {/* === Add to Cart === */}
+                    <Button
+                        className="text-[20px] h-[40px] bg-app-primary mt-4"
+                        disabled={!selectedVariant}
+                        onClick={handleAddItemToCart}
+                    >
+                        Add to Cart
+                    </Button>
                 </div>
             </div>
-            <div>
-                <p>You might also like</p>
-
-            </div>
-        </>
+        </div>
     );
+}
+
+// ===== Helpers =====
+function getAllImageUrls(product: Product | undefined) {
+    if (!product) return [];
+    return [
+        ...product.images.map((img) => ({
+            original: img.imageUrl,
+            thumbnail: img.imageUrl,
+        })),
+        ...product.variants
+            .filter((v) => v.imageUrl)
+            .map((v) => ({
+                original: v.imageUrl,
+                thumbnail: v.imageUrl,
+            })),
+    ];
 }
