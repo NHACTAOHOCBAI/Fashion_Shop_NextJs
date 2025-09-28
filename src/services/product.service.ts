@@ -64,4 +64,8 @@ const deleteProducts = async (ids: { ids: number[] }) => {
     const response = await axiosInstance.post('/products/remove-multiple', ids)
     return response
 }
-export { getProducts, createProduct, deleteProduct, deleteProducts, updateProduct }
+const getProductById = async (id: number) => {
+    const response = await axiosInstance.get(`/products/${id}`)
+    return response.data as Product
+}
+export { getProducts, createProduct, deleteProduct, deleteProducts, updateProduct, getProductById }

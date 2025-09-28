@@ -11,6 +11,7 @@ import {
     NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu"
 import { useDepartmentSelections } from "@/hooks/queries/useDepartment"
+import { ICONS } from "@/constants/icon.enum"
 
 export default function Header() {
     const { data: departmentSelections } = useDepartmentSelections()
@@ -30,7 +31,7 @@ export default function Header() {
         ${isScrolled ? "bg-white/90 backdrop-blur-md shadow-md " : "bg-transparent"}
       `}
         >
-            <div className="flex items-center mx-auto w-[1200px] transition-all duration-300">
+            <div className="flex items-center mx-auto w-[1200px] transition-all duration-300 justify-between">
                 <div className="font-bold">LOGO HERE</div>
 
                 <NavigationMenu viewport={false} className="ml-[30px]">
@@ -79,6 +80,17 @@ export default function Header() {
                         ))}
                     </NavigationMenuList>
                 </NavigationMenu>
+                <div className="flex items-center gap-[20px]">
+                    <div className="relative p-[10px]">
+                        <div className="right-0 top-0 absolute text-[12px] rounded-full bg-red-400 w-[20px] h-[20px] flex items-center justify-center">
+                            3
+                        </div>
+                        {ICONS.CART}
+                    </div>
+                    <div>
+                        {ICONS.MY_ACCOUNT}
+                    </div>
+                </div>
             </div>
         </header>
     )

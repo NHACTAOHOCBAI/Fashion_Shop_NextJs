@@ -1,10 +1,15 @@
 'use client'
-import { createProduct, deleteProduct, deleteProducts, getProducts } from '@/services/product.service';
+import { createProduct, deleteProduct, deleteProducts, getProductById, getProducts } from '@/services/product.service';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 const useProducts = (params: QueryParams) =>
     useQuery({
         queryKey: ['products', params],
         queryFn: () => getProducts(params),
+    });
+const useGetProductById = (id: number) =>
+    useQuery({
+        queryKey: ['product', id],
+        queryFn: () => getProductById(id),
     });
 const useDeleteProduct = () => {
     const queryClient = useQueryClient();
@@ -33,4 +38,4 @@ const useCreateProduct = () => {
         },
     });
 }
-export { useCreateProduct, useDeleteProducts, useDeleteProduct, useMutation, useProducts }
+export { useCreateProduct, useDeleteProducts, useDeleteProduct, useMutation, useProducts, useGetProductById }

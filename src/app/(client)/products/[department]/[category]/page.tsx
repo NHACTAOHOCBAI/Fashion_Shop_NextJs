@@ -60,15 +60,6 @@ const Products = ({
                         {products?.data.map((product) =>
                             <ProductCard key={product.id} item={product} />
                         )}
-                        {products?.data.map((product) =>
-                            <ProductCard key={product.id} item={product} />
-                        )}
-                        {products?.data.map((product) =>
-                            <ProductCard key={product.id} item={product} />
-                        )}
-                        {products?.data.map((product) =>
-                            <ProductCard key={product.id} item={product} />
-                        )}
                     </div>
                     <Pagination>
                         <PaginationContent>

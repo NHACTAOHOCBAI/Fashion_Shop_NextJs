@@ -30,7 +30,7 @@ const updateAttribute = async ({ id, data }: { id: number, data: { name: string 
 }
 
 export const getAttributeCategoryByCategory = async (id: number) => {
-    const response = await axiosInstance.get(`/attributes/${id}`)
+    const response = await axiosInstance.get(`categories/${id}/attributes`)
     console.log(response)
     return response.data as AttributeCategory[]
 };
