@@ -1,4 +1,4 @@
-import { Archive, ChartPie, Newspaper, Shirt, Store, UsersRound } from "lucide-react";
+import { Archive, ChartPie, Minus, Newspaper, Plus, Shirt, Store, UsersRound } from "lucide-react";
 import { IoColorFilterOutline } from "react-icons/io5";
 import { FaHeart, FaRegHeart, FaStar } from "react-icons/fa";
 import { BsCart3 } from "react-icons/bs";
@@ -17,5 +17,7 @@ export const ICONS = {
    CART: <BsCart3 size={20} />,
    MY_ACCOUNT: <FiUser size={20} />,
    STAR: <FaStar className="text-yellow-200 " size={20} />,
-   DOLLAR: <BiDollar />
+   DOLLAR: <BiDollar />,
+   PLUS: <Plus size={14} />,
+   MINUS: <Minus size={14} />
 };

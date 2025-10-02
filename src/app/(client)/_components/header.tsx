@@ -81,12 +81,12 @@ export default function Header() {
                     </NavigationMenuList>
                 </NavigationMenu>
                 <div className="flex items-center gap-[20px]">
-                    <div className="relative p-[10px]">
+                    <Link href="/my-cart" className="relative p-[10px]">
                         <div className="right-0 top-0 absolute text-[12px] rounded-full bg-red-400 w-[20px] h-[20px] flex items-center justify-center">
                             3
                         </div>
                         {ICONS.CART}
-                    </div>
+                    </Link>
                     <div>
                         {ICONS.MY_ACCOUNT}
                     </div>
