@@ -1,8 +1,8 @@
-import { Archive, ChartPie, Minus, Newspaper, Plus, Shirt, Store, UsersRound } from "lucide-react";
+import { Archive, Building, ChartPie, CircleUser, HeartPlus, Home, LogOut, MapPinHouse, Minus, Newspaper, Plus, Shirt, SquarePen, Store, Trash, UsersRound } from "lucide-react";
 import { IoColorFilterOutline } from "react-icons/io5";
 import { FaHeart, FaRegHeart, FaStar } from "react-icons/fa";
 import { BsCart3 } from "react-icons/bs";
-import { FiUser } from "react-icons/fi";
+import { FiPackage, FiUser } from "react-icons/fi";
 import { BiDollar } from "react-icons/bi";
 export const ICONS = {
    OVERVIEWS: <ChartPie />,
@@ -19,5 +19,14 @@ export const ICONS = {
    STAR: <FaStar className="text-yellow-200 " size={20} />,
    DOLLAR: <BiDollar />,
    PLUS: <Plus size={14} />,
-   MINUS: <Minus size={14} />
+   MINUS: <Minus size={14} />,
+   HEAER_SIDEBAR: <HeartPlus />,
+   PROFILE: <CircleUser />,
+   LOGOUT: <LogOut />,
+   ADDRESS: <MapPinHouse />,
+   ORDER: <FiPackage size={22} />,
+   EDIT: <SquarePen size={16} />,
+   DELETE: <Trash size={16} />,
+   OFFICE: <Building size={16} className="text-green-500" />,
+   HOME: <Home size={16} className="text-blue-500" />
 };
