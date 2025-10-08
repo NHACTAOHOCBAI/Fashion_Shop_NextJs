@@ -82,7 +82,7 @@ const FilterItem = ({ item, selected, onToggle }: filterItemProps) => {
         <Collapsible
             open={isOpen}
             onOpenChange={setIsOpen}
-            className="flex flex-col gap-2"
+            className="flex flex-col gap-2 bg-[#F6F7F8] p-[10px] rounded"
         >
             <div className="flex items-center justify-between gap-4 px-4">
                 <h4 className="text-sm font-semibold">
