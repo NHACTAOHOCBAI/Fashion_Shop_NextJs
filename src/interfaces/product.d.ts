@@ -16,6 +16,7 @@ interface ProductImage {
     publicId: string
 }
 interface Variant {
+    product: Product;
     id: number;
     imageUrl: string;
     publicId: string;
