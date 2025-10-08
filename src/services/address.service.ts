@@ -16,8 +16,23 @@ const createAddress = async (data: {
     const response = await axiosInstance.post('/address', data)
     return response;
 }
+const updateAddress = async ({ id, data }: {
+    id: number,
+    data: {
+        recipientName: string;
+        recipientPhone: string;
+        province: string;
+        district: string;
+        commune: string;
+        type: 'home' | 'office'
+        isDefault: boolean;
+    }
+}) => {
+    const response = await axiosInstance.patch(`/address/${id}`, data)
+    return response;
+}
 const deleteAddress = async ({ id }: { id: number }) => {
     const response = await axiosInstance.delete(`/address/${id}`)
     return response
 }
-export { getMyAddress, createAddress, deleteAddress }
+export { getMyAddress, createAddress, deleteAddress, updateAddress }

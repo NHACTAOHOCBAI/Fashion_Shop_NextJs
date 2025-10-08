@@ -1,11 +1,11 @@
-import { createAddress, deleteAddress, getMyAddress } from '@/services/address.service';
+import { createAddress, deleteAddress, getMyAddress, updateAddress } from '@/services/address.service';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 const useMyAddress = () =>
     useQuery({
         queryKey: ['my-address'],
         queryFn: () => getMyAddress(),
     });
-const useDeleteAdress = () => {
+const useDeleteAddress = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: deleteAddress,
@@ -23,4 +23,13 @@ const useCreateAddress = () => {
         },
     });
 }
-export { useMyAddress, useCreateAddress, useDeleteAdress }
+const useUpdateAddress = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: updateAddress,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['my-address'] });
+        },
+    });
+}
+export { useMyAddress, useCreateAddress, useDeleteAddress, useUpdateAddress }
