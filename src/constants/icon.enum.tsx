@@ -1,4 +1,4 @@
-import { Archive, Building, ChartPie, CircleUser, HeartPlus, Home, LogOut, MapPinHouse, Minus, Newspaper, Plus, Shirt, SquarePen, Store, Trash, UsersRound } from "lucide-react";
+import { Archive, Bell, Building, ChartPie, CircleUser, HeartPlus, Home, LogOut, MapPinHouse, Minus, Newspaper, Plus, Shirt, SquarePen, Store, Trash, UsersRound } from "lucide-react";
 import { IoColorFilterOutline } from "react-icons/io5";
 import { FaHeart, FaRegHeart, FaStar } from "react-icons/fa";
 import { BsCart3 } from "react-icons/bs";
@@ -28,5 +28,6 @@ export const ICONS = {
    EDIT: <SquarePen size={16} />,
    DELETE: <Trash size={16} />,
    OFFICE: <Building size={16} className="text-green-500" />,
-   HOME: <Home size={16} className="text-blue-500" />
+   HOME: <Home size={16} className="text-blue-500" />,
+   NOTIFICATION: <Bell />,
 };

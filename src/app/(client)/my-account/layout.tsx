@@ -9,6 +9,7 @@ const menuItems = [
     { key: "addresses", label: "Addresses", icon: ICONS.ADDRESS, href: "/my-account/addresses" },
     { key: "profile", label: "Profile", icon: ICONS.PROFILE, href: "/my-account/profile" },
     { key: "wishlist", label: "Wishlist", icon: ICONS.HEAER_SIDEBAR, href: "/my-account/wishlist" },
+    { key: "notifications", label: "Notifications", icon: ICONS.NOTIFICATION, href: "/my-account/notifications" },
 ]
 
 export default function Layout({ children }: { children: React.ReactNode }) {

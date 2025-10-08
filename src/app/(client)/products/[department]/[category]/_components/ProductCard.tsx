@@ -1,21 +1,42 @@
 import { Button } from "@/components/ui/button"
 import { ICONS } from "@/constants/icon.enum"
+import { useToggleWishlistItem } from "@/hooks/queries/useWishlist"
+import { formatDateTimeWithAt } from "@/lib/formatDate"
 import { formatMoney } from "@/lib/formatMoney"
 import Image from "next/image"
 import Link from "next/link"
+import { toast } from "sonner"
 
 const ProductCard = ({ item }: { item: Product }) => {
+    const { mutate: toggleWishlistItem } = useToggleWishlistItem()
+    const handleToggleWishlistItem = () => {
+        toggleWishlistItem({ productId: item.id }, {
+            onSuccess: () => {
+                toast.success("You have added this item to your wishlists", {
+                    description: formatDateTimeWithAt(new Date()),
+                })
+            },
+            onError: (error) => {
+                toast.error(`Ohh!!! ${error.message}`, {
+                    description: formatDateTimeWithAt(new Date()),
+                })
+            },
+        })
+    }
     return (
         <Link href={`/products/product-detail/${item.id}`} className="group  hover:drop-shadow-xl duration-300  w-[240px] h-[320px] relative rounded-[10px] overflow-hidden flex flex-col cursor-pointer">
             {/* Icon yêu thích */}
             <div
+                onClick={handleToggleWishlistItem}
                 className="absolute right-4 top-4 z-50
-             opacity-0 group-hover:opacity-100
-             -translate-y-2 group-hover:translate-y-0
-             transition-all duration-300"
+        opacity-0 group-hover:opacity-100
+        -translate-y-2 group-hover:translate-y-0
+        transition-all duration-300
+        active:scale-90 hover:scale-110 cursor-pointer"
             >
                 {ICONS.UN_HEART}
             </div>
+
 
 
             {/* Ảnh sản phẩm */}

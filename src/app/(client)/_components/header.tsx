@@ -12,6 +12,9 @@ import {
 } from "@/components/ui/navigation-menu"
 import { useDepartmentSelections } from "@/hooks/queries/useDepartment"
 import { ICONS } from "@/constants/icon.enum"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { LogOut } from "lucide-react"
 
 export default function Header() {
     const { data: departmentSelections } = useDepartmentSelections()
@@ -81,15 +84,60 @@ export default function Header() {
                     </NavigationMenuList>
                 </NavigationMenu>
                 <div className="flex items-center gap-[20px]">
-                    <Link href="/my-cart" className="relative p-[10px]">
+                    <Link href="/my-cart" className="relative p-[10px] hover:scale-[0.9] transition-all duration-300 hover:opacity-70">
                         <div className="right-0 top-0 absolute text-[12px] rounded-full bg-red-400 w-[20px] h-[20px] flex items-center justify-center">
                             3
                         </div>
                         {ICONS.CART}
                     </Link>
-                    <div>
-                        {ICONS.MY_ACCOUNT}
-                    </div>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <div className="hover:scale-[0.9] transition-all duration-300 hover:opacity-70">
+                                {ICONS.MY_ACCOUNT}
+                            </div>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+                            align="end"
+                            sideOffset={4}
+                        >
+                            <DropdownMenuLabel className="p-0 font-normal">
+                                <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                                    <Avatar className="h-8 w-8 rounded-lg">
+                                        <AvatarImage />
+                                        <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                                    </Avatar>
+                                    <div className="grid flex-1 text-left text-sm leading-tight">
+                                        <span className="truncate font-medium">phuc</span>
+                                        <span className="truncate text-xs">email</span>
+                                    </div>
+                                </div>
+                            </DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuGroup>
+                                <DropdownMenuItem>
+                                    <Link className="w-full" href={'/my-account/profile'}>Profile</Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem>
+                                    <Link className="w-full" href={'/my-account/addresses'}>Addresses</Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem>
+                                    <Link className="w-full" href={'/my-account/orders'}>Orders</Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem>
+                                    <Link className="w-full" href={'/my-account/wishlist'}>Wishlist</Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem>
+                                    <Link className="w-full" href={'/my-account/notifications'}>Notifications</Link>
+                                </DropdownMenuItem>
+                            </DropdownMenuGroup>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem>
+                                <LogOut />
+                                Log out
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
             </div>
         </header>
