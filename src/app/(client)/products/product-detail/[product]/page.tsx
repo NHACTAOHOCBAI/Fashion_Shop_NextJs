@@ -11,6 +11,13 @@ import { formatMoney } from "@/lib/formatMoney";
 import { useAddToCart } from "@/hooks/queries/useCart";
 import { toast } from "sonner";
 import { formatDateTimeWithAt } from "@/lib/formatDate";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Avatar } from "@/components/ui/avatar";
+import { AvatarFallback } from "@radix-ui/react-avatar";
+import { Star } from "lucide-react";
+import { StarRating } from "@/components/rating/Rating";
+import convertAlias from "@/lib/convertAlias";
 
 export default function ProductDetail({
     params,
@@ -94,90 +101,96 @@ export default function ProductDetail({
         }, {
             onSuccess: () => {
                 console.log("thanh congf")
-                toast.success(`Add ${productDetail.name}`, {
-                    description: formatDateTimeWithAt(new Date()),
-                });
+                toast.success(`Add ${productDetail.name}`);
             },
             onError: (err) => {
-                toast.error(`Ohh!!! ${err.message}`, {
-                    description: formatDateTimeWithAt(new Date()),
-                });
+                toast.error(`Ohh!!! ${err.message}`);
             },
         })
     }
     // ===== Render =====
     return (
-        <div className="flex gap-[80px]">
-            {/* === Left: Image Gallery === */}
-            <div className="w-[500px]">
-                <ImageGallery
-                    items={images}
-                    showPlayButton={false}
-                    showFullscreenButton={false}
-                    showNav={false}
-                    showBullets={false}
-                    thumbnailPosition="bottom"
-                />
-            </div>
+        <>
+            <div className="flex gap-[80px]">
+                {/* === Left: Image Gallery === */}
+                <div className="w-[500px]">
+                    <ImageGallery
+                        items={images}
+                        showPlayButton={false}
+                        showFullscreenButton={false}
+                        showNav={false}
+                        showBullets={false}
+                        thumbnailPosition="bottom"
+                    />
+                </div>
 
-            {/* === Right: Product Info === */}
-            <div className="flex-1">
-                <div className="flex flex-col gap-4">
-                    <p className="text-text-secondary font-medium text-xl">
-                        {productDetail.brand.name}
-                    </p>
-                    <p className="font-bold text-4xl">{productDetail.name}</p>
+                {/* === Right: Product Info === */}
+                <div className="flex-1">
+                    <div className="flex flex-col gap-4">
+                        <p className="text-text-secondary font-medium text-xl">
+                            {productDetail.brand.name}
+                        </p>
+                        <p className="font-bold text-4xl">{productDetail.name}</p>
+                        <p>
+                            These sport shoes are designed for comfort, performance, and style. With lightweight cushioning and breathable materials, they keep your feet cool and supported during any activity. Perfect for running, training, or everyday wear.
+                        </p>
+                        <div className="flex gap-[10px]">
+                            <p>Sold: 100</p>
+                            <div className="w-[2px] bg-accent-foreground"></div>
+                            <p>Stock: 200</p>
+                        </div>
+                        <p className="font-medium text-2xl">
+                            {formatMoney(Number(productDetail.price))}
+                        </p>
 
-                    <p className="font-medium text-2xl">
-                        {formatMoney(Number(productDetail.price))}
-                    </p>
-
-                    {/* === Attribute Groups === */}
-                    {options.map((field) => {
-                        const enabledValues = getEnabledValues(field.attributeName);
-                        return (
-                            <div key={field.attributeName}>
-                                <p className="mb-[10px] font-bold">{field.attributeName}</p>
-                                <ToggleGroup type="single">
-                                    <div className="flex gap-[10px] flex-wrap">
-                                        {field.values.map((value) => {
-                                            const isDisabled = !enabledValues.has(value.value);
-                                            const isActive =
-                                                selectedAttributes[field.attributeName] === value.value;
-                                            return (
-                                                <ToggleGroupItem
-                                                    key={value.id}
-                                                    value={value.value}
-                                                    disabled={isDisabled}
-                                                    data-state={isActive ? "on" : "off"}
-                                                    onClick={() =>
-                                                        handleSelect(field.attributeName, value.value)
-                                                    }
-                                                    className="w-[60px] h-[36px] border rounded-md text-center
+                        {/* === Attribute Groups === */}
+                        {options.map((field) => {
+                            const enabledValues = getEnabledValues(field.attributeName);
+                            return (
+                                <div key={field.attributeName}>
+                                    <p className="mb-[10px] font-bold">{field.attributeName}</p>
+                                    <ToggleGroup type="single">
+                                        <div className="flex gap-[10px] flex-wrap">
+                                            {field.values.map((value) => {
+                                                const isDisabled = !enabledValues.has(value.value);
+                                                const isActive =
+                                                    selectedAttributes[field.attributeName] === value.value;
+                                                return (
+                                                    <ToggleGroupItem
+                                                        key={value.id}
+                                                        value={value.value}
+                                                        disabled={isDisabled}
+                                                        data-state={isActive ? "on" : "off"}
+                                                        onClick={() =>
+                                                            handleSelect(field.attributeName, value.value)
+                                                        }
+                                                        className="w-[60px] h-[36px] border rounded-md text-center
                                                         data-[state=on]:bg-black data-[state=on]:text-white
                                                         disabled:opacity-30 disabled:cursor-not-allowed"
-                                                >
-                                                    <p>{value.value}</p>
-                                                </ToggleGroupItem>
-                                            );
-                                        })}
-                                    </div>
-                                </ToggleGroup>
-                            </div>
-                        );
-                    })}
+                                                    >
+                                                        <p>{value.value}</p>
+                                                    </ToggleGroupItem>
+                                                );
+                                            })}
+                                        </div>
+                                    </ToggleGroup>
+                                </div>
+                            );
+                        })}
 
-                    {/* === Add to Cart === */}
-                    <Button
-                        className="text-[20px] h-[40px] bg-app-primary mt-4"
-                        disabled={!selectedVariant}
-                        onClick={handleAddItemToCart}
-                    >
-                        Add to Cart
-                    </Button>
+                        {/* === Add to Cart === */}
+                        <Button
+                            className="text-[20px] h-[40px] bg-app-primary mt-4"
+                            disabled={!selectedVariant}
+                            onClick={handleAddItemToCart}
+                        >
+                            Add to Cart
+                        </Button>
+                    </div>
                 </div>
             </div>
-        </div>
+            <ProductReviews />
+        </>
     );
 }
 
@@ -196,4 +209,78 @@ function getAllImageUrls(product: Product | undefined) {
                 thumbnail: v.imageUrl,
             })),
     ];
+}
+function ProductReviews() {
+    const reviews = [
+        {
+            name: "Peggy G.",
+            rating: 5,
+            text: "Excellent Product",
+            time: "1 week ago",
+        },
+        {
+            name: "Mona Lisa",
+            rating: 5,
+            text: "Perfect fit. Superb Quality!",
+            time: "2 weeks ago",
+        },
+        {
+            name: "Mona Lisa",
+            rating: 4,
+            text: "Great Quality. Packaging could be better.",
+            time: "2 weeks ago",
+        },
+    ];
+
+    return (
+        <div className="w-full bg-white rounded-lg p-4">
+            <Tabs defaultValue="reviews" className="w-full">
+                {/* --- Tabs header --- */}
+                <TabsList>
+                    <TabsTrigger value="reviews">Reviews</TabsTrigger>
+                    <TabsTrigger value="questions">Questions</TabsTrigger>
+                </TabsList>
+
+                {/* --- Reviews tab --- */}
+                <TabsContent value="reviews" className="mt-6">
+                    <div className="flex items-center justify-between flex-wrap gap-3">
+                        <div>
+                            <h2 className="text-3xl font-bold leading-none">4.8</h2>
+                            <div className="flex items-center gap-1 mt-1">
+                                <StarRating rating={4.8} />
+                                <span className="text-sm text-gray-500 ml-1">Based on 138 reviews</span>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div className="divide-y divide-gray-200 mt-4">
+                        {reviews.map((r, i) => (
+                            <div key={i} className="flex justify-between py-4">
+                                <div className="flex gap-3">
+                                    <Avatar className="bg-gray-200 flex items-center justify-center">
+                                        <AvatarFallback>{convertAlias(r.name)}</AvatarFallback>
+                                    </Avatar>
+                                    <div>
+                                        <h4 className="font-medium text-gray-800">{r.name}</h4>
+                                        <div className="flex items-center mt-0.5">
+                                            <StarRating rating={4.8} />
+                                        </div>
+                                        <p className="text-sm text-gray-700 mt-1">{r.text}</p>
+                                    </div>
+                                </div>
+                                <span className="text-sm text-gray-500 whitespace-nowrap">{r.time}</span>
+                            </div>
+                        ))}
+                    </div>
+                </TabsContent>
+
+                {/* --- Questions tab --- */}
+                <TabsContent value="questions" className="mt-6 text-gray-500">
+                    No questions yet. Be the first to ask!
+                </TabsContent>
+            </Tabs>
+        </div>
+    );
 }

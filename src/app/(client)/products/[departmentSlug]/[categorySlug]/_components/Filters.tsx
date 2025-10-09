@@ -4,10 +4,14 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { Label } from "@/components/ui/label"
+import { Slider } from "@/components/ui/slider"
+import { formatMoney } from "@/lib/formatMoney"
+import { cn } from "@/lib/utils"
 import { ChevronsUpDown } from "lucide-react"
 import { useState } from "react"
 
 const Filters = () => {
+    const [range, setRange] = useState<[number, number]>([0, 100]);
     const filterFields = [
         {
             attributeName: "Size",
@@ -54,7 +58,21 @@ const Filters = () => {
                     onToggle={handleToggle}
                 />
             )}
-
+            <div className="flex flex-col gap-2 bg-[#F6F7F8] p-[10px] rounded">
+                <div className="flex items-center justify-between gap-4 px-4">
+                    <h4 className="text-sm font-semibold">PRICES</h4>
+                    <span className="text-sm text-gray-600">
+                        {formatMoney(range[0])} – {formatMoney(range[1])}
+                    </span>
+                </div>
+                <Slider
+                    className="w-[90%] mx-auto mt-[10px]"
+                    defaultValue={[0, 100]}
+                    max={100}
+                    step={1}
+                    onValueChange={(value) => setRange(value as [number, number])}
+                />
+            </div>
             {/* Bạn có thể log ra để test */}
             <pre className="mt-4 bg-gray-100 p-2 text-sm">
                 {JSON.stringify(selectedValues, null, 2)}
@@ -86,7 +104,7 @@ const FilterItem = ({ item, selected, onToggle }: filterItemProps) => {
         >
             <div className="flex items-center justify-between gap-4 px-4">
                 <h4 className="text-sm font-semibold">
-                    {item.attributeName}
+                    {item.attributeName.toUpperCase()}
                 </h4>
                 <CollapsibleTrigger asChild>
                     <Button variant="ghost" size="icon" className="size-8">
@@ -118,6 +136,7 @@ const FilterItem = ({ item, selected, onToggle }: filterItemProps) => {
                         </div>
                     )
                 })}
+
             </CollapsibleContent>
         </Collapsible>
     )

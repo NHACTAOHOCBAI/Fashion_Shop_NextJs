@@ -4,6 +4,8 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --color-app-background: var(--app-background);
+  --color-app-secondary: var(--app-secondary);
   --color-app-primary: var(--app-primary);
   --color-text-secondary:var(--text-secondary);
 
@@ -48,8 +50,10 @@
 }
 
 :root {
+  --app-background:#F6F7F8;
+  --app-secondary:#40BFFF;
   --app-primary:#FFD470;
---text-secondary:#8C8C8C;
+  --text-secondary:#8C8C8C;
 
   --radius:0.625rem;
   --background:oklch(1 0 0);
@@ -86,8 +90,10 @@
 }
 
 .dark {
+  --app-background:#F6F7F8;
+  --app-secondary:#40BFFF;
   --app-primary:#FFD470;
---text-secondary:#6B6565;
+  --text-secondary:#6B6565;
 
   --background:oklch(0.145 0 0);
   --foreground:oklch(0.985 0 0);

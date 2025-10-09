@@ -1,9 +1,10 @@
 'use client'
-import Filters from "@/app/(client)/products/[department]/[category]/_components/Filters"
-import ProductCard from "@/app/(client)/products/[department]/[category]/_components/ProductCard"
+import Filters from "@/app/(client)/products/[departmentSlug]/[categorySlug]/_components/Filters"
+import ProductCard from "@/app/(client)/products/[departmentSlug]/[categorySlug]/_components/ProductCard"
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useGetCategoryBySlug } from "@/hooks/queries/useCategory"
 import { useProducts } from "@/hooks/queries/useProduct"
 import slugToTitle from "@/lib/slugToTitle"
 import Image from "next/image"
@@ -12,11 +13,11 @@ import { use } from "react"
 const Products = ({
     params,
 }: {
-    params: Promise<{ department: string, category: string }>
+    params: Promise<{ departmentSlug: string, categorySlug: string }>
 }) => {
-    const { category, department } = use(params)
+    const { categorySlug, departmentSlug } = use(params)
     const { data: products } = useProducts({})
-
+    const { data: category } = useGetCategoryBySlug(categorySlug)
     return (
         <div className="flex gap-[20px]">
             <div className="w-[300px] ">
@@ -27,29 +28,29 @@ const Products = ({
                     <Breadcrumb>
                         <BreadcrumbList>
                             <BreadcrumbItem className="hidden md:block">
-                                {slugToTitle(department)}
+                                {slugToTitle(departmentSlug)}
                             </BreadcrumbItem>
                             <BreadcrumbSeparator className="hidden md:block" />
                             <BreadcrumbItem>
-                                <BreadcrumbPage> {slugToTitle(category)}</BreadcrumbPage>
+                                <BreadcrumbPage> {slugToTitle(categorySlug)}</BreadcrumbPage>
                             </BreadcrumbItem>
                         </BreadcrumbList>
                     </Breadcrumb>
-                    <div className="rounded relative bg-[#40BFFF] min-h-[200px] px-[60px] py-[20px] text-white mt-[10px]">
+                    <div className="rounded relative bg-app-secondary min-h-[200px] px-[60px] py-[20px] text-white mt-[10px]">
                         <div className="w-[500px]">
-                            <p className="font-bold text-2xl">{slugToTitle(category)}</p>
+                            <p className="font-bold text-2xl">{slugToTitle(categorySlug)}</p>
                             <p className=" mt-[5px] text-[13px]">Step into effortless style with our Classic Comfort Sandals, designed for all–day wear. Crafted with a soft yet durable sole and adjustable straps, these sandals provide a secure fit while keeping your feet cool and comfortable. Whether you’re strolling along the beach, exploring the city, or enjoying a casual outing, this versatile pair perfectly balances fashion and function.</p>
                         </div>
                         <Image
                             alt="category image"
-                            src="https://png.pngtree.com/png-vector/20231230/ourmid/pngtree-dropshipping-men-hole-sole-jogging-shoes-png-image_11389148.png"
+                            src={category?.imageUrl || "https://png.pngtree.com/png-vector/20231230/ourmid/pngtree-dropshipping-men-hole-sole-jogging-shoes-png-image_11389148.png"}
                             width={1000}
                             height={1000}
                             className="w-[300px] h-[300px] object-contain ml-auto absolute right-0 bottom-0"
                         />
                     </div>
                 </div>
-                <Select>
+                <Select >
                     <SelectTrigger className="w-[180px] ml-auto">
                         <SelectValue placeholder="Sort By" />
                     </SelectTrigger>
@@ -63,7 +64,7 @@ const Products = ({
                         </SelectGroup>
                     </SelectContent>
                 </Select>
-                <div className="grid grid-cols-3  gap-y-[10px]">
+                <div className="grid grid-cols-3  gap-y-[10px] mt-[10px]">
                     {products?.data.map((product) =>
                         <ProductCard key={product.id} item={product} />
                     )}

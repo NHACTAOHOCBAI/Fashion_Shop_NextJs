@@ -34,19 +34,17 @@ const ProductCard = ({ item }: { item: Product }) => {
         transition-all duration-300
         active:scale-90 hover:scale-110 cursor-pointer"
             >
-                {ICONS.UN_HEART}
+                {ICONS.HEART}
             </div>
-
-
 
             {/* Ảnh sản phẩm */}
             <div className="relative w-full h-[200px] overflow-hidden">
                 <Image
-                    className="w-full h-full object-cover bg-amber-100 transition-transform duration-300 hover:scale-125"
+                    className="w-full h-full object-cover bg-app-background  transition-transform duration-300 hover:scale-125"
                     alt={`${item.name} img`}
                     width={200}
                     height={200}
-                    src={"https://static.nike.com/a/images/t_PDP_936_v1/f_auto,q_auto:eco/b7d9211c-26e7-431a-ac24-b0540fb3c00f/AIR+FORCE+1+%2707.png"}
+                    src={item.images[0].imageUrl || "https://static.nike.com/a/images/t_PDP_936_v1/f_auto,q_auto:eco/b7d9211c-26e7-431a-ac24-b0540fb3c00f/AIR+FORCE+1+%2707.png"}
                 />
             </div>
 

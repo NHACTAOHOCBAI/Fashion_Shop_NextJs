@@ -1,6 +1,6 @@
 'use client'
 
-import ProductCard from "@/app/(client)/products/[department]/[category]/_components/ProductCard"
+import ProductCard from "@/app/(client)/products/[departmentSlug]/[categorySlug]/_components/ProductCard"
 import { useProducts } from "@/hooks/queries/useProduct"
 import { Heart } from "lucide-react"
 
