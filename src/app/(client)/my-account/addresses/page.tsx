@@ -45,7 +45,7 @@ const Addressess = () => {
             />
 
             <div className="space-y-5">
-                <Button className="ml-[20px]" onClick={() => setOpenCreate(true)}>
+                <Button onClick={() => setOpenCreate(true)}>
                     New address
                 </Button>
 

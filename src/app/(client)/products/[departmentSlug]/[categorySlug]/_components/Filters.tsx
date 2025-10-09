@@ -5,33 +5,19 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { Label } from "@/components/ui/label"
 import { Slider } from "@/components/ui/slider"
+import convertAttributeCategories from "@/lib/convertAttributeCategories"
 import { formatMoney } from "@/lib/formatMoney"
-import { cn } from "@/lib/utils"
 import { ChevronsUpDown } from "lucide-react"
 import { useState } from "react"
 
-const Filters = () => {
-    const [range, setRange] = useState<[number, number]>([0, 100]);
-    const filterFields = [
-        {
-            attributeName: "Size",
-            values: [
-                { id: 1, value: "L" },
-                { id: 2, value: "M" },
-                { id: 3, value: "XL" },
-                { id: 4, value: "XXL" }
-            ]
-        },
-        {
-            attributeName: "Color",
-            values: [
-                { id: 5, value: "Green" },
-                { id: 6, value: "Blue" },
-                { id: 7, value: "Red" }
-            ]
-        }
-    ]
+interface FiltersProps {
+    attributeCategories: AttributeCategory[]
+}
+const Filters = ({ attributeCategories }: FiltersProps) => {
 
+    const [range, setRange] = useState<[number, number]>([0, 100]);
+    const filterFields = convertAttributeCategories(attributeCategories)
+    console.log(filterFields)
     // State lưu tất cả giá trị được chọn: { Size: string[], Color: string[] }
     const [selectedValues, setSelectedValues] = useState<Record<string, string[]>>({})
 

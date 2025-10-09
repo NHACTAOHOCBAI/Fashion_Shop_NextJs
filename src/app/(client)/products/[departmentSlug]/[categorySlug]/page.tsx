@@ -1,6 +1,6 @@
 'use client'
 import Filters from "@/app/(client)/products/[departmentSlug]/[categorySlug]/_components/Filters"
-import ProductCard from "@/app/(client)/products/[departmentSlug]/[categorySlug]/_components/ProductCard"
+import ProductCard from "@/app/(client)/_components/ProductCard"
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -18,10 +18,11 @@ const Products = ({
     const { categorySlug, departmentSlug } = use(params)
     const { data: products } = useProducts({})
     const { data: category } = useGetCategoryBySlug(categorySlug)
+    console.log(category?.attributeCategories)
     return (
         <div className="flex gap-[20px]">
             <div className="w-[300px] ">
-                <Filters />
+                <Filters attributeCategories={category?.attributeCategories || []} />
             </div>
             <div className="flex-[1]">
                 <div className="pb-[20px]">

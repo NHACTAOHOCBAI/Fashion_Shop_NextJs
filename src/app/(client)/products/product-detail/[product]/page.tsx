@@ -5,25 +5,24 @@ import ImageGallery from "react-image-gallery";
 import "react-image-gallery/styles/css/image-gallery.css";
 import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { useGetProductById } from "@/hooks/queries/useProduct";
+import { useGetProductById, useProducts } from "@/hooks/queries/useProduct";
 import convertAttributeCategories from "@/lib/convertAttributeCategories";
 import { formatMoney } from "@/lib/formatMoney";
 import { useAddToCart } from "@/hooks/queries/useCart";
 import { toast } from "sonner";
-import { formatDateTimeWithAt } from "@/lib/formatDate";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Avatar } from "@/components/ui/avatar";
 import { AvatarFallback } from "@radix-ui/react-avatar";
-import { Star } from "lucide-react";
 import { StarRating } from "@/components/rating/Rating";
 import convertAlias from "@/lib/convertAlias";
+import ProductCard from "@/app/(client)/_components/ProductCard";
 
 export default function ProductDetail({
     params,
 }: {
     params: Promise<{ product: string }>;
 }) {
+    const { data: products } = useProducts({})
     // ===== Data =====
     const { product } = use(params);
     const { data: productDetail } = useGetProductById(Number(product));
@@ -190,6 +189,14 @@ export default function ProductDetail({
                 </div>
             </div>
             <ProductReviews />
+            <div>
+                <h3 className="text-3xl font-bold leading-none mt-[10px]">RELATED PRODUCTS</h3>
+                <div className="grid grid-cols-4  gap-y-[10px] mt-[40px]">
+                    {products?.data.map((product) =>
+                        <ProductCard key={product.id} item={product} />
+                    )}
+                </div>
+            </div>
         </>
     );
 }

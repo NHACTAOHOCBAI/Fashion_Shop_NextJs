@@ -1,10 +1,15 @@
 
-import { createDepartment, deleteDepartment, deleteDepartments, getDepartments, getDepartmentSelection, updateDepartment } from '@/services/department.service';
+import { createDepartment, deleteDepartment, deleteDepartments, getDepartmentBySlug, getDepartments, getDepartmentSelection, updateDepartment } from '@/services/department.service';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 const useDepartments = (params: QueryParams) =>
     useQuery({
         queryKey: ['departments', params],
         queryFn: () => getDepartments(params),
+    });
+const useGetDepartmentBySlug = (slug: string) =>
+    useQuery({
+        queryKey: ['department', slug],
+        queryFn: () => getDepartmentBySlug(slug),
     });
 const useDepartmentSelections = () =>
     useQuery({
@@ -47,4 +52,4 @@ const useUpdateDepartment = () => {
         },
     });
 }
-export { useDepartments, useCreateDepartment, useDeleteDepartment, useDeleteDepartments, useUpdateDepartment, useDepartmentSelections }
+export { useDepartments, useCreateDepartment, useDeleteDepartment, useDeleteDepartments, useUpdateDepartment, useDepartmentSelections, useGetDepartmentBySlug }

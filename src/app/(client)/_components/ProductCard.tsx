@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { ICONS } from "@/constants/icon.enum"
 import { useToggleWishlistItem } from "@/hooks/queries/useWishlist"
-import { formatDateTimeWithAt } from "@/lib/formatDate"
 import { formatMoney } from "@/lib/formatMoney"
 import Image from "next/image"
 import Link from "next/link"
@@ -12,19 +11,19 @@ const ProductCard = ({ item }: { item: Product }) => {
     const handleToggleWishlistItem = () => {
         toggleWishlistItem({ productId: item.id }, {
             onSuccess: () => {
-                toast.success("You have added this item to your wishlists", {
-                    description: formatDateTimeWithAt(new Date()),
-                })
+                toast.success("You have added this item to your wishlists")
             },
             onError: (error) => {
-                toast.error(`Ohh!!! ${error.message}`, {
-                    description: formatDateTimeWithAt(new Date()),
-                })
+                toast.error(`Ohh!!! ${error.message}`)
             },
         })
     }
     return (
-        <Link href={`/products/product-detail/${item.id}`} className="group  hover:drop-shadow-xl duration-300  w-[240px] h-[320px] relative rounded-[10px] overflow-hidden flex flex-col cursor-pointer">
+        <Link
+            href={`/products/product-detail/${item.id}`}
+            className="group shadow-[2px_2px_0_#00000010] hover:shadow-[6px_6px_6px_#00000010] duration-300 w-[240px] h-[320px] relative rounded-[10px] overflow-hidden flex flex-col cursor-pointer"
+        >
+
             {/* Icon yêu thích */}
             <div
                 onClick={handleToggleWishlistItem}

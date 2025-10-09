@@ -29,7 +29,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                     key={item.key}
                                     href={item.href}
                                     className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${isActive
-                                        ? "bg-yellow-300 text-black font-semibold"
+                                        ? "bg-app-primary text-black font-semibold"
                                         : "text-gray-600 hover:bg-yellow-100"
                                         }`}
                                 >
@@ -38,6 +38,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                 </Link>
                             )
                         })}
+
                     </nav>
                 </div>
             </aside>

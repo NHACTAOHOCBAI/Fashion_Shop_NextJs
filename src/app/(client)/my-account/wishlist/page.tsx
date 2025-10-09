@@ -1,19 +1,13 @@
 'use client'
 
-import ProductCard from "@/app/(client)/products/[departmentSlug]/[categorySlug]/_components/ProductCard"
+import ProductCard from "@/app/(client)/_components/ProductCard"
 import { useProducts } from "@/hooks/queries/useProduct"
-import { Heart } from "lucide-react"
-
-
 
 const WishlistPage = () => {
     const { data: products } = useProducts({})
 
     return (
         <div className="max-w-6xl mx-auto px-4 py-8">
-            <h1 className="text-2xl font-bold mb-6 flex items-center gap-2">
-                <Heart className="text-pink-500" /> My Wishlist
-            </h1>
 
             {(!products || products.data.length === 0) && (
                 <div className="text-gray-500 text-center py-10">
