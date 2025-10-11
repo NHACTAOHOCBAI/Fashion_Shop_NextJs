@@ -11,6 +11,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { AlertDialogTitle } from "@radix-ui/react-alert-dialog"
 import { toast } from "sonner"
 import { formatDateTimeWithAt } from "@/lib/formatDate"
+import Content from "@/app/(client)/my-account/_components/Content"
 
 const Addressess = () => {
     const { data: addresses } = useMyAddress()
@@ -36,7 +37,7 @@ const Addressess = () => {
         })
     }
     return (
-        <>
+        <Content title="My Addresses">
             <CreateAddressForm open={openCreate} setOpen={setOpenCreate} />
             <UpdateAddressForm
                 open={openUpdate}
@@ -118,7 +119,7 @@ const Addressess = () => {
                     </>
                 ))}
             </div>
-        </>
+        </Content>
     )
 }
 

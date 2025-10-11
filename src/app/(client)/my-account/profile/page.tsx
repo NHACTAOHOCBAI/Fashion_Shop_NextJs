@@ -12,6 +12,7 @@ import { useForm } from "react-hook-form"
 import z from "zod"
 import { toast } from "sonner"
 import { formatDateTimeWithAt } from "@/lib/formatDate"
+import Content from "@/app/(client)/my-account/_components/Content"
 
 const Profile = () => {
     const { data: myProfile } = useMyProfile()
@@ -69,66 +70,68 @@ const Profile = () => {
     }
 
     return (
-        <Form {...form}>
-            <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
-                {/* Avatar hiển thị */}
-                <div className="flex flex-col items-center gap-3">
-                    <Image
-                        width={200}
-                        height={200}
-                        alt="avatar"
-                        src={
-                            preview ||
-                            "https://static.nike.com/a/images/t_PDP_936_v1/f_auto,q_auto:eco/b7d9211c-26e7-431a-ac24-b0540fb3c00f/AIR+FORCE+1+%2707.png"
-                        }
-                        className="rounded-full w-[200px] h-[200px] object-cover border"
+        <Content title="My Profile">
+            <Form {...form}>
+                <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
+                    {/* Avatar hiển thị */}
+                    <div className="flex flex-col items-center gap-3">
+                        <Image
+                            width={200}
+                            height={200}
+                            alt="avatar"
+                            src={
+                                preview ||
+                                "https://static.nike.com/a/images/t_PDP_936_v1/f_auto,q_auto:eco/b7d9211c-26e7-431a-ac24-b0540fb3c00f/AIR+FORCE+1+%2707.png"
+                            }
+                            className="rounded-full w-[200px] h-[200px] object-cover border"
+                        />
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageChange}
+                            className="text-sm text-gray-500"
+                        />
+                    </div>
+
+                    {/* Full name */}
+                    <FormField
+                        control={form.control}
+                        name="fullName"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Full name</FormLabel>
+                                <FormControl>
+                                    <Input {...field} placeholder="Enter your full name" />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
                     />
-                    <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageChange}
-                        className="text-sm text-gray-500"
+
+                    {/* Email (readonly) */}
+                    <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Email</FormLabel>
+                                <FormControl>
+                                    <Input {...field} disabled />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
                     />
-                </div>
 
-                {/* Full name */}
-                <FormField
-                    control={form.control}
-                    name="fullName"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Full name</FormLabel>
-                            <FormControl>
-                                <Input {...field} placeholder="Enter your full name" />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-
-                {/* Email (readonly) */}
-                <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Email</FormLabel>
-                            <FormControl>
-                                <Input {...field} disabled />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-
-                {/* Submit */}
-                <div className="pt-4">
-                    <Button type="submit" className="w-full" disabled={isPending}>
-                        {isPending ? "Saving..." : "Save changes"}
-                    </Button>
-                </div>
-            </form>
-        </Form>
+                    {/* Submit */}
+                    <div className="pt-4">
+                        <Button type="submit" className="w-full" disabled={isPending}>
+                            {isPending ? "Saving..." : "Save changes"}
+                        </Button>
+                    </div>
+                </form>
+            </Form>
+        </Content>
     )
 }
 

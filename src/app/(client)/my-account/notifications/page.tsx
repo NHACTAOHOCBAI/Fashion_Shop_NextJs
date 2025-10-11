@@ -2,6 +2,7 @@
 
 import React from "react"
 import { Bell, Package, Tag, Info } from "lucide-react"
+import Content from "@/app/(client)/my-account/_components/Content"
 
 const notifications = [
     {
@@ -46,50 +47,49 @@ const getIconByType = (type: string) => {
 
 export default function NotificationsPage() {
     return (
-        <div className="flex flex-col gap-6">
-            {/* Header */}
-            <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-semibold text-gray-800 flex items-center gap-2">
-                    <Bell className="w-6 h-6 text-yellow-500" />
-                    Notifications
-                </h1>
-                <button className="text-sm text-gray-500 hover:text-gray-800 transition-colors">
-                    Mark all as read
-                </button>
-            </div>
+        <Content title="My Notifications">
+            <div className="flex flex-col gap-6">
+                {/* Header */}
+                <div className="flex items-center justify-between">
+                    <button className="text-sm text-gray-500 hover:text-gray-800 transition-colors">
+                        Mark all as read
+                    </button>
+                </div>
 
-            {/* Notifications list */}
-            <div className="flex flex-col divide-y divide-gray-100 bg-white rounded-xl border border-gray-100 shadow-sm">
-                {notifications.map((n) => (
-                    <div
-                        key={n.id}
-                        className={`flex items-center gap-4 p-4 hover:bg-gray-50 transition-all duration-200 ${!n.read ? "bg-yellow-50" : ""
-                            }`}
-                    >
-                        {/* Icon */}
-                        <div className="w-12 h-12 flex items-center justify-center rounded-full bg-gray-100 flex-shrink-0">
-                            {getIconByType(n.type)}
-                        </div>
-
-                        {/* Content */}
-                        <div className="flex-1">
-                            <div className="flex items-start justify-between">
-                                <h3
-                                    className={`text-sm font-semibold ${n.read ? "text-gray-700" : "text-gray-900"
-                                        }`}
-                                >
-                                    {n.title}
-                                </h3>
-                                {!n.read && (
-                                    <span className="w-2 h-2 bg-yellow-400 rounded-full mt-1"></span>
-                                )}
+                {/* Notifications list */}
+                <div className="flex flex-col divide-y divide-gray-100 bg-white rounded-xl border border-gray-100 shadow-sm">
+                    {notifications.map((n) => (
+                        <div
+                            key={n.id}
+                            className={`flex items-center gap-4 p-4 hover:bg-gray-50 transition-all duration-200 ${!n.read ? "bg-yellow-50" : ""
+                                }`}
+                        >
+                            {/* Icon */}
+                            <div className="w-12 h-12 flex items-center justify-center rounded-full bg-gray-100 flex-shrink-0">
+                                {getIconByType(n.type)}
                             </div>
-                            <p className="text-sm text-gray-600 mt-1">{n.message}</p>
-                            <span className="text-xs text-gray-400 mt-1 block">{n.time}</span>
+
+                            {/* Content */}
+                            <div className="flex-1">
+                                <div className="flex items-start justify-between">
+                                    <h3
+                                        className={`text-sm font-semibold ${n.read ? "text-gray-700" : "text-gray-900"
+                                            }`}
+                                    >
+                                        {n.title}
+                                    </h3>
+                                    {!n.read && (
+                                        <span className="w-2 h-2 bg-yellow-400 rounded-full mt-1"></span>
+                                    )}
+                                </div>
+                                <p className="text-sm text-gray-600 mt-1">{n.message}</p>
+                                <span className="text-xs text-gray-400 mt-1 block">{n.time}</span>
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
-        </div>
+        </Content>
+
     )
 }
