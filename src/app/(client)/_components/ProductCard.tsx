@@ -21,20 +21,8 @@ const ProductCard = ({ item }: { item: Product }) => {
     return (
         <Link
             href={`/products/product-detail/${item.id}`}
-            className="group shadow-[2px_2px_0_#00000010] hover:shadow-[6px_6px_6px_#00000010] duration-300 w-[240px] h-[320px] relative rounded-[10px] overflow-hidden flex flex-col cursor-pointer"
+            className="group shadow-[2px_2px_0_#00000010] hover:shadow-[6px_6px_6px_#00000010] duration-300 w-[240px] h-[320px] rounded-[10px] overflow-hidden flex flex-col cursor-pointer"
         >
-
-            {/* Icon yêu thích */}
-            <div
-                onClick={handleToggleWishlistItem}
-                className="absolute right-4 top-4 z-50
-        opacity-0 group-hover:opacity-100
-        -translate-y-2 group-hover:translate-y-0
-        transition-all duration-300
-        active:scale-90 hover:scale-110 cursor-pointer"
-            >
-                {ICONS.HEART}
-            </div>
 
             {/* Ảnh sản phẩm */}
             <div className="relative w-full h-[200px] overflow-hidden">
@@ -63,7 +51,7 @@ const ProductCard = ({ item }: { item: Product }) => {
              translate-y-2 group-hover:translate-y-0
              transition-all duration-300"
                 >
-                    Add to Cart
+                    View detail
                 </Button>
 
             </div>

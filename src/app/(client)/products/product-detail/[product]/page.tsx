@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useState, useMemo } from "react";
+import { use, useState, useMemo, useEffect } from "react";
 import ImageGallery from "react-image-gallery";
 import "react-image-gallery/styles/css/image-gallery.css";
 import { Button } from "@/components/ui/button";
@@ -17,12 +17,16 @@ import { StarRating } from "@/components/rating/Rating";
 import convertAlias from "@/lib/convertAlias";
 import ProductCard from "@/app/(client)/_components/ProductCard";
 import { ICONS } from "@/constants/icon.enum";
+import { useToggleWishlistItem } from "@/hooks/queries/useWishlist";
 
 export default function ProductDetail({
     params,
 }: {
     params: Promise<{ product: string }>;
 }) {
+    const [isFavourite, setIsFavourite] = useState(false);
+
+    const { mutate: toggoleFavourite } = useToggleWishlistItem()
     const { data: products } = useProducts({})
     // ===== Data =====
     const { product } = use(params);
@@ -30,6 +34,20 @@ export default function ProductDetail({
     const { mutate: addItemToCart } = useAddToCart()
     // ===== State =====
     const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string>>({});
+    function handleToggleFavourite() {
+        toggoleFavourite(
+            { productId: Number(product) },
+            {
+                onSuccess: () => {
+                    setIsFavourite((prev) => !prev);
+                    toast.success(`${isFavourite ? "Removed from" : "Added to"} favourite: ${productDetail?.name}`);
+                },
+                onError: (err) => {
+                    toast.error(`Ohh!!! ${err.message}`);
+                },
+            }
+        );
+    }
 
     // ===== Derived data =====
     const options = useMemo(() => {
@@ -54,6 +72,12 @@ export default function ProductDetail({
             })
         );
     }, [productDetail, selectedAttributes, options]);
+
+    useEffect(() => {
+        if (productDetail) {
+            setIsFavourite(false);
+        }
+    }, [productDetail]);
 
     if (!productDetail) return <p>Loading...</p>;
 
@@ -108,6 +132,7 @@ export default function ProductDetail({
             },
         })
     }
+
     // ===== Render =====
     return (
         <>
@@ -126,9 +151,15 @@ export default function ProductDetail({
 
                 {/* === Right: Product Info === */}
                 <div className="flex-1 relative">
-                    <div className="absolute top-0 right-0 p-2 rounded-full cursor-pointer">
-                        {ICONS.HEART}
+                    <div
+                        className="absolute top-0 right-0 p-2 rounded-full cursor-pointer"
+                        onClick={handleToggleFavourite}
+                    >
+                        <div className={isFavourite ? "text-red-500" : "text-gray-400"}>
+                            {ICONS.HEART}
+                        </div>
                     </div>
+
                     <div className="flex flex-col gap-4">
                         <p className="text-text-secondary font-medium text-xl">
                             {productDetail.brand.name}
