@@ -1,3 +1,4 @@
+'use client'
 import { AppSidebar } from "@/app/admin/_components/app-sidebar"
 import ContentHeader from "@/app/admin/_components/content-header"
 import ModeToggle from "@/components/dark-mode/mode-toggle"
@@ -7,8 +8,10 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from "@/components/ui/sidebar"
+import { useAuthInit } from "@/hooks/useAuthInit"
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+    useAuthInit()
     return (
         <SidebarProvider>
             <AppSidebar />

@@ -22,12 +22,15 @@ import { formatDateTimeWithAt } from "@/lib/formatDate"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { Loader } from "lucide-react"
+import { useDispatch } from "react-redux"
+import { setCredentials } from "@/store/authSlice"
 
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const dispatch = useDispatch()
   const router = useRouter()
   const [isNavigating, setIsNavigating] = useState(false);
 
@@ -37,7 +40,8 @@ export function LoginForm({
   })
   async function onSubmit(values: z.infer<typeof LoginSchema>) {
     login(values, {
-      onSuccess: () => {
+      onSuccess: ({ user }) => {
+        dispatch(setCredentials({ user: user }))
         toast.success("Login success", {
           description: formatDateTimeWithAt(new Date()),
         })

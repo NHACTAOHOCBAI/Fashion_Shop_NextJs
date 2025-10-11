@@ -15,11 +15,35 @@ import { ICONS } from "@/constants/icon.enum"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { LogOut } from "lucide-react"
+import { useDispatch, useSelector } from "react-redux"
+import { RootState } from "@/store"
+import convertAlias from "@/lib/convertAlias"
+import { useLogout } from "@/hooks/queries/useAuth"
+import { logout } from "@/store/authSlice"
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 
 export default function Header() {
+    const router = useRouter()
+    const dispatch = useDispatch()
+    const { user } = useSelector((state: RootState) => state.auth)
+    const { mutate: logOut } = useLogout()
     const { data: departmentSelections } = useDepartmentSelections()
     const [isScrolled, setIsScrolled] = React.useState(false)
-
+    const handleLogout = () => {
+        logOut(undefined, {
+            onSuccess: () => {
+                dispatch(logout()) // Xóa user trong Redux + localStorage
+                router.push("/")         // Quay về trang chủ
+                toast.success("Logout success")
+            },
+            onError: () => {
+                dispatch(logout())  // Vẫn xóa local dù API lỗi
+                router.push("/")
+                toast.error("Logout failed")
+            },
+        })
+    }
     React.useEffect(() => {
         const onScroll = () => {
             setIsScrolled(window.scrollY > 0) // cuộn xuống >0 thì true
@@ -90,54 +114,56 @@ export default function Header() {
                         </div>
                         {ICONS.CART}
                     </Link>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <div className="hover:scale-[0.9] transition-all duration-300 hover:opacity-70">
-                                {ICONS.MY_ACCOUNT}
-                            </div>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent
-                            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-                            align="end"
-                            sideOffset={4}
-                        >
-                            <DropdownMenuLabel className="p-0 font-normal">
-                                <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                                    <Avatar className="h-8 w-8 rounded-lg">
-                                        <AvatarImage />
-                                        <AvatarFallback className="rounded-lg">CN</AvatarFallback>
-                                    </Avatar>
-                                    <div className="grid flex-1 text-left text-sm leading-tight">
-                                        <span className="truncate font-medium">phuc</span>
-                                        <span className="truncate text-xs">email</span>
-                                    </div>
+                    {
+                        user && <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <div className="hover:scale-[0.9] transition-all duration-300 hover:opacity-70">
+                                    {ICONS.MY_ACCOUNT}
                                 </div>
-                            </DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuGroup>
-                                <DropdownMenuItem>
-                                    <Link className="w-full" href={'/my-account/profile'}>Profile</Link>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent
+                                className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+                                align="end"
+                                sideOffset={4}
+                            >
+                                <DropdownMenuLabel className="p-0 font-normal">
+                                    <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                                        <Avatar className="h-8 w-8 rounded-lg">
+                                            <AvatarImage src={user.avatar} />
+                                            <AvatarFallback className="rounded-lg">{convertAlias(user.fullName)}</AvatarFallback>
+                                        </Avatar>
+                                        <div className="grid flex-1 text-left text-sm leading-tight">
+                                            <span className="truncate font-medium">{user.fullName}</span>
+                                            <span className="truncate text-xs">{user.email}</span>
+                                        </div>
+                                    </div>
+                                </DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuGroup>
+                                    <DropdownMenuItem>
+                                        <Link className="w-full" href={'/my-account/profile'}>Profile</Link>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem>
+                                        <Link className="w-full" href={'/my-account/addresses'}>Addresses</Link>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem>
+                                        <Link className="w-full" href={'/my-account/orders'}>Orders</Link>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem>
+                                        <Link className="w-full" href={'/my-account/wishlist'}>Wishlist</Link>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem>
+                                        <Link className="w-full" href={'/my-account/notifications'}>Notifications</Link>
+                                    </DropdownMenuItem>
+                                </DropdownMenuGroup>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem onClick={() => handleLogout()}>
+                                    <LogOut />
+                                    Log out
                                 </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <Link className="w-full" href={'/my-account/addresses'}>Addresses</Link>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <Link className="w-full" href={'/my-account/orders'}>Orders</Link>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <Link className="w-full" href={'/my-account/wishlist'}>Wishlist</Link>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <Link className="w-full" href={'/my-account/notifications'}>Notifications</Link>
-                                </DropdownMenuItem>
-                            </DropdownMenuGroup>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem>
-                                <LogOut />
-                                Log out
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    }
                 </div>
             </div>
         </header>

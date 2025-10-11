@@ -1,8 +1,13 @@
-import { getMyProfile, login, updateMyProfile } from "@/services/auth.service";
+import { getMyProfile, login, logout, updateMyProfile } from "@/services/auth.service";
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 const useLogin = () => {
     return useMutation({
         mutationFn: login,
+    });
+}
+const useLogout = () => {
+    return useMutation({
+        mutationFn: logout,
     });
 }
 const useMyProfile = () =>
@@ -19,4 +24,4 @@ const useUpdateMyProfile = () => {
         },
     });
 }
-export { useLogin, useMyProfile, useUpdateMyProfile }
+export { useLogin, useMyProfile, useUpdateMyProfile, useLogout }
