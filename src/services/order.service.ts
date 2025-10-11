@@ -8,4 +8,8 @@ const getMyOrders = async (params: QueryParams) => {
     const response = await axiosInstance.get('/orders/me', { params }) as GetAllResponse<Order>
     return response.data
 }
-export { placeOrder, getMyOrders }
+const getMyOrderById = async (id: number) => {
+    const response = await axiosInstance.get(`/orders/me/${id}`) as { data: Order }
+    return response.data
+}
+export { placeOrder, getMyOrders, getMyOrderById }

@@ -17,7 +17,7 @@ interface Order {
 interface OrderItem {
     id: number;
     order: Order;
-    variant: ProductVariant;
+    variant: Variant;
     quantity: number;
     price: number;
     createdAt: string;
