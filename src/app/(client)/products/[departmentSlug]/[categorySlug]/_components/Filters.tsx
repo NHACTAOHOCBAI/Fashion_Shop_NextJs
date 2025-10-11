@@ -12,26 +12,43 @@ import { useState } from "react"
 
 interface FiltersProps {
     attributeCategories: AttributeCategory[]
+    onFilterChange: (filters: {
+        selectedValues: Record<string, number[]>
+        priceRange: [number, number]
+    }) => void
 }
-const Filters = ({ attributeCategories }: FiltersProps) => {
 
+const Filters = ({ attributeCategories, onFilterChange }: FiltersProps) => {
     const [range, setRange] = useState<[number, number]>([0, 100]);
-    const filterFields = convertAttributeCategories(attributeCategories)
-    console.log(filterFields)
-    // State lưu tất cả giá trị được chọn: { Size: string[], Color: string[] }
-    const [selectedValues, setSelectedValues] = useState<Record<string, string[]>>({})
+    const [selectedValues, setSelectedValues] = useState<Record<string, number[]>>({});
+    const filterFields = convertAttributeCategories(attributeCategories);
 
-    const handleToggle = (attrName: string, val: string) => {
-        setSelectedValues(prev => {
-            const current = prev[attrName] || []
-            const isChecked = current.includes(val)
-            return {
+    const handleToggle = (attrName: string, val: number) => {
+        setSelectedValues((prev) => {
+            const current = prev[attrName] || [];
+            const isChecked = current.includes(val);
+
+            // Tạo bản sao mới, giữ lại toàn bộ previous
+            const newValues = {
                 ...prev,
                 [attrName]: isChecked
-                    ? current.filter(v => v !== val)
-                    : [...current, val]
-            }
-        })
+                    ? current.filter((v) => v !== val) // bỏ nếu bỏ chọn
+                    : [...current, val], // thêm nếu chọn mới
+            };
+
+            // Gọi callback filterChange sau khi có newValues
+            onFilterChange({
+                selectedValues: newValues,
+                priceRange: range,
+            });
+            return newValues;
+        });
+    };
+
+
+    const handlePriceChange = (value: [number, number]) => {
+        setRange(value)
+        onFilterChange({ selectedValues, priceRange: value })
     }
 
     return (
@@ -44,6 +61,7 @@ const Filters = ({ attributeCategories }: FiltersProps) => {
                     onToggle={handleToggle}
                 />
             )}
+
             <div className="flex flex-col gap-2 bg-[#F6F7F8] p-[10px] rounded">
                 <div className="flex items-center justify-between gap-4 px-4">
                     <h4 className="text-sm font-semibold">PRICES</h4>
@@ -56,16 +74,13 @@ const Filters = ({ attributeCategories }: FiltersProps) => {
                     defaultValue={[0, 100]}
                     max={100}
                     step={1}
-                    onValueChange={(value) => setRange(value as [number, number])}
+                    onValueChange={handlePriceChange}
                 />
             </div>
-            {/* Bạn có thể log ra để test */}
-            <pre className="mt-4 bg-gray-100 p-2 text-sm">
-                {JSON.stringify(selectedValues, null, 2)}
-            </pre>
         </div>
     )
 }
+
 
 interface filterItemProps {
     item: {
@@ -75,8 +90,8 @@ interface filterItemProps {
             value: string;
         }[];
     };
-    selected: string[];
-    onToggle: (attrName: string, val: string) => void;
+    selected: number[];
+    onToggle: (attrName: string, val: number) => void;
 }
 
 const FilterItem = ({ item, selected, onToggle }: filterItemProps) => {
@@ -103,14 +118,14 @@ const FilterItem = ({ item, selected, onToggle }: filterItemProps) => {
             <CollapsibleContent className="flex flex-col gap-2 px-4">
                 {item.values.map((value) => {
                     const id = `${item.attributeName}-${value.id}`
-                    const isChecked = selected.includes(value.value)
+                    const isChecked = selected.includes(value.id)
                     return (
                         <div key={id} className="flex items-center gap-3">
                             <Checkbox
                                 id={id}
                                 checked={isChecked}
                                 onCheckedChange={() =>
-                                    onToggle(item.attributeName, value.value)
+                                    onToggle(item.attributeName, value.id)
                                 }
                             />
                             <Label

@@ -5,3 +5,7 @@ interface QueryParams {
     sortOrder?: "ASC" | "DESC";
     sortBy?: string;
 }
+interface ProductQueryParams extends QueryParams {
+    categoryId?: number;
+    attributeCategoryIds?: number[]
+}

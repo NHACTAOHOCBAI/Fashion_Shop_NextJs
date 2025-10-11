@@ -16,6 +16,7 @@ import { AvatarFallback } from "@radix-ui/react-avatar";
 import { StarRating } from "@/components/rating/Rating";
 import convertAlias from "@/lib/convertAlias";
 import ProductCard from "@/app/(client)/_components/ProductCard";
+import { ICONS } from "@/constants/icon.enum";
 
 export default function ProductDetail({
     params,
@@ -124,7 +125,10 @@ export default function ProductDetail({
                 </div>
 
                 {/* === Right: Product Info === */}
-                <div className="flex-1">
+                <div className="flex-1 relative">
+                    <div className="absolute top-0 right-0 p-2 rounded-full cursor-pointer">
+                        {ICONS.HEART}
+                    </div>
                     <div className="flex flex-col gap-4">
                         <p className="text-text-secondary font-medium text-xl">
                             {productDetail.brand.name}

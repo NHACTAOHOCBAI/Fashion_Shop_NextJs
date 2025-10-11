@@ -1,9 +1,19 @@
 import axiosInstance from "@/config/axios"
 
-const getProducts = async (params: QueryParams) => {
-    const response = await axiosInstance.get('/products', { params }) as GetAllResponse<Product>
-    return response.data
-}
+const getProducts = async (params: ProductQueryParams) => {
+    const query = {
+        ...params,
+        ...(params.attributeCategoryIds?.length
+            ? { attributeCategoryIds: params.attributeCategoryIds.join(',') }
+            : {}),
+    };
+
+    const response = await axiosInstance.get('/products', { params: query }) as GetAllResponse<Product>;
+    return response.data;
+};
+
+
+
 const createProduct = async (data: {
     name: string,
     description?: string,

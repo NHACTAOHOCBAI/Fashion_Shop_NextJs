@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from "react"
+import { use, useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
@@ -19,6 +19,7 @@ export default function CheckoutPage() {
     const router = useRouter()
     const [items, setItems] = useState<{ variant: Variant; quantity: number }[]>([])
     const { data: myAddress } = useMyAddress()
+    const [note, setNote] = useState("")
     const [selectedAddress, setSelectedAddress] = useState<Address | null>(null)
 
     const subtotal = items.reduce((sum, item) => sum + item.variant.product.price * item.quantity, 0)
@@ -47,10 +48,10 @@ export default function CheckoutPage() {
                         quantity: item.quantity
                     }
                 }),
-
+                note: note
             }, {
                 onSuccess: () => {
-                    router.push('/success')
+                    router.push('checkout/success')
                 },
                 onError: (error: Error) => {
                     toast.error(`Ohh!!! ${error.message}`, {
@@ -173,7 +174,18 @@ export default function CheckoutPage() {
                     </RadioGroup>
                 </CardContent>
             </Card>
-
+            <Card className="rounded-2xl border border-gray-100 shadow-sm p-0">
+                <CardHeader className="p-5 bg-[#FFF9E8] rounded-t-2xl">
+                    <CardTitle className="text-lg font-semibold">Order Note</CardTitle>
+                </CardHeader>
+                <CardContent className="p-5">
+                    <textarea
+                        placeholder="Leave a note for your order (optional)..."
+                        className="w-full min-h-[100px] p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FFD470] transition"
+                        onChange={(e) => setNote(e.target.value)}
+                    />
+                </CardContent>
+            </Card>
             {/* Order Summary */}
             <Card className="rounded-2xl border border-gray-100 shadow-md">
                 <CardContent className="p-5 space-y-4">

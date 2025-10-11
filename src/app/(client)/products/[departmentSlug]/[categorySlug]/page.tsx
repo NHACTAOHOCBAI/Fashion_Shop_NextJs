@@ -8,21 +8,54 @@ import { useGetCategoryBySlug } from "@/hooks/queries/useCategory"
 import { useProducts } from "@/hooks/queries/useProduct"
 import slugToTitle from "@/lib/slugToTitle"
 import Image from "next/image"
-import { use } from "react"
+import { use, useState, useMemo } from "react"
+import { fi } from "zod/v4/locales"
 
 const Products = ({
     params,
 }: {
     params: Promise<{ departmentSlug: string, categorySlug: string }>
 }) => {
+    const [page, setPage] = useState(1)
+
     const { categorySlug, departmentSlug } = use(params)
-    const { data: products } = useProducts({})
     const { data: category } = useGetCategoryBySlug(categorySlug)
-    console.log(category?.attributeCategories)
+
+    // 🧩 State để lưu filters được chọn từ component Filters
+    const [filters, setFilters] = useState<{
+        selectedValues: Record<string, number[]>,
+        priceRange: [number, number]
+    }>({
+        selectedValues: {},
+        priceRange: [0, 100],
+    })
+
+    // ✅ Chuẩn bị query params gửi API
+    const queryParams = useMemo(() => {
+        const attributeCategoryIds: number[] =
+            Object.keys(filters.selectedValues).length > 0
+                ? Object.values(filters.selectedValues).flat()
+                : []
+        return {
+            categoryId: category?.id || 0,
+            attributeCategoryIds,
+            // minPrice: filters.priceRange[0],
+            // maxPrice: filters.priceRange[1],
+            page, // 👈 thêm dòng này
+            limit: 9 // giới hạn mỗi trang 9 sản phẩm
+        }
+    }, [filters, category, page])
+
+
+    const { data: products } = useProducts(queryParams)
+
     return (
         <div className="flex gap-[20px]">
             <div className="w-[300px] ">
-                <Filters attributeCategories={category?.attributeCategories || []} />
+                <Filters
+                    attributeCategories={category?.attributeCategories || []}
+                    onFilterChange={setFilters}
+                />
             </div>
             <div className="flex-[1]">
                 <div className="pb-[20px]">
@@ -37,10 +70,11 @@ const Products = ({
                             </BreadcrumbItem>
                         </BreadcrumbList>
                     </Breadcrumb>
+
                     <div className="rounded relative bg-app-secondary min-h-[200px] px-[60px] py-[20px] text-white mt-[10px]">
                         <div className="w-[500px]">
                             <p className="font-bold text-2xl">{slugToTitle(categorySlug)}</p>
-                            <p className=" mt-[5px] text-[13px]">Step into effortless style with our Classic Comfort Sandals, designed for all–day wear. Crafted with a soft yet durable sole and adjustable straps, these sandals provide a secure fit while keeping your feet cool and comfortable. Whether you’re strolling along the beach, exploring the city, or enjoying a casual outing, this versatile pair perfectly balances fashion and function.</p>
+                            <p className=" mt-[5px] text-[13px]">{category?.description}</p>
                         </div>
                         <Image
                             alt="category image"
@@ -51,49 +85,71 @@ const Products = ({
                         />
                     </div>
                 </div>
-                <Select >
+
+                <Select>
                     <SelectTrigger className="w-[180px] ml-auto">
                         <SelectValue placeholder="Sort By" />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
                             <SelectLabel>Sort by</SelectLabel>
-                            <SelectItem value="apple">Best Selling</SelectItem>
-                            <SelectItem value="banana">Newest Arrivals</SelectItem>
-                            <SelectItem value="blueberry">Price: Low to High</SelectItem>
-                            <SelectItem value="blueberry">Price: High to Low</SelectItem>
+                            <SelectItem value="bestselling">Best Selling</SelectItem>
+                            <SelectItem value="newest">Newest Arrivals</SelectItem>
+                            <SelectItem value="lowtohigh">Price: Low to High</SelectItem>
+                            <SelectItem value="hightolow">Price: High to Low</SelectItem>
                         </SelectGroup>
                     </SelectContent>
                 </Select>
-                <div className="grid grid-cols-3  gap-y-[10px] mt-[10px]">
-                    {products?.data.map((product) =>
+
+                <div className="grid grid-cols-3 gap-y-[10px] mt-[10px]">
+                    {products?.data?.map((product) =>
                         <ProductCard key={product.id} item={product} />
                     )}
                 </div>
+
                 <Pagination className="mt-[10px]">
                     <PaginationContent>
                         <PaginationItem>
-                            <PaginationPrevious href="#" />
+                            <PaginationPrevious
+                                href="#"
+                                onClick={(e) => {
+                                    e.preventDefault()
+                                    if (page > 1) setPage(page - 1)
+                                }}
+                            />
                         </PaginationItem>
+
+                        {Array.from(
+                            { length: Math.ceil((products?.pagination?.total || 0) / (products?.pagination?.limit || 1)) },
+                            (_, i) => (
+                                <PaginationItem key={i}>
+                                    <PaginationLink
+                                        href="#"
+                                        isActive={page === i + 1}
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                            setPage(i + 1)
+                                        }}
+                                    >
+                                        {i + 1}
+                                    </PaginationLink>
+                                </PaginationItem>
+                            )
+                        )}
+
                         <PaginationItem>
-                            <PaginationLink href="#">1</PaginationLink>
-                        </PaginationItem>
-                        <PaginationItem>
-                            <PaginationLink href="#" isActive>
-                                2
-                            </PaginationLink>
-                        </PaginationItem>
-                        <PaginationItem>
-                            <PaginationLink href="#">3</PaginationLink>
-                        </PaginationItem>
-                        <PaginationItem>
-                            <PaginationEllipsis />
-                        </PaginationItem>
-                        <PaginationItem>
-                            <PaginationNext href="#" />
+                            <PaginationNext
+                                href="#"
+                                onClick={(e) => {
+                                    e.preventDefault()
+                                    if (page < Math.ceil((products?.pagination?.total || 0) / (products?.pagination?.limit || 1)))
+                                        setPage(page + 1)
+                                }}
+                            />
                         </PaginationItem>
                     </PaginationContent>
                 </Pagination>
+
             </div>
         </div>
     )
