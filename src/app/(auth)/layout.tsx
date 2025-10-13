@@ -3,7 +3,6 @@ import ModeToggle from "@/components/dark-mode/mode-toggle";
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
     return (
         <div >
-
             <div className="absolute h-16 flex items-center justify-end w-full px-4 border-b ">
                 <ModeToggle />
             </div>

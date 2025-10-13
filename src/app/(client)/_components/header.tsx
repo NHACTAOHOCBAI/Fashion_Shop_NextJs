@@ -59,7 +59,9 @@ export default function Header() {
       `}
         >
             <div className="flex items-center mx-auto w-[1200px] transition-all duration-300 justify-between">
-                <div className="font-bold">LOGO HERE</div>
+                <div className="font-bold">LOGO HERE
+                    <Link href={'/login'}>Login</Link>
+                </div>
 
                 <NavigationMenu viewport={false} className="ml-[30px]">
                     <NavigationMenuList>

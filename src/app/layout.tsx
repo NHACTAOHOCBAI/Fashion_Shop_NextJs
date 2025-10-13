@@ -5,6 +5,7 @@ import { ReactQueryProviders } from "@/config/react-query.provider";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/config/theme.provider";
 import { ReduxProvider } from "@/providers/reduxProvider";
+import LoadingOverlay from "@/components/loading_overlay/loading-overlay";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,6 +41,7 @@ export default function RootLayout({
           >
             <Toaster position="top-center" />
             <ReactQueryProviders>
+              <LoadingOverlay />
               {children}
             </ReactQueryProviders>
           </ThemeProvider>
