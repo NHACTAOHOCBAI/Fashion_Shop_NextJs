@@ -47,6 +47,9 @@ export default function Products() {
                     <Plus />
                     Add Product
                 </Button>
+                <Button>
+                    Test Notification
+                </Button>
             </CrudTable>
         </>
     )

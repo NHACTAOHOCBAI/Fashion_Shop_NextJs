@@ -14,7 +14,7 @@ import { useDepartmentSelections } from "@/hooks/queries/useDepartment"
 import { ICONS } from "@/constants/icon.enum"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { LogOut } from "lucide-react"
+import { Bell, LogOut } from "lucide-react"
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "@/store"
 import convertAlias from "@/lib/convertAlias"
@@ -22,6 +22,7 @@ import { useLogout } from "@/hooks/queries/useAuth"
 import { logout } from "@/store/authSlice"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
+import NotificationBell from "@/app/(client)/_components/NotifcationBell"
 
 export default function Header() {
     const router = useRouter()
@@ -60,7 +61,6 @@ export default function Header() {
         >
             <div className="flex items-center mx-auto w-[1200px] transition-all duration-300 justify-between">
                 <div className="font-bold">LOGO HERE
-                    <Link href={'/login'}>Login</Link>
                 </div>
 
                 <NavigationMenu viewport={false} className="ml-[30px]">
@@ -110,6 +110,7 @@ export default function Header() {
                     </NavigationMenuList>
                 </NavigationMenu>
                 <div className="flex items-center gap-[20px]">
+                    <NotificationBell />
                     <Link href="/my-cart" className="relative p-[10px] hover:scale-[0.9] transition-all duration-300 hover:opacity-70">
                         <div className="right-0 top-0 absolute text-[12px] rounded-full bg-red-400 w-[20px] h-[20px] flex items-center justify-center">
                             3

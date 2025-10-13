@@ -24,6 +24,7 @@ import { useState } from "react"
 import { Loader } from "lucide-react"
 import { useDispatch } from "react-redux"
 import { setCredentials } from "@/store/authSlice"
+import { connectSocket } from "@/lib/socket"
 
 
 export function LoginForm({
@@ -44,6 +45,8 @@ export function LoginForm({
           description: formatDateTimeWithAt(new Date()),
         })
         setIsNavigating(true)  // 👈 bật trạng thái loading
+
+        connectSocket(user.id);
         router.push('/admin/users/view-users')
       },
       onError: (error) => {
