@@ -107,6 +107,16 @@ const data = {
         },
       ],
     },
+     {
+      title: "Orders",
+      icon: ICONS.ORDERS,
+      items: [
+        {
+          title: "View Orders",
+          url: "/admin/orders/view-orders",
+        }
+      ],
+    },
   ],
 }
 

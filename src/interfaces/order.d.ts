@@ -6,7 +6,7 @@ interface Order {
     province: string;
     district: string;
     commune: string;
-    status: string;
+    status: OrderStatus;
     totalAmount: number;
     note: string;
     user: User;

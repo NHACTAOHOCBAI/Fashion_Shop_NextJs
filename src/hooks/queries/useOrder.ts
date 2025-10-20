@@ -1,5 +1,5 @@
 
-import { getMyOrderById, getMyOrders, placeOrder } from '@/services/order.service';
+import { cancelOrder, cancelOrders, getMyOrderById, getMyOrders, getOrders, placeOrder, updateOrder } from '@/services/order.service';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 const useMyOrders = (params: QueryParams) =>
     useQuery({
@@ -20,4 +20,36 @@ const usePlaceOrder = () => {
         },
     });
 }
-export { useMyOrders, usePlaceOrder, useMyOrderById }
+const useOrders = (params: QueryParams) =>
+    useQuery({
+        queryKey: ['orders', params],
+        queryFn: () => getOrders(params),
+    });
+const useUpdateOrder = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: updateOrder,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['orders'] });
+        },
+    });
+}
+const useDeleteOrders = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: cancelOrders,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['orders'] });
+        },
+    });
+}
+const useDeleteOrder = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: cancelOrder,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['orders'] });
+        },
+    });
+}
+export { useMyOrders, usePlaceOrder, useMyOrderById, useOrders, useUpdateOrder, useDeleteOrders, useDeleteOrder }

@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import axiosInstance from "@/config/axios"
+import { AxiosResponse } from "axios"
 
 const placeOrder = async (data: { addressId: number, note?: string, items: { variantId: number, quantity: number }[] }) => {
     const response = await axiosInstance.post('/orders', data)
@@ -12,4 +14,19 @@ const getMyOrderById = async (id: number) => {
     const response = await axiosInstance.get(`/orders/me/${id}`) as { data: Order }
     return response.data
 }
-export { placeOrder, getMyOrders, getMyOrderById }
+const getOrders = async (params: QueryParams) => {
+    const response = await axiosInstance.get('/orders/all', { params }) as GetAllResponse<Order>
+    return response.data
+}
+const updateOrder = async ({ id, data }: { id: number, data: { status: string } }) => {
+    const response = await axiosInstance.patch(`/orders/${id}/status`, data)
+    return response.data
+}
+const cancelOrders = async (ids: { ids: number[] }) => {
+    console.log("Cancel orders")
+    return {} as Promise<AxiosResponse<any, any>>
+}
+const cancelOrder = async (id: number) => {
+    console.log("Cancel order")
+}
+export { placeOrder, getMyOrders, getMyOrderById, getOrders, updateOrder, cancelOrders, cancelOrder }
