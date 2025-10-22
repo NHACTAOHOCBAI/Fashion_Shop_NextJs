@@ -44,7 +44,12 @@ export const categoryColumns = (
       enableSorting: false,
       enableHiding: false,
     },
-
+    {
+      accessorKey: "id",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="ID" />
+      ),
+    },
     {
       accessorKey: "Image",
       cell: ({ row }) => {
@@ -93,13 +98,13 @@ export const categoryColumns = (
       },
     },
     {
-      accessorKey: "createdAt",
+      accessorKey: "updatedAt",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Created At" />
+        <DataTableColumnHeader column={column} title="Updated At" />
       ),
       cell: ({ row }) => {
-        const createdAt = row.original.createdAt;
-        return shorthandFormatDateTime(new Date(createdAt));
+        const updatedAt = row.original.updatedAt;
+        return shorthandFormatDateTime(new Date(updatedAt));
       },
     },
     // ✅ Hành động
