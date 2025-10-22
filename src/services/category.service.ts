@@ -8,6 +8,10 @@ const getCategoryBySlug = async (slug: string) => {
     const response = await axiosInstance.get(`/categories/slugs/${slug}`)
     return response.data as Category
 }
+const getCategoryById = async (id: number) => {
+    const response = await axiosInstance.get(`/categories/${id}`)
+    return response.data as Category
+}
 const getCategorySelection = async () => {
     const response = await axiosInstance.get('/categories') as GetAllResponse<Category>
     return response.data.data
@@ -66,4 +70,4 @@ const updateCategory = async ({ id, data }: {
     })
     return response;
 }
-export { createCategory, deleteCategories, deleteCategory, getCategories, updateCategory, getCategorySelection, getCategoryBySlug }
+export { createCategory, deleteCategories, deleteCategory, getCategories, updateCategory, getCategorySelection, getCategoryBySlug ,getCategoryById}

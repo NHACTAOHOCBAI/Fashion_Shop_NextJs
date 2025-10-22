@@ -8,7 +8,7 @@ interface Category {
     updatedAt: string;
     isActive: boolean
     description?: string;
-    department: Departmentl
+    department: Department
     attributeCategories: AttributeCategory[]
 }
 interface AttributeCategory {

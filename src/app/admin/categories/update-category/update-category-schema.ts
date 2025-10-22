@@ -1,6 +1,6 @@
 import z from "zod";
 
-const CreateCategorySchema = z.object({
+const UpdateCategorySchema = z.object({
   name: z.string("Category name is required"),
   description: z.string().optional(),
   image: z
@@ -19,4 +19,4 @@ const CreateCategorySchema = z.object({
     .optional(), // Cho phép category không có attribute nào
 });
 
-export default CreateCategorySchema;
+export default UpdateCategorySchema;

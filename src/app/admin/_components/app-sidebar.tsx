@@ -1,17 +1,16 @@
-"use client"
+"use client";
 
-import * as React from "react"
-
+import * as React from "react";
 
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarRail,
-} from "@/components/ui/sidebar"
-import { NavMain } from "@/app/admin/_components/nav-main"
-import { NavUser } from "@/app/admin/_components/nav-user"
-import { ICONS } from "@/constants/icon.enum"
+} from "@/components/ui/sidebar";
+import { NavMain } from "@/app/admin/_components/nav-main";
+import { NavUser } from "@/app/admin/_components/nav-user";
+import { ICONS } from "@/constants/icon.enum";
 
 // This is sample data.
 const data = {
@@ -107,18 +106,18 @@ const data = {
         },
       ],
     },
-     {
+    {
       title: "Orders",
       icon: ICONS.ORDERS,
       items: [
         {
           title: "View Orders",
           url: "/admin/orders/view-orders",
-        }
+        },
       ],
     },
   ],
-}
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
@@ -131,5 +130,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

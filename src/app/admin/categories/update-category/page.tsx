@@ -1,14 +1,23 @@
 "use client";
 
-import CreateCategorySchema from "@/app/admin/categories/create-category/create-category-schema";
-import { ImageUpload } from "@/components/image-upload/image-upload";
-import { Button } from "@/components/ui/button";
+import { useCallback, useEffect, useState } from "react";
+import { useForm, useFieldArray } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import { X } from "lucide-react";
+
+import { useUpdateCategory } from "@/hooks/queries/useCategory";
+import { useDepartmentSelections } from "@/hooks/queries/useDepartment";
+import { useAttributeSelections } from "@/hooks/queries/useAttribute";
+import { formatDateTimeWithAt } from "@/lib/formatDate";
+
 import {
   Card,
-  CardAction,
-  CardContent,
   CardHeader,
   CardTitle,
+  CardContent,
+  CardAction,
 } from "@/components/ui/card";
 import {
   Form,
@@ -19,30 +28,26 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
-  SelectContent,
-  SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectContent,
+  SelectItem,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { ImageUpload } from "@/components/image-upload/image-upload";
 import { Placeholder } from "@/constants/placeholder.num";
-import { useAttributeSelections } from "@/hooks/queries/useAttribute";
-import { useCreateCategory } from "@/hooks/queries/useCategory";
-import { useDepartmentSelections } from "@/hooks/queries/useDepartment";
-import { formatDateTimeWithAt } from "@/lib/formatDate";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { X } from "lucide-react";
-import React from "react";
-import { useFieldArray, useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { z } from "zod";
+import UpdateCategorySchema from "@/app/admin/categories/update-category/update-category-schema";
+import { useInitializeImage } from "@/hooks/useInitializeImage";
 
-export default function CreateCategory() {
-  const { mutate: createItem, isPending } = useCreateCategory();
-  const form = useForm<z.infer<typeof CreateCategorySchema>>({
-    resolver: zodResolver(CreateCategorySchema),
+const UpdateCategory = () => {
+  const [updatedItem, setUpdatedItem] = useState<Category>();
+  const { mutate: updateCategory, isPending } = useUpdateCategory();
+  const { fileArray } = useInitializeImage(updatedItem?.imageUrl);
+  const form = useForm<z.infer<typeof UpdateCategorySchema>>({
+    resolver: zodResolver(UpdateCategorySchema),
     defaultValues: {
       name: "",
       description: "",
@@ -64,25 +69,52 @@ export default function CreateCategory() {
     value: department.id,
     label: department.name,
   }));
+
   const attributeSelections = attributeData?.map((attribute) => ({
     value: attribute.id,
     label: attribute.name,
   }));
 
-  function onSubmit(values: z.infer<typeof CreateCategorySchema>) {
+  const resetForm = useCallback(async () => {
+    if (updatedItem)
+      form.reset({
+        image: fileArray,
+        name: updatedItem.name,
+        description: updatedItem.description || "",
+        departmentId: String(updatedItem.department?.id),
+        attributes:
+          updatedItem.attributeCategories?.map((ac) => ({
+            attributeId: ac.attribute.id,
+            values: [ac.value],
+          })) || [],
+      });
+  }, [form, updatedItem, fileArray]);
+
+  useEffect(() => {
+    const data = localStorage.getItem("updatedCategory");
+    const updatedItem: Category = JSON.parse(data || "");
+    setUpdatedItem(updatedItem);
+  }, []);
+  const handleCancel = () => form.reset();
+
+  function onSubmit(values: z.infer<typeof UpdateCategorySchema>) {
     const attributes = values.attributes?.flatMap((attr) =>
       attr.values.map((v: string) => ({
         attributeId: attr.attributeId,
         value: v,
       }))
     );
-    createItem(
+
+    updateCategory(
       {
-        name: values.name,
-        image: values.image[0],
-        departmentId: Number(values.departmentId),
-        description: values.description,
-        attributes: attributes || [],
+        id: 1,
+        data: {
+          name: values.name,
+          image: values.image[0],
+          departmentId: Number(values.departmentId),
+          description: values.description,
+          attributes: attributes || [],
+        },
       },
       {
         onSuccess: () => {
@@ -91,31 +123,27 @@ export default function CreateCategory() {
           });
         },
         onError: (error) => {
-          toast.error(`Ohh!!! ${error.message}`, {
+          toast.error(`Update failed: ${error.message}`, {
             description: formatDateTimeWithAt(new Date()),
           });
-        },
-        onSettled: () => {
-          handleCancel();
         },
       }
     );
   }
-
-  const handleCancel = () => {
-    form.reset();
-  };
-
+  useEffect(() => {
+    resetForm();
+  }, [resetForm]);
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Create Category</CardTitle>
+        <CardTitle>Update Category</CardTitle>
       </CardHeader>
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="flex gap-[10px]">
-              <div className="flex-[2]  space-y-2">
+              {/* Left side */}
+              <div className="flex-[2] space-y-2">
                 {/* Image Upload */}
                 <FormField
                   control={form.control}
@@ -125,7 +153,7 @@ export default function CreateCategory() {
                       <FormControl>
                         <ImageUpload
                           field={field}
-                          label="Upload Images"
+                          label="Upload Image"
                           numOfImage={1}
                         />
                       </FormControl>
@@ -203,7 +231,7 @@ export default function CreateCategory() {
                 />
               </div>
 
-              {/* Variants */}
+              {/* Right side (Attributes) */}
               <div className="flex-[1] space-y-2">
                 <FormLabel>Attributes</FormLabel>
                 {fields.map((field, index) => (
@@ -213,14 +241,16 @@ export default function CreateCategory() {
                       <CardAction>
                         <Button
                           type="button"
-                          variant={"ghost"}
+                          variant="ghost"
                           onClick={() => remove(index)}
+                          disabled={isPending}
                         >
                           <X />
                         </Button>
                       </CardAction>
                     </CardHeader>
                     <CardContent className="space-y-4">
+                      {/* Attribute Name */}
                       <FormField
                         control={form.control}
                         name={`attributes.${index}.attributeId`}
@@ -238,9 +268,7 @@ export default function CreateCategory() {
                                 }
                               >
                                 <SelectTrigger className="w-full">
-                                  <SelectValue
-                                    placeholder={Placeholder.CategoryParent}
-                                  />
+                                  <SelectValue placeholder="Select attribute" />
                                 </SelectTrigger>
                                 <SelectContent>
                                   {attributeSelections?.map((option) => (
@@ -258,6 +286,8 @@ export default function CreateCategory() {
                           </FormItem>
                         )}
                       />
+
+                      {/* Attribute Values */}
                       <FormField
                         control={form.control}
                         name={`attributes.${index}.values`}
@@ -273,7 +303,7 @@ export default function CreateCategory() {
                                     ? field.value.join(", ")
                                     : field.value || ""
                                 }
-                                onChange={(e) => field.onChange(e.target.value)} // Raw string input
+                                onChange={(e) => field.onChange(e.target.value)}
                                 onBlur={(e) => {
                                   const values = e.target.value
                                     .split(",")
@@ -281,7 +311,7 @@ export default function CreateCategory() {
                                     .filter((v) => v);
                                   field.onChange(
                                     values.length > 0 ? values : [""]
-                                  ); // Transform on blur
+                                  );
                                 }}
                                 disabled={isPending}
                               />
@@ -293,6 +323,7 @@ export default function CreateCategory() {
                     </CardContent>
                   </Card>
                 ))}
+
                 <Button
                   className="w-full"
                   type="button"
@@ -304,16 +335,17 @@ export default function CreateCategory() {
                 </Button>
               </div>
             </div>
+
             {/* Actions */}
             <div className="flex justify-end gap-3 mt-6">
               <Button onLoading={isPending} type="submit">
-                Create
+                Update
               </Button>
               <Button
                 disabled={isPending}
                 type="button"
                 onClick={handleCancel}
-                variant={"outline"}
+                variant="outline"
               >
                 Cancel
               </Button>
@@ -323,4 +355,6 @@ export default function CreateCategory() {
       </CardContent>
     </Card>
   );
-}
+};
+
+export default UpdateCategory;
