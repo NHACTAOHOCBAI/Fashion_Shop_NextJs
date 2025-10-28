@@ -18,7 +18,8 @@ import { MoreHorizontal } from "lucide-react";
 
 export const productColumns = (
   handleUpdateBtn: (item: Product) => void,
-  handleDeleteItem: (id: number) => void
+  handleDeleteItem: (id: number) => void,
+  handleViewDetail: (item: Product) => void
 ): ColumnDef<Product>[] => {
   return [
     {
@@ -120,10 +121,8 @@ export const productColumns = (
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(String(item.id))}
-              >
-                Copy ID
+              <DropdownMenuItem onClick={() => handleViewDetail(item)}>
+                Detail Product
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => handleUpdateBtn(item)}>
