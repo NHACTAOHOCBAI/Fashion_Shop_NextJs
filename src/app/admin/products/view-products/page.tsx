@@ -22,7 +22,8 @@ export default function Products() {
     localStorage.setItem("detailProduct", JSON.stringify(item));
   };
   const handleUpdateBtn = (item: Product) => {
-    router.push(`/admin/products/update-product/${item.id}`);
+    router.push(`/admin/products/update-product`);
+    localStorage.setItem("updatedProduct", JSON.stringify(item));
   };
   const handleDeleteItem = (id: number) => {
     deleteItem(
