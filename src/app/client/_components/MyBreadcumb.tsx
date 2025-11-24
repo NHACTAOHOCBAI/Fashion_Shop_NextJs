@@ -17,7 +17,7 @@ const MyBreadcrumb = ({ data }: MyBreadcumbProps) => {
           <React.Fragment key={index}>
             <span
               className={`
-                text-[16px] font-medium 
+                text-[18px] font-medium 
                 ${isLast ? "text-[#40BFFF]" : "cursor-pointer"}
               `}
             >
