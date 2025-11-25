@@ -1,4 +1,5 @@
 "use client";
+import MyTag from "@/app/client/_components/MyTag";
 import QuantitySelector from "@/app/client/products/_components/MyCount";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Trash2 } from "lucide-react";
@@ -185,7 +186,7 @@ const CartItem: React.FC<CartItemProps> = ({
             <p>{name}</p>
             <div className="flex gap-[17px] mt-[10px]">
               {attributes.map((attr) => (
-                <Tag key={attr} value={attr} />
+                <MyTag key={attr} value={attr} />
               ))}
             </div>
           </div>
@@ -200,14 +201,6 @@ const CartItem: React.FC<CartItemProps> = ({
 };
 
 // --- Các Component Phụ Khác (Giữ nguyên) ---
-
-const Tag = ({ value }: { value: string }) => {
-  return (
-    <div className="bg-[#FAFAFB] border-[#F6F7F8] border-[1px] text-[14px] font-light px-[18px] py-[4px] rounded-[5px]">
-      {value}
-    </div>
-  );
-};
 
 const DeleteButton = ({ onClick }: { onClick: () => void }) => {
   return (
