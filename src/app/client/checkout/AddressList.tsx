@@ -1,12 +1,14 @@
 import MyTag from "@/app/client/_components/MyTag";
+import NormalButton from "@/app/client/_components/NormalButton";
+import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
 import {
-  AlertDialogCancel,
+  AlertDialog,
   AlertDialogContent,
-  AlertDialogFooter,
+  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Progress } from "@/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Building, House, X } from "lucide-react";
+import AddNewAddress from "@/app/client/checkout/AddNewAddress";
 const initialAddress = [
   {
     id: 1,
@@ -38,12 +40,12 @@ const AddressList = ({
     <AlertDialogContent className="w-[600px] max-h-[600px] flex flex-col">
       <div className="flex justify-between ">
         <p className="font-medium">My Address</p>
+        <AlertDialogPrimitive.Cancel>
+          <X />
+        </AlertDialogPrimitive.Cancel>
       </div>
       <div className="bg-[#FAFAFB] h-[2px] w-full" />
-      <div className="overflow-y-auto p-4">
-        {" "}
-        {/* Thêm scrollbar cho khu vực địa chỉ */}
-        {/* 🆕 Dùng RadioGroup có controlled state */}
+      <div className="overflow-y-auto">
         <RadioGroup
           value={String(selectedAddressId)} // Gán giá trị đang chọn
           onValueChange={(value) => onSelectAddress(Number(value))} // Gán hàm xử lý
@@ -107,9 +109,16 @@ const AddressList = ({
           })}
         </RadioGroup>
       </div>
-      <AlertDialogFooter>
-        <AlertDialogCancel>Save</AlertDialogCancel>
-      </AlertDialogFooter>
+      <div className="ml-auto">
+        <AlertDialog>
+          <AlertDialogTrigger>
+            <NormalButton>
+              <p className="text-[14px] text-[#40BFFF]">Add New Address</p>
+            </NormalButton>
+          </AlertDialogTrigger>
+          <AddNewAddress />
+        </AlertDialog>
+      </div>
       {/* END OF SCROLLABLE AREA */}
     </AlertDialogContent>
   );

@@ -5,6 +5,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Progress } from "@/components/ui/progress";
 import { X } from "lucide-react";
+import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
 const initialCoupons = [
   {
     id: 1,
@@ -43,7 +44,9 @@ const CouponList = ({ handleCouponClick, selectedCouponId }: CouponList) => {
     <AlertDialogContent className="w-[600px] max-h-[600px] flex flex-col">
       <div className="flex justify-between ">
         <p className="font-medium">Choose coupon</p>
-        <X className="cursor-pointer" />
+        <AlertDialogPrimitive.Cancel>
+          <X />
+        </AlertDialogPrimitive.Cancel>
       </div>
       <div className="bg-[#FAFAFB] h-[2px] w-full" />
       <div className="overflow-y-auto  flex-1 space-y-8">
@@ -77,7 +80,7 @@ const CouponList = ({ handleCouponClick, selectedCouponId }: CouponList) => {
                       DISCOUNT
                     </p>
                   </div>
-                  <div className="py-[9px] pl-[15px] flex-1">
+                  <div className="py-[9px] px-[15px] flex-1">
                     {" "}
                     {/* Dùng flex-1 thay vì w-[xxx] để thích ứng */}
                     <p className="font-semibold text-base">{coupon.code}</p>
@@ -95,7 +98,7 @@ const CouponList = ({ handleCouponClick, selectedCouponId }: CouponList) => {
                       </p>
                     </div>
                   </div>
-                  <div className="absolute right-0 top-0 m-2 h-fit px-[10px] py-[4px] text-[14px] font-semibold border-[2px] border-[#BCDDFE]">
+                  <div className="absolute right-0 top-0  h-fit px-[10px] py-[4px] text-[14px] font-semibold border-[2px] border-[#BCDDFE]">
                     x3
                   </div>
                 </div>
@@ -149,7 +152,7 @@ const CouponList = ({ handleCouponClick, selectedCouponId }: CouponList) => {
                       </p>
                     </div>
                   </div>
-                  <div className="absolute right-0 top-0 m-2 h-fit px-[10px] py-[4px] text-[14px] font-semibold border-[2px] border-[#BCDDFE]">
+                  <div className="absolute right-0 top-0 h-fit px-[10px] py-[4px] text-[14px] font-semibold border-[2px] border-[#BCDDFE]">
                     x3
                   </div>
                 </div>
@@ -160,9 +163,6 @@ const CouponList = ({ handleCouponClick, selectedCouponId }: CouponList) => {
         {/* Thêm các khu vực coupon khác nếu cần */}
       </div>
       {/* END OF SCROLLABLE AREA */}
-      <AlertDialogFooter>
-        <AlertDialogCancel>Save</AlertDialogCancel>
-      </AlertDialogFooter>
     </AlertDialogContent>
   );
 };
