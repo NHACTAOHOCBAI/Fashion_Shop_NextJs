@@ -265,11 +265,7 @@ const Checkout = () => {
             {selectedAddress?.address}
           </p>
           <AlertDialog>
-            <AlertDialogTrigger>
-              <NormalButton>
-                <p className="text-[14px] text-[#40BFFF]">Change</p>
-              </NormalButton>
-            </AlertDialogTrigger>
+            <AlertDialogTrigger></AlertDialogTrigger>
             {/* 🆕 TRUYỀN PROPS XUỐNG COMPONENT CON */}
             <AddressList
               selectedAddressId={selectedAddressId}
