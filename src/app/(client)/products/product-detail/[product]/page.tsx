@@ -64,7 +64,7 @@ export default function ProductDetail({
     return convertAttributeCategories(
       productDetail.variants.flatMap((v) =>
         v.variantAttributeValues.map((vav) => vav.attributeCategory)
-      )
+      ) as any
     );
   }, [productDetail]);
 

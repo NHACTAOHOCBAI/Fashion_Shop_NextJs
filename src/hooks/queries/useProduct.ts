@@ -4,8 +4,8 @@ import {
   deleteProduct,
   deleteProducts,
   getProductById,
-  getProducts,
   getProducts2,
+  getRelatedProducts,
   updateProduct,
 } from "@/services/product.service";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -18,6 +18,11 @@ const useGetProductById = (id: number) =>
   useQuery({
     queryKey: ["product", id],
     queryFn: () => getProductById(id),
+  });
+const useRelatedProducts = (id: number) =>
+  useQuery({
+    queryKey: ["related product", id],
+    queryFn: () => getRelatedProducts(id),
   });
 const useDeleteProduct = () => {
   const queryClient = useQueryClient();
@@ -63,4 +68,5 @@ export {
   useProducts,
   useGetProductById,
   useUpdateProduct,
+  useRelatedProducts,
 };

@@ -1,4 +1,5 @@
 import axiosInstance from "@/config/axios";
+import { productDataWithoutQuotes } from "@/needAPi";
 const products = [
   {
     id: 1,
@@ -102,6 +103,9 @@ const getProducts2 = async (params: ProductQueryParams) => {
     data: products,
   };
 };
+const getRelatedProducts = async (idProduct: number) => {
+  return products.slice(0, 4);
+};
 const getProducts = async (params: ProductQueryParams) => {
   const query = {
     ...params,
@@ -181,8 +185,9 @@ const deleteProducts = async (ids: { ids: number[] }) => {
   return response;
 };
 const getProductById = async (id: number) => {
-  const response = await axiosInstance.get(`/products/${id}`);
-  return response.data as Product;
+  return productDataWithoutQuotes;
+  // const response = await axiosInstance.get(`/products/${id}`);
+  // return response.data as Product;
 };
 export {
   getProducts,
@@ -192,4 +197,5 @@ export {
   updateProduct,
   getProductById,
   getProducts2,
+  getRelatedProducts,
 };

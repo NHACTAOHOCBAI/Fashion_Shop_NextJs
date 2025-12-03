@@ -12,9 +12,6 @@ const DisplayImages = ({ images }: DisplayImagesProps) => {
   // Lấy URL của ảnh lớn hiện tại
   const mainImageUrl = images[activeIndex] || images[0];
 
-  // Dùng tên mô tả mẫu
-  const description = "*Nike Airmax 270 React";
-
   return (
     <div className="flex gap-[38px]">
       {/* Cột ảnh nhỏ */}
@@ -63,7 +60,6 @@ const DisplayImages = ({ images }: DisplayImagesProps) => {
           src={mainImageUrl}
           className="w-[390px] h-[390px] bg-[#F6F7F8] object-contain"
         />
-        <p className="text-[14px] font-light mt-[20px]">{description}</p>
       </div>
     </div>
   );
