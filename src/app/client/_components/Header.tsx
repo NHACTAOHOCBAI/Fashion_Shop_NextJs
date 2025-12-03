@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/popover";
 import { useGetHeaderData } from "@/hooks/queries/useHome";
 import { Heart, ShoppingCart, User } from "lucide-react";
+import { useRouter } from "next/navigation";
 import React from "react";
 const NotificationItem = () => {
   return (
@@ -49,12 +50,13 @@ const Content = ({
 };
 
 const Header = () => {
+  const router = useRouter();
   const { data: headerData } = useGetHeaderData();
   return (
     <header>
       <div className="w-[1240px] mx-auto flex justify-end gap-[41px]   py-[20px] ">
         <Heart />
-        <ShoppingCart />
+        <ShoppingCart onClick={() => router.push("/client/cart")} />
         <Popover>
           <PopoverTrigger>
             <User />

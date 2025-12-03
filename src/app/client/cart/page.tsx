@@ -2,54 +2,35 @@
 import MyTag from "@/app/client/_components/MyTag";
 import QuantitySelector from "@/app/client/products/_components/MyCount";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useGetMyCart, useRemoveFromCart } from "@/hooks/queries/useCart";
 import { Trash2 } from "lucide-react";
 import Image from "next/image";
-import { useState, useMemo } from "react";
+import { useState, useEffect } from "react"; // ✨ THÊM useEffect
 
-// --- Định nghĩa Interface cho dữ liệu giỏ hàng ---
-interface CartItemData {
-  id: number;
-  name: string;
-  image: string;
-  attributes: string[];
-  unitPrice: number;
-}
+// Thêm các Interface cần thiết vào file này để code chạy
 
-// --- Combined State Type ---
-interface CartStateItem extends CartItemData {
-  quantity: number; // Thêm quantity vào state
-}
-
-// --- Dữ liệu giỏ hàng (Tĩnh) ---
-const initialCartItems: CartStateItem[] = [
-  {
-    id: 1,
-    name: "Nike Airmax 270 react",
-    image:
-      "https://png.pngtree.com/png-clipart/20241231/original/pngtree-running-shoes-or-sneakers-on-a-transparent-background-png-image_18457027.png",
-    attributes: ["Red", "XL"],
-    quantity: 2,
-    unitPrice: 499.0,
-  },
-  {
-    id: 2,
-    name: "Adidas Ultraboost 21",
-    image:
-      "https://png.pngtree.com/png-clipart/20241231/original/pngtree-running-shoes-or-sneakers-on-a-transparent-background-png-image_18457027.png",
-    attributes: ["Blue", "L"],
-    quantity: 1,
-    unitPrice: 350.0,
-  },
-];
+// END Interfaces
 
 const SHIPPING_FEE = 20.0;
 
 const Cart = () => {
-  // State chính lưu trữ toàn bộ dữ liệu giỏ hàng (bao gồm quantity)
-  const [cartItems, setCartItems] = useState(initialCartItems);
-  const [selectedItemIds, setSelectedItemIds] = useState<number[]>(
-    initialCartItems.map((item) => item.id)
-  );
+  const { data: myCart, isLoading } = useGetMyCart();
+  const { mutate: removeFromCart } = useRemoveFromCart();
+  // State chứa dữ liệu giỏ hàng được quản lý (khởi tạo là mảng rỗng)
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [selectedItemIds, setSelectedItemIds] = useState<number[]>([]);
+
+  // ✨ useEffect để khởi tạo state khi myCart load xong
+  useEffect(() => {
+    if (myCart?.items) {
+      // Khởi tạo cartItems từ dữ liệu API
+      setCartItems(myCart.items);
+    }
+  }, [myCart]); // Chạy lại khi myCart thay đổi
+
+  if (isLoading || !myCart) {
+    return <div className="w-[1240px] mx-auto py-[50px]">Loading cart...</div>;
+  }
 
   // --- Handlers Cập nhật Quantity TRỰC TIẾP ---
   const createQuantitySetter = (itemId: number) => {
@@ -85,22 +66,28 @@ const Cart = () => {
     setCartItems((prevItems) =>
       prevItems.filter((item) => !selectedItemIds.includes(item.id))
     );
+    removeFromCart(selectedItemIds);
     setSelectedItemIds([]);
   };
 
-  // Tính toán Subtotal và Total động (Giữ nguyên logic cũ)
-  const { subtotal, total } = useMemo(() => {
+  // Tính toán Subtotal và Total động (Đã sửa logic tính giá)
+  const caculate = () => {
     const selectedItems = cartItems.filter((item) =>
       selectedItemIds.includes(item.id)
     );
     const calculatedSubtotal = selectedItems.reduce(
-      (acc, item) => acc + item.unitPrice * item.quantity,
+      // ✨ SỬ DỤNG GIÁ TỪ PRODUCT: item.variant.product.price
+      (acc, item) => acc + item.variant.product.price * item.quantity,
       0
     );
     const calculatedTotal = calculatedSubtotal + SHIPPING_FEE;
-    return { subtotal: calculatedSubtotal, total: calculatedTotal };
-  }, [cartItems, selectedItemIds]);
-
+    return {
+      subtotal: calculatedSubtotal,
+      total: calculatedTotal,
+      selectedItems,
+    };
+  };
+  const { subtotal, total, selectedItems } = caculate();
   const selectedCount = selectedItemIds.length;
 
   return (
@@ -114,18 +101,19 @@ const Cart = () => {
         {selectedCount > 0 && <DeleteButton onClick={handleDeleteSelected} />}
       </div>
       <div className="mt-[17px]">
+        {/* ✨ SỬ DỤNG cartItems state để render thay vì myCart?.items */}
         {cartItems.map((item) => (
           <CartItem
             key={item.id}
             item={item}
             isSelected={selectedItemIds.includes(item.id)}
             onToggleSelect={handleToggleSelect}
-            // TRUYỀN HÀM SETTER ĐƯỢC TẠO RA ĐỂ PHÙ HỢP VỚI QuantitySelectorProps
             setQuantity={createQuantitySetter(item.id)}
           />
         ))}
       </div>
-      {/* Phần Tóm Tắt Thanh Toán... (Giữ nguyên) */}
+
+      {/* Phần Tóm Tắt Thanh Toán... */}
       <div className="w-[286px] ml-auto mt-[44px]">
         <div className="flex justify-between items-center">
           <p>Subtotal</p>
@@ -140,7 +128,8 @@ const Cart = () => {
           <p>TOTAL</p>
           <p>${total.toFixed(2)}</p>
         </div>
-        <CheckoutButton subtotal={subtotal} />
+        {/* ✨ TRUYỀN selectedItems XUỐNG CheckoutButton */}
+        <CheckoutButton subtotal={subtotal} selectedItems={selectedItems} />
       </div>
     </div>
   );
@@ -148,12 +137,11 @@ const Cart = () => {
 
 export default Cart;
 
-// --- Component CartItem (Sửa để truyền props đúng) ---
+// --- Component CartItem (Đã sửa) ---
 interface CartItemProps {
-  item: CartStateItem; // Dữ liệu item (có quantity)
+  item: CartItem; // Sử dụng CartItem interface đã định nghĩa
   isSelected: boolean;
   onToggleSelect: (id: number) => void;
-  // Thêm setQuantity vào props để truyền xuống QuantitySelector
   setQuantity: React.Dispatch<React.SetStateAction<number>>;
 }
 
@@ -161,39 +149,43 @@ const CartItem: React.FC<CartItemProps> = ({
   item,
   isSelected,
   onToggleSelect,
-  setQuantity, // Nhận hàm setter từ Cart
+  setQuantity,
 }) => {
-  const { id, name, image, attributes, quantity, unitPrice } = item;
-  const itemTotal = unitPrice * quantity;
+  // ✨ TÍNH itemTotal DỰA TRÊN CẤU TRÚC DỮ LIỆU MỚI
+  const itemTotal = item.quantity * item.variant.product.price;
 
   return (
     <div className="flex py-[20px] px-[30px] items-center border-b-[1px] border-[#F6F7F8] justify-between">
       <div className="flex items-center">
         <Checkbox
           checked={isSelected}
-          onCheckedChange={() => onToggleSelect(id)}
+          onCheckedChange={() => onToggleSelect(item.id)}
           className="data-[state=checked]:bg-[#40BFFF] data-[state=checked]:border-[#40BFFF]"
         />
         <div className="flex gap-[17px] ml-[35px]">
           <Image
             height={94}
             width={138}
-            alt={name}
-            src={image}
+            alt={item.variant.product.name}
+            src={item.variant.imageUrl}
             className="bg-[#F6F7F8] rounded-[8px] w-[138px] h-[94px] object-contain"
           />
           <div>
-            <p>{name}</p>
+            <p>{item.variant.product.name}</p>
             <div className="flex gap-[17px] mt-[10px]">
-              {attributes.map((attr) => (
-                <MyTag key={attr} value={attr} />
+              {item.variant.variantAttributeValues.map((attr) => (
+                <MyTag key={attr.id} value={attr.attributeCategory.value} />
               ))}
             </div>
           </div>
         </div>
       </div>
       <div className="flex items-center">
-        <QuantitySelector quantity={quantity} setQuantity={setQuantity} />
+        <QuantitySelector
+          quantity={item.quantity}
+          setQuantity={setQuantity}
+          maxQuantity={item.variant.remaining} // Tồn kho của biến thể
+        />
         <div className="w-[120px] text-right">${itemTotal.toFixed(2)}</div>
       </div>
     </div>
@@ -214,21 +206,59 @@ const DeleteButton = ({ onClick }: { onClick: () => void }) => {
   );
 };
 
-const CheckoutButton = ({ subtotal }: { subtotal: number }) => {
-  const handleClick = () => {
-    const totalAmount = subtotal + SHIPPING_FEE;
-    if (subtotal > 0) {
-      alert(
-        `Proceeding to checkout with total amount: $${totalAmount.toFixed(2)}`
+const CheckoutButton = ({
+  subtotal,
+  selectedItems,
+  disabled = false, // Prop disabled từ bên ngoài
+}: {
+  subtotal: number;
+  selectedItems: CartItem[];
+  disabled?: boolean;
+}) => {
+  // Tính toán trạng thái disable: Disabled từ prop HOẶC không có mục nào được chọn
+  const isDisabled = disabled || selectedItems.length === 0;
+
+  const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (isDisabled) {
+      event.preventDefault();
+      console.log(
+        "Checkout button is disabled: No items selected or external lock."
       );
-    } else {
-      alert("Your cart is empty. Please select items to checkout.");
+      return;
     }
+
+    // Lọc ra danh sách variantId và quantity
+    const checkoutData = selectedItems.map((item) => ({
+      variantId: item.variant.id,
+      quantity: item.quantity,
+    }));
+
+    const totalAmount = subtotal + SHIPPING_FEE;
+
+    console.log("-----------------------------------------");
+    console.log(
+      `PROCEEDING TO CHECKOUT: Total Amount $${totalAmount.toFixed(2)}`
+    );
+    console.log("Checkout Payload (Variant ID & Quantity):");
+    console.table(checkoutData);
+    console.log("-----------------------------------------");
   };
+
   return (
     <div
       onClick={handleClick}
-      className="text-white cursor-pointer bg-[#40BFFF] rounded-[4px] py-[10px] w-full text-center duration-300 active:scale-90 "
+      aria-disabled={isDisabled}
+      role="button"
+      className={`
+        text-white rounded-[4px] py-[10px] w-full text-center duration-300 select-none
+        ${
+          isDisabled
+            ? // STYLE KHI DISABLED
+              "bg-gray-400 cursor-not-allowed opacity-70"
+            : // STYLE KHI ACTIVE
+              "bg-[#40BFFF] cursor-pointer active:scale-90 hover:bg-[#33A0FF]"
+        }
+      `}
     >
       <p>Checkout</p>
     </div>

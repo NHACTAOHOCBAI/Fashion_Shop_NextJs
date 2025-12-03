@@ -1,7 +1,8 @@
 "use client";
-import { ShoppingCart } from "lucide-react";
+import { Loader2, ShoppingCart } from "lucide-react";
 
 interface AddToCartButtonProps {
+  isLoading?: boolean;
   /**
    * Xác định xem nút có bị vô hiệu hóa hay không.
    */
@@ -13,22 +14,13 @@ interface AddToCartButtonProps {
 }
 
 const AddToCartButton = ({
+  isLoading = false,
   disabled = false,
   onClick,
 }: AddToCartButtonProps) => {
-  // Xử lý sự kiện click
-  const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (disabled) {
-      // Ngăn chặn sự kiện nếu nút bị vô hiệu hóa
-      event.preventDefault();
-      return;
-    }
-    onClick?.(); // Gọi hàm onClick nếu có
-  };
-
   return (
     <div
-      onClick={handleClick}
+      onClick={onClick}
       // Thuộc tính aria-disabled để thông báo trạng thái cho các công cụ hỗ trợ (Accessibility)
       aria-disabled={disabled}
       role="button" // Sử dụng role="button" cho một div hoạt động như một nút
@@ -43,8 +35,21 @@ const AddToCartButton = ({
         }
       `}
     >
-      <ShoppingCart />
-      <p>Add To Cart</p>
+      {isLoading ? (
+        // ✨ HIỂN THỊ SPINNER KHI ĐANG LOADING
+        <>
+          <Loader2 className="h-5 w-5 animate-spin" />
+          <p>Loading...</p>
+        </>
+      ) : (
+        // HIỂN THỊ NỘI DUNG BÌNH THƯỜNG
+        <>
+          <ShoppingCart />
+          <p>Add To Cart</p>
+        </>
+      )}
+      {/* <ShoppingCart />
+      <p>Add To Cart</p> */}
     </div>
   );
 };

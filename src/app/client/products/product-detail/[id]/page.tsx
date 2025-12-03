@@ -8,6 +8,7 @@ import QuantitySelector from "@/app/client/products/_components/MyCount";
 import { CustomPagination } from "@/app/client/products/_components/MyPagination";
 import ProductCard from "@/app/client/products/_components/ProductCard";
 import TabbedContent from "@/app/client/products/_components/TabContent";
+import { useAddToCart } from "@/hooks/queries/useCart";
 import {
   useGetProductById,
   useRelatedProducts,
@@ -19,6 +20,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useMemo, useState, useCallback } from "react";
 import { FaStar } from "react-icons/fa";
+import { toast } from "sonner";
 
 interface OptionGroupData {
   attributeName: string;
@@ -95,6 +97,7 @@ const ReviewItem = ({ review }: { review: Review }) => {
 };
 
 const ProductDetail = () => {
+  const { mutate: addToCart, isPending } = useAddToCart();
   const pathname = usePathname();
   const productId = pathname.split("/").pop();
   const { data: product } = useGetProductById(Number(productId));
@@ -180,14 +183,21 @@ const ProductDetail = () => {
     const variantId = selectedVariant!.id;
     // 2. Lấy số lượng
     const selectedQuantity = quantity;
-
-    // 3. Thực hiện logic thêm vào giỏ hàng (ví dụ: gọi API, dispatch Redux/Zustand action)
-    console.log(`Đã thêm vào giỏ hàng:`);
-    console.log(`- ID Biến thể (Variant ID): ${variantId}`);
-    console.log(`- Số lượng (Quantity): ${selectedQuantity}`);
-
-    // Ví dụ: dispatch(addToCart({ variantId, quantity: selectedQuantity }));
-  }, [selectedVariant, quantity]);
+    addToCart(
+      {
+        quantity: selectedQuantity,
+        variantId: variantId,
+      },
+      {
+        onSuccess: () => {
+          toast.success(`${product?.name} has been added to cart`);
+        },
+        onError: (error) => {
+          toast.error(`Ohh!!! ${error.message}`);
+        },
+      }
+    );
+  }, [selectedVariant, quantity, addToCart, product?.name]);
   const productTabs = [
     {
       title: "Description",
@@ -256,6 +266,7 @@ const ProductDetail = () => {
               />
               {/* Nút AddToCart bị disabled nếu chưa chọn biến thể hoặc số lượng bằng 0 */}
               <AddToCartButton
+                isLoading={isPending}
                 disabled={!selectedVariant || quantity === 0}
                 onClick={handleAddToCart} // Gắn hàm xử lý đã định nghĩa
               />
