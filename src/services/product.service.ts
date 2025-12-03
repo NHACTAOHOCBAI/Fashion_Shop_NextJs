@@ -1,5 +1,107 @@
 import axiosInstance from "@/config/axios";
+const products = [
+  {
+    id: 1,
+    image:
+      "https://png.pngtree.com/png-clipart/20241231/original/pngtree-running-shoes-or-sneakers-on-a-transparent-background-png-image_18457027.png",
+    name: "Nike shoes",
+    rating: 3.8,
+    price: 299.99,
+    createdAt: "2025-12-02T12:52:36.000Z",
+  },
+  {
+    id: 2,
+    image:
+      "https://png.pngtree.com/png-clipart/20241231/original/pngtree-running-shoes-or-sneakers-on-a-transparent-background-png-image_18457027.png",
+    name: "Nike shoes",
+    rating: 3.8,
+    price: 299.99,
+    createdAt: "2025-11-05T00:39:01.746Z",
+  },
+  {
+    id: 3,
+    image:
+      "https://png.pngtree.com/png-clipart/20241231/original/pngtree-running-shoes-or-sneakers-on-a-transparent-background-png-image_18457027.png",
+    name: "Nike shoes",
+    rating: 3.8,
+    price: 299.99,
+    createdAt: "2025-12-02T12:52:36.000Z",
+  },
+  {
+    id: 4,
+    image:
+      "https://png.pngtree.com/png-clipart/20241231/original/pngtree-running-shoes-or-sneakers-on-a-transparent-background-png-image_18457027.png",
+    name: "Nike shoes",
+    rating: 3.8,
+    price: 299.99,
+    createdAt: "2025-11-05T00:39:01.746Z",
+  },
+  {
+    id: 5,
+    image:
+      "https://png.pngtree.com/png-clipart/20241231/original/pngtree-running-shoes-or-sneakers-on-a-transparent-background-png-image_18457027.png",
+    name: "Nike shoes",
+    rating: 3.8,
+    price: 299.99,
+    createdAt: "2025-12-02T12:52:36.000Z",
+  },
+  {
+    id: 6,
+    image:
+      "https://png.pngtree.com/png-clipart/20241231/original/pngtree-running-shoes-or-sneakers-on-a-transparent-background-png-image_18457027.png",
+    name: "Nike shoes",
+    rating: 3.8,
+    price: 299.99,
+    createdAt: "2025-11-05T00:39:01.746Z",
+  },
+  {
+    id: 7,
+    image:
+      "https://png.pngtree.com/png-clipart/20241231/original/pngtree-running-shoes-or-sneakers-on-a-transparent-background-png-image_18457027.png",
+    name: "Nike shoes",
+    rating: 3.8,
+    price: 299.99,
+    createdAt: "2025-12-02T12:52:36.000Z",
+  },
+  {
+    id: 8,
+    image:
+      "https://png.pngtree.com/png-clipart/20241231/original/pngtree-running-shoes-or-sneakers-on-a-transparent-background-png-image_18457027.png",
+    name: "Nike shoes",
+    rating: 3.8,
+    price: 299.99,
+    createdAt: "2025-11-05T00:39:01.746Z",
+  },
+  {
+    id: 9,
+    image:
+      "https://png.pngtree.com/png-clipart/20241231/original/pngtree-running-shoes-or-sneakers-on-a-transparent-background-png-image_18457027.png",
+    name: "Nike shoes",
+    rating: 3.8,
+    price: 299.99,
+    createdAt: "2025-12-02T12:52:36.000Z",
+  },
+];
+// Hàm tiện ích để tạo một độ trễ
+const delay = (ms: number) => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};
 
+const getProducts2 = async (params: ProductQueryParams) => {
+  console.log("hook", params);
+
+  // Thêm độ trễ 1000 mili giây (1 giây)
+  await delay(1000);
+
+  return {
+    pagination: {
+      total: 10,
+      page: 1,
+      limit: 9,
+    },
+    data: products,
+  };
+};
 const getProducts = async (params: ProductQueryParams) => {
   const query = {
     ...params,
@@ -89,4 +191,5 @@ export {
   deleteProducts,
   updateProduct,
   getProductById,
+  getProducts2,
 };

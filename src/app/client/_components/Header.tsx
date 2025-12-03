@@ -1,10 +1,11 @@
-import MyBreadcrumb from "@/app/client/_components/MyBreadcumb";
+"use client";
 import TabbedContent from "@/app/client/products/_components/TabContent";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useGetHeaderData } from "@/hooks/queries/useHome";
 import { Heart, ShoppingCart, User } from "lucide-react";
 import React from "react";
 const NotificationItem = () => {
@@ -21,43 +22,34 @@ const NotificationItem = () => {
     </div>
   );
 };
-const manCategories = [
-  "T-Shirts",
-  "Shirts & Blouses",
-  "Dresses",
-  "Jeans & Denim",
-  "Pants & Trousers",
-  "Shorts",
-  "Outerwear (Jackets & Coats)",
-  "Hoodies & Sweatshirts",
-  "Sportswear",
-  "Activewear",
-  "Footwear",
-  "Bags & Backpacks",
-  "Accessories",
-  "Jewelry",
-  "Watches",
-  "Sunglasses",
-  "Underwear",
-  "Collections",
-];
 
-const Content = () => {
+const Content = ({
+  items,
+  origin,
+}: {
+  items: {
+    id: number;
+    name: string;
+  }[];
+  origin: string;
+}) => {
   return (
     <div className="grid grid-cols-4 gap-y-3 gap-x-8">
-      {manCategories.map((item) => (
-        <div
-          key={item}
+      {items.map((item) => (
+        <a // Thay div bằng a
+          key={item.id}
+          href={`/client/products/${origin}?category=${item.id}`}
           className="text-[18px] text-gray-700 hover:text-[#40BFFF] transition-colors font-normal cursor-pointer"
         >
-          {item}
-        </div>
+          {item.name}
+        </a>
       ))}
     </div>
   );
 };
 
 const Header = () => {
+  const { data: headerData } = useGetHeaderData();
   return (
     <header>
       <div className="w-[1240px] mx-auto flex justify-end gap-[41px]   py-[20px] ">
@@ -78,25 +70,26 @@ const Header = () => {
         <div className=" flex-[1] w-full">
           <nav>
             <ul className="flex justify-center gap-[80px]">
-              <SubCatgories content={<Content />}>
-                <li className="uppercase text-[24px] font-medium">Home</li>
-              </SubCatgories>
-              <SubCatgories content={<Content />}>
-                <li className="uppercase text-[24px] font-medium">Man</li>
-              </SubCatgories>
-              <SubCatgories content={<Content />}>
-                <li className="uppercase text-[24px] font-medium">Woman</li>
-              </SubCatgories>
-              <SubCatgories content={<Content />}>
-                <li className="uppercase text-[24px] font-medium">Kid</li>
-              </SubCatgories>
+              <li className="uppercase text-[24px] font-medium cursor-pointer select-none">
+                Home
+              </li>
+              {headerData?.map((department) => (
+                <SubCatgories
+                  key={department.department}
+                  content={
+                    <Content
+                      items={department.categories}
+                      origin={department.department}
+                    />
+                  }
+                >
+                  <li className="uppercase text-[24px] font-medium cursor-pointer select-none">
+                    {department.department}
+                  </li>
+                </SubCatgories>
+              ))}
             </ul>
           </nav>
-        </div>
-      </div>
-      <div className="bg-[#F6F7F8]">
-        <div className="w-[1240px] mx-auto py-[16px]">
-          <MyBreadcrumb data={["Man", "Shoes"]} />
         </div>
       </div>
     </header>
@@ -112,6 +105,7 @@ const SubCatgories = ({ children, content }: SubCatgoriesProps) => {
       {children}
       <div
         className="
+        select-none
           absolute z-10 
           bg-white rounded-[10px] border-[#FAFAFB] border-[2px] p-[30px] 
           shadow-lg w-[1240px] 

@@ -5,13 +5,14 @@ import {
   deleteProducts,
   getProductById,
   getProducts,
+  getProducts2,
   updateProduct,
 } from "@/services/product.service";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 const useProducts = (params: ProductQueryParams) =>
   useQuery({
     queryKey: ["products", params],
-    queryFn: () => getProducts(params),
+    queryFn: () => getProducts2(params),
   });
 const useGetProductById = (id: number) =>
   useQuery({

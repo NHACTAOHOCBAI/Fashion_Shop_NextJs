@@ -1,22 +1,44 @@
-const Content = () => {
+const Content = ({
+  onSortChange,
+}: {
+  onSortChange: (sortBy: string, sortOrder: "ASC" | "DESC") => void;
+}) => {
   return (
     <div>
-      <div className="text-[18px] text-gray-700 hover:text-[#40BFFF] transition-colors font-normal cursor-pointer">
+      <div
+        onClick={() => {
+          onSortChange("createdAt", "DESC");
+        }}
+        className="text-[18px] text-gray-700 hover:text-[#40BFFF] transition-colors font-normal cursor-pointer"
+      >
         Latest
       </div>
-      <div className="text-[18px] text-gray-700 hover:text-[#40BFFF] transition-colors font-normal cursor-pointer">
+      <div
+        onClick={() => {
+          onSortChange("price", "DESC");
+        }}
+        className="text-[18px] text-gray-700 hover:text-[#40BFFF] transition-colors font-normal cursor-pointer"
+      >
         Price: High - Low
       </div>
-      <div className="text-[18px] text-gray-700 hover:text-[#40BFFF] transition-colors font-normal cursor-pointer">
+      <div
+        onClick={() => {
+          onSortChange("price", "ASC");
+        }}
+        className="text-[18px] text-gray-700 hover:text-[#40BFFF] transition-colors font-normal cursor-pointer"
+      >
         Price: Low - High
       </div>
     </div>
   );
 };
-const SortByButton = () => {
+interface SortByButtonProps {
+  onSortChange: (sortBy: string, sortOrder: "ASC" | "DESC") => void;
+}
+const SortByButton = ({ onSortChange }: SortByButtonProps) => {
   return (
-    <SortByDropdown content={<Content />}>
-      <div className="font-medium">SORT BY</div>
+    <SortByDropdown content={<Content onSortChange={onSortChange} />}>
+      <div className="font-medium cursor-pointer select-none">SORT BY</div>
     </SortByDropdown>
   );
 };
