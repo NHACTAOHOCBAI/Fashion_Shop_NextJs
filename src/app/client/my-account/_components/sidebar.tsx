@@ -1,4 +1,3 @@
-import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,46 +8,106 @@ import {
 } from "@/components/ui/collapsible";
 import { Bell, User, ListOrdered, Tag, Heart, ChevronDown } from "lucide-react";
 import * as React from "react";
+// Giả định sử dụng Next.js App Router hooks
+import { usePathname, useRouter } from "next/navigation";
 
-// Dữ liệu cho các mục menu
-const menuData = [
+// --- I. Dữ liệu Menu ---
+
+// Định nghĩa cấu trúc Item và Section
+interface MenuItem {
+  label: string;
+  count?: number;
+  href: string; // Thêm href
+}
+
+interface MenuSection {
+  icon: React.ElementType;
+  title: string;
+  href: string; // Thêm href (base path)
+  items: MenuItem[];
+  isCollapsible: boolean;
+}
+
+const menuData: MenuSection[] = [
   {
     icon: Bell,
     title: "Notification",
+    href: "/account/notifications",
     items: [
-      { label: "Order News", count: 2, isHighlighted: true },
-      { label: "Discount", count: 2, isHighlighted: false },
+      {
+        label: "Order News",
+        count: 2,
+        href: "/client/my-account/order-news",
+      },
+      {
+        label: "Discount",
+        count: 2,
+        href: "/client/my-account/discount",
+      },
     ],
     isCollapsible: true,
   },
   {
     icon: User,
     title: "My Account",
+    href: "/account/profile",
     items: [
-      { label: "Profile", count: 1, isHighlighted: true },
-      { label: "Address", count: 2, isHighlighted: false },
+      {
+        label: "Profile",
+        href: "/client/my-account/profile",
+      },
+      {
+        label: "Address",
+        href: "/client/my-account/my-address",
+      },
     ],
     isCollapsible: true,
   },
   {
     icon: ListOrdered,
     title: "Orders",
-    items: [{ label: "Orders", count: 2, isHighlighted: false }],
-    isCollapsible: false, // Mục này không có submenu và được render như một nút đơn
+    href: "/account/orders",
+    items: [
+      {
+        label: "Orders",
+        href: "/client/my-account/orders",
+      },
+    ],
+    isCollapsible: false,
   },
   {
     icon: Tag,
     title: "Coupons",
-    items: [{ label: "Coupons", count: 2, isHighlighted: false }],
-    isCollapsible: false, // Mục này không có submenu và được render như một nút đơn
+    href: "/account/coupons",
+    items: [
+      {
+        label: "Coupons",
+        href: "/client/my-account/coupons",
+      },
+    ],
+    isCollapsible: false,
+  },
+  {
+    icon: Heart,
+    title: "Wishlist",
+    href: "/account/wishlist",
+    items: [
+      {
+        label: "Coupons",
+        href: "/client/my-account/wishlist",
+      },
+    ],
+    isCollapsible: false,
   },
 ];
 
-// Component cho mục menu có thể thu gọn (Collapsible)
+// --- II. Component cho mục menu có thể thu gọn (Collapsible) ---
+
 interface CollapsibleMenuSectionProps {
   icon: React.ElementType;
   title: string;
-  items: { label: string; count: number; isHighlighted: boolean }[];
+  basePath: string;
+  items: MenuItem[];
 }
 
 const CollapsibleMenuSection: React.FC<CollapsibleMenuSectionProps> = ({
@@ -56,7 +115,29 @@ const CollapsibleMenuSection: React.FC<CollapsibleMenuSectionProps> = ({
   title,
   items,
 }) => {
-  const [isOpen, setIsOpen] = React.useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
+
+  // Kiểm tra nếu bất kỳ mục con nào active thì mở mục cha
+  const isAnyChildActive = items.some((item) => item.href === pathname);
+  const [isOpen, setIsOpen] = React.useState(isAnyChildActive);
+
+  // Kiểm tra xem mục cha có nên được highlight không (nếu bất kỳ mục con nào active)
+  // Sử dụng startsWith để highlight cả base path (ví dụ: /account/notifications)
+  const isParentActive = items.some(
+    (item) => pathname.startsWith(item.href) || pathname === item.href
+  );
+
+  // Xử lý click cho mục cha (chỉ mở/đóng)
+  const handleParentClick = () => {
+    setIsOpen(!isOpen);
+    // Tùy chọn: chuyển hướng đến base path nếu muốn mục cha cũng là một trang
+    // router.push(basePath);
+  };
+
+  const handleChildClick = (href: string) => {
+    router.push(href);
+  };
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen} className="space-y-1">
@@ -64,17 +145,26 @@ const CollapsibleMenuSection: React.FC<CollapsibleMenuSectionProps> = ({
       <CollapsibleTrigger asChild>
         <Button
           variant="ghost"
-          className="w-full h-auto p-3 justify-start text-base font-semibold text-gray-700 hover:bg-gray-100/70"
+          className={`w-full h-auto p-3 justify-start text-gray-700  text-base hover:text-[#40BFFF] font-medium transition-colors ${
+            isParentActive
+              ? "bg-blue-100/70 text-[#40BFFF] hover:bg-blue-100/80"
+              : " hover:bg-gray-100/70 "
+          }`}
+          onClick={handleParentClick}
         >
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center">
-              <Icon className="mr-3 h-5 w-5 text-gray-500" />
+              <Icon
+                className={`mr-3 h-5 w-5 ${
+                  isParentActive ? "text-[#40BFFF]" : ""
+                }`}
+              />
               <span>{title}</span>
             </div>
             <ChevronDown
-              className={`h-4 w-4 text-gray-500 transition-transform ${
-                isOpen ? "rotate-180" : "rotate-0"
-              }`}
+              className={`h-4 w-4 ${
+                isParentActive ? "text-[#40BFFF]" : ""
+              } transition-transform ${isOpen ? "rotate-180" : "rotate-0"}`}
             />
           </div>
         </Button>
@@ -82,88 +172,111 @@ const CollapsibleMenuSection: React.FC<CollapsibleMenuSectionProps> = ({
 
       {/* Content (Nội dung sẽ được thu gọn/mở rộng) */}
       <CollapsibleContent className="space-y-1 ml-4 pl-4 border-l border-gray-200">
-        {items.map((item) => (
-          <Button
-            key={item.label}
-            variant="ghost"
-            className={`w-full h-auto p-2 justify-start transition-colors ${
-              item.isHighlighted
-                ? "bg-blue-100 text-blue-700 font-medium hover:bg-blue-100/80"
-                : "hover:bg-gray-50 text-gray-600"
-            }`}
-          >
-            <div className="flex items-center justify-between w-full">
-              <span>{item.label}</span>
-              <Badge
-                variant="secondary"
-                className={`h-5 w-5 justify-center rounded-full text-xs font-semibold ${
-                  item.isHighlighted
-                    ? "bg-red-500 text-white"
-                    : "bg-gray-200 text-gray-600"
-                }`}
-              >
-                {item.count}
-              </Badge>
-            </div>
-          </Button>
-        ))}
+        {items.map((item) => {
+          const isItemActive = item.href === pathname;
+          return (
+            <Button
+              key={item.label}
+              variant="ghost"
+              className={`w-full h-auto p-2 justify-start transition-colors hover:text-[#40BFFF] ${
+                isItemActive
+                  ? "bg-blue-100 text-[#40BFFF] font-medium hover:bg-blue-100/80"
+                  : "hover:bg-gray-50 "
+              }`}
+              onClick={() => handleChildClick(item.href)}
+            >
+              <div className="flex items-center justify-between w-full">
+                <span>{item.label}</span>
+                {item.count && (
+                  <Badge
+                    variant="secondary"
+                    className={`h-5 w-5 justify-center rounded-full text-xs font-semibold ${
+                      isItemActive
+                        ? "bg-red-500 text-white" // Badge đỏ cho highlight/active
+                        : "bg-gray-200 text-gray-600"
+                    }`}
+                  >
+                    {item.count}
+                  </Badge>
+                )}
+              </div>
+            </Button>
+          );
+        })}
       </CollapsibleContent>
     </Collapsible>
   );
 };
 
-// Component cho mục menu đơn (Orders, Coupons)
+// --- III. Component cho mục menu đơn (Simple) ---
+
 interface SimpleMenuSectionProps {
   icon: React.ElementType;
   title: string;
   count: number;
+  href: string;
 }
 
 const SimpleMenuSection: React.FC<SimpleMenuSectionProps> = ({
   icon: Icon,
   title,
-  count,
-}) => (
-  <Button
-    variant="ghost"
-    className="w-full h-auto p-3 justify-start text-base font-semibold text-gray-700 hover:bg-gray-100/70"
-  >
-    <div className="flex items-center justify-between w-full">
-      <div className="flex items-center">
-        <Icon className="mr-3 h-5 w-5 text-gray-500" />
-        <span>{title}</span>
-      </div>
-      <Badge
-        variant="secondary"
-        className="h-5 w-5 justify-center rounded-full text-xs font-semibold bg-gray-200 text-gray-600"
-      >
-        {count}
-      </Badge>
-    </div>
-  </Button>
-);
+  href,
+}) => {
+  const pathname = usePathname();
+  const router = useRouter();
 
-// Component chính
-export function MyAccountSidebar() {
-  const wishlistCount = 3;
+  const isActive = pathname === href;
+
+  const handleClick = () => {
+    router.push(href);
+  };
 
   return (
-    <div className="w-[250px] rounded-[15px] overflow-hidden border bg-white">
+    <Button
+      variant="ghost"
+      onClick={handleClick}
+      className={`w-full h-auto p-3 justify-start text-base font-medium transition-colors ${
+        isActive
+          ? "bg-blue-100 text-app- font-bold hover:bg-blue-100/80"
+          : "text-gray-700 hover:bg-gray-100/70"
+      }`}
+    >
+      <div className="flex items-center justify-between w-full">
+        <div className="flex items-center">
+          <Icon
+            className={`mr-3 h-5 w-5 ${
+              isActive ? "text-blue-700" : "text-gray-500"
+            }`}
+          />
+          <span>{title}</span>
+        </div>
+      </div>
+    </Button>
+  );
+};
+
+// --- IV. Component chính ---
+
+export function MyAccountSidebar() {
+  return (
+    <div className="w-[250px] rounded-[15px] overflow-hidden border bg-white shadow-lg">
       {/* Phần Thông tin người dùng */}
-      <div className="bg-[#40BFFF]/60 p-5 flex items-center space-x-3 rounded-t-2xl">
+      <div className="bg-[#40BFFF]/60 p-5 flex items-center space-x-3 rounded-t-2xl text-white">
         <Avatar className="h-12 w-12 border-2 border-white">
+          {/* Thay đổi src ảnh placeholder nếu cần */}
           <AvatarImage src="/placeholder-user.jpg" alt="Nobi Nobita" />
           <AvatarFallback className="bg-blue-500/50 text-white font-bold text-lg">
             NN
           </AvatarFallback>
         </Avatar>
         <div>
-          <h3 className="text-[18px] ">Nobi Nobita</h3>
+          <h3 className="text-[18px] font-semibold">Nobi Nobita</h3>
           <p className="font-light text-[12px]">nobi@gmail.com</p>
         </div>
       </div>
 
       <div className="p-4 space-y-1">
+        {/* Render các mục Menu chính */}
         {menuData.map((section) => {
           if (section.isCollapsible) {
             return (
@@ -171,41 +284,25 @@ export function MyAccountSidebar() {
                 key={section.title}
                 icon={section.icon}
                 title={section.title}
+                basePath={section.href}
                 items={section.items}
               />
             );
           } else {
-            // Lấy count từ mục đầu tiên (mặc định)
+            // Lấy count và href từ mục đầu tiên cho SimpleMenuSection
             const count = section.items[0]?.count || 0;
+            const href = section.items[0]?.href || "#";
             return (
               <SimpleMenuSection
                 key={section.title}
                 icon={section.icon}
                 title={section.title}
                 count={count}
+                href={href}
               />
             );
           }
         })}
-
-        {/* Nút Wishlist (Mục riêng) - Tương tự như SimpleMenuSection nhưng với màu đặc biệt */}
-        <Button
-          variant="ghost"
-          className="w-full h-auto p-3 justify-start bg-blue-500/90 text-white hover:bg-blue-600 hover:text-white rounded-lg transition-colors mt-4"
-        >
-          <div className="flex items-center justify-between w-full">
-            <div className="flex items-center">
-              <Heart className="mr-3 h-5 w-5 fill-white" />
-              <span className="text-base font-semibold">Wishlist</span>
-            </div>
-            <Badge
-              variant="secondary"
-              className="h-5 w-5 justify-center rounded-full text-xs font-semibold bg-red-500 text-white"
-            >
-              {wishlistCount}
-            </Badge>
-          </div>
-        </Button>
       </div>
     </div>
   );

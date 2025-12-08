@@ -10,97 +10,6 @@ const getCategoryBySlug = async (slug: string) => {
   const response = await axiosInstance.get(`/categories/slugs/${slug}`);
   return response.data as Category;
 };
-const categoryFilters = {
-  id: 1,
-  name: " Shoes",
-  description:
-    " Stylish and comfortable men’s shoes for every occasion. From casual sneakers to formal dress shoes, find the perfect pair to match your everyday style.",
-  image:
-    "https://png.pngtree.com/png-clipart/20241231/original/pngtree-running-shoes-or-sneakers-on-a-transparent-background-png-image_18457027.png",
-  brands: [
-    {
-      id: 1,
-      name: "Gucci",
-    },
-    {
-      id: 2,
-      name: "Louis Vuitton",
-    },
-    {
-      id: 3,
-      name: "Adidas",
-    },
-    {
-      id: 4,
-      name: "Nike",
-    },
-    {
-      id: 5,
-      name: "Labubu",
-    },
-  ],
-  attributes: [
-    {
-      id: 101,
-      attribute: {
-        id: 1,
-        name: "Color",
-        createdAt: "2025-11-20T08:00:00.000Z",
-      },
-      value: "Red",
-    },
-    {
-      id: 102,
-      attribute: {
-        id: 1,
-        name: "Color",
-        createdAt: "2025-11-20T08:00:00.000Z",
-      },
-      value: "Blue",
-    },
-
-    {
-      id: 201,
-      attribute: {
-        id: 2,
-        name: "Size",
-        createdAt: "2025-11-25T10:30:00.000Z",
-      },
-      value: "S",
-    },
-    {
-      id: 202,
-      attribute: {
-        id: 2,
-        name: "Size",
-        createdAt: "2025-11-25T10:30:00.000Z",
-      },
-      value: "M",
-    },
-    {
-      id: 301,
-      attribute: {
-        id: 3,
-        name: "Material",
-        createdAt: "2025-11-28T15:45:00.000Z",
-      },
-      value: "Cotton",
-    },
-    {
-      id: 401,
-      attribute: {
-        id: 4,
-        name: "Pattern",
-        createdAt: "2025-10-01T12:00:00.000Z",
-        updatedAt: "2025-11-01T00:00:00.000Z",
-      },
-      value: "Striped",
-    },
-  ],
-};
-const getCategoryFilters = async (id: number) => {
-  return categoryFilters;
-};
 const getCategoryById = async (id: number) => {
   const response = await axiosInstance.get(`/categories/${id}`);
   return response.data as Category;
@@ -178,5 +87,4 @@ export {
   getCategorySelection,
   getCategoryBySlug,
   getCategoryById,
-  getCategoryFilters,
 };

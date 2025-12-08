@@ -83,26 +83,6 @@ const products = [
     createdAt: "2025-12-02T12:52:36.000Z",
   },
 ];
-// Hàm tiện ích để tạo một độ trễ
-const delay = (ms: number) => {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-};
-
-const getProducts2 = async (params: ProductQueryParams) => {
-  console.log("hook", params);
-
-  // Thêm độ trễ 1000 mili giây (1 giây)
-  await delay(1000);
-
-  return {
-    pagination: {
-      total: 10,
-      page: 1,
-      limit: 9,
-    },
-    data: products,
-  };
-};
 const getRelatedProducts = async (idProduct: number) => {
   return products.slice(0, 4);
 };
@@ -112,6 +92,7 @@ const getProducts = async (params: ProductQueryParams) => {
     ...(params.attributeCategoryIds?.length
       ? { attributeCategoryIds: params.attributeCategoryIds.join(",") }
       : {}),
+    ...(params.brandIds?.length ? { brandIds: params.brandIds.join(",") } : {}),
   };
 
   const response = (await axiosInstance.get("/products", {
@@ -196,6 +177,5 @@ export {
   deleteProducts,
   updateProduct,
   getProductById,
-  getProducts2,
   getRelatedProducts,
 };

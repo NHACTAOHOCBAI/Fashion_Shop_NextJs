@@ -1,30 +1,32 @@
 interface Product {
-    id: number,
-    name: string,
-    description: string,
-    price: number;
-    createdAt: string;
-    updatedAt: string;
-    category: Category;
-    brand: Brand;
-    variants: Variant[];
-    images: ProductImage[]
+  id: number;
+  name: string;
+  description: string;
+  price: string;
+  averageRating: string;
+  reviewCount: number;
+  createdAt: string;
+  updatedAt: string;
+  category: Category;
+  brand: Brand;
+  variants: Variant[];
+  images: ProductImage[];
 }
 interface ProductImage {
-    id: number;
-    imageUrl: string;
-    publicId: string
+  id: number;
+  imageUrl: string;
+  publicId: string;
 }
 interface Variant {
-    product: Product;
-    id: number;
-    imageUrl: string;
-    publicId: string;
-    quantity: number;
-    remaining: number;
-    variantAttributeValues: VariantAttributeValue[]
+  product: Product;
+  id: number;
+  imageUrl: string;
+  publicId: string;
+  quantity: number;
+  remaining: number;
+  variantAttributeValues: VariantAttributeValue[];
 }
 interface VariantAttributeValue {
-    id: number;
-    attributeCategory: AttributeCategory
+  id: number;
+  attributeCategory: AttributeCategory;
 }

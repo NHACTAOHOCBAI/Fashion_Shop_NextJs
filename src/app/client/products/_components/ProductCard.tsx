@@ -17,18 +17,7 @@ const isNewProduct = (createdAt: string): boolean => {
   const timeDifference = currentTime - createdTime;
   return timeDifference < NEWTIME;
 };
-const ProductCard = ({
-  product = data,
-}: {
-  product?: {
-    id: number;
-    image: string;
-    name: string;
-    rating: number;
-    price: number;
-    createdAt: string;
-  };
-}) => {
+const ProductCard = ({ product = data as any }: { product?: Product }) => {
   const showNewTag = isNewProduct(product.createdAt);
   return (
     <div className="relative">
@@ -37,16 +26,16 @@ const ProductCard = ({
           height={300}
           width={300}
           alt={product.name}
-          src={product.image}
+          src={product.images[0]?.imageUrl || ""}
           className="w-[300px] h-[300px] bg-[#F6F7F8] object-contain"
         />
         <div className="px-[17px] py-[11px]">
           <p className="font-medium">{product.name}</p>
           <div className="flex gap-[5px]">
-            <p>{product.rating}</p>
+            <p>{product.averageRating}</p>
             <FaStar className="text-yellow-300 mt-[3px]" />
           </div>
-          <p className="font-medium text-right">{finalMoney(product.price)}</p>
+          <p className="font-medium text-right">{finalMoney(+product.price)}</p>
         </div>
       </div>
       {showNewTag && (

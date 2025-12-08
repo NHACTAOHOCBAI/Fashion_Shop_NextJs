@@ -11,13 +11,19 @@ import { CustomPagination } from "@/app/client/products/_components/MyPagination
 import ProductCard from "@/app/client/products/_components/ProductCard";
 import SearchInput from "@/app/client/products/_components/SearchInput";
 import SortByButton from "@/app/client/products/_components/SortByButton";
-import { useGetCategoryFilter } from "@/hooks/queries/useCategory";
+import { useGetCategoryById } from "@/hooks/queries/useCategory";
 import { useProducts } from "@/hooks/queries/useProduct";
 import { useDebounce } from "@/hooks/useDebounce";
 import Image from "next/image";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useMemo, useState } from "react";
-const formatToFilterData = (data: AttributeCategory[]) => {
+import { useMemo, useState, useEffect } from "react"; // 👈 Thêm useEffect
+
+// HẠN CHẾ SỬ DỤNG TRÊN BÀI TẬP NÀY VÌ KHÔNG ĐƯỢC CUNG CẤP TYPE
+// type AttributeCategory = any;
+// type ProductQueryParams = any;
+
+// Hàm chuyển đổi dữ liệu thuộc tính thành cấu trúc lọc
+const formatToFilterData = (data: any[] /* AttributeCategory[] */) => {
   const groupedData = new Map<string, string[]>();
 
   data.forEach((item) => {
@@ -25,15 +31,12 @@ const formatToFilterData = (data: AttributeCategory[]) => {
     const value = item.value;
 
     if (groupedData.has(fieldName)) {
-      // Nếu field đã tồn tại, thêm giá trị vào mảng hiện có
       groupedData.get(fieldName)!.push(value);
     } else {
-      // Nếu field chưa tồn tại, tạo mảng mới và thêm giá trị
       groupedData.set(fieldName, [value]);
     }
   });
 
-  // 2. Chuyển đổi Map thành mảng các đối tượng FilterItem
   const filterData = Array.from(groupedData.entries()).map(
     ([fieldName, valuesArray]) => ({
       field: fieldName,
@@ -43,9 +46,11 @@ const formatToFilterData = (data: AttributeCategory[]) => {
 
   return filterData;
 };
+
+// Hàm chuyển đổi filters đã chọn thành attributeCategoryIds
 const filtersToAttributeCategoryIds = (
   selectedFilters: { [key: string]: string[] },
-  categoryAttributesData: AttributeCategory[]
+  categoryAttributesData: any[] /* AttributeCategory[] */
 ): number[] => {
   const selectedIds: number[] = [];
   for (const fieldName in selectedFilters) {
@@ -65,6 +70,8 @@ const filtersToAttributeCategoryIds = (
   }
   return Array.from(new Set(selectedIds));
 };
+
+// Hàm chuyển đổi brand names thành brandIds (giữ nguyên không thay đổi)
 const filtersToBrandIds = (
   selectedBrandNames: string[],
   brandData: {
@@ -85,37 +92,61 @@ const filtersToBrandIds = (
     .filter((id): id is number => id !== null);
   return brandIds;
 };
+
 const Products = () => {
   const [sort, setSort] = useState<{
     sortBy: string;
     sortOrder: "ASC" | "DESC";
   }>({ sortBy: "", sortOrder: "ASC" });
+
   const [searchInput, setSearchInput] = useState("");
   const debouncedSearchTerm = useDebounce(searchInput, 500);
+
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const categoryId = searchParams.get("category");
-  const { data: category } = useGetCategoryFilter(categoryId ? +categoryId : 0);
-  const filterData = formatToFilterData((category?.attributes as any) || []);
-  const [page, setPage] = useState(1);
 
-  const initialFilters: { [key: string]: string[] } = {};
-  filterData.forEach((f) => {
-    initialFilters[f.field] = [];
-  });
-  // THÊM BRANDS VÀO STATE KHỞI TẠO BẰNG TAY
-  initialFilters["brands"] = [];
-  const [filters, setFilters] = useState<{ [key: string]: string[] }>(
-    initialFilters
+  // Lấy dữ liệu danh mục
+  const { data: category } = useGetCategoryById(categoryId ? +categoryId : 0);
+
+  // Sử dụng useMemo để tính toán filterData chỉ khi categoryAttributes thay đổi
+  const filterData = useMemo(
+    () => formatToFilterData(category?.attributeCategories || []),
+    [category?.attributeCategories]
   );
+
+  const [page, setPage] = useState(1);
+  // Khởi tạo state filters với một đối tượng rỗng
+  const [filters, setFilters] = useState<{ [key: string]: string[] }>({});
   // Thêm state cho Price Range
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 25]);
+
+  // Vùng FIX LỖI RENDER VÔ HẠN: Thiết lập/Reset state filters khi category thay đổi
+  useEffect(() => {
+    // Chỉ reset khi có dữ liệu category hợp lệ (để đảm bảo filterData được tính đúng)
+    if (category?.attributeCategories) {
+      const newInitialFilters: { [key: string]: string[] } = {};
+
+      // Tạo cấu trúc filters dựa trên filterData mới
+      filterData.forEach((f) => {
+        newInitialFilters[f.field] = [];
+      });
+      newInitialFilters["brands"] = []; // THÊM BRANDS VÀO STATE KHỞI TẠO BẰNG TAY
+
+      // Cập nhật state filters
+      setFilters(newInitialFilters);
+      setPage(1); // Reset trang về 1 khi danh mục/filters thay đổi
+      setPriceRange([0, 25]); // Reset Price Range
+    }
+  }, [category?.id, category?.attributeCategories]); // Chạy lại khi categoryId hoặc attributes của category thay đổi.
 
   const handleFilterChange = (
     field: string,
     value: string,
     checked: boolean
   ) => {
+    // Đảm bảo setPage về 1 khi filters thay đổi
+    setPage(1);
     setFilters((prev) => {
       // Đảm bảo lấy đúng mảng giá trị của field hiện tại
       const prevValues = prev[field] || [];
@@ -126,35 +157,47 @@ const Products = () => {
       return { ...prev, [field]: newValues };
     });
   };
-  const queryParams: ProductQueryParams = useMemo(() => {
+
+  // Tính toán queryParams (giữ nguyên logic useMemo)
+  const queryParams: any /* ProductQueryParams */ = useMemo(() => {
     const attributeCategoryIds = filtersToAttributeCategoryIds(
       filters,
-      (category?.attributes as any) || []
+      category?.attributeCategories || []
     );
-    const brandIds = filtersToBrandIds(
-      filters["brands"],
-      category?.brands || []
-    );
+    // const brandIds = filtersToBrandIds(
+    //   filters["brands"],
+    //   category?.brands || []
+    // );
     return {
-      sortBy: sort.sortBy,
-      sortOrder: sort.sortOrder,
-      search: debouncedSearchTerm,
+      ...(sort.sortBy && { sortBy: sort.sortBy, sortOrder: sort.sortOrder }),
+      ...(searchInput && { search: debouncedSearchTerm }),
       categoryId: category?.id || 0,
-      brandIds,
+      // brandIds,
       attributeCategoryIds,
       minPrice: priceRange[0],
       maxPrice: priceRange[1],
-      page, // 👈 thêm dòng này
-      limit: 9, // giới hạn mỗi trang 9 sản phẩm
+      page,
+      limit: 9,
     };
-  }, [filters, page, priceRange, category, debouncedSearchTerm, sort]);
+  }, [
+    filters,
+    page,
+    priceRange,
+    category,
+    debouncedSearchTerm,
+    sort,
+    searchInput,
+  ]);
+
   const { data: products, isLoading } = useProducts(queryParams);
+
   const handlePageChange = (newPage: number) => {
     const totalPages = products?.pagination?.total ?? 1;
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);
     }
   };
+
   return (
     <div>
       <div className="bg-[#F6F7F8]">
@@ -164,6 +207,7 @@ const Products = () => {
       </div>
       <div className="w-[1240px] mx-auto py-[50px] flex gap-[30px]">
         <div className="w-[270px] flex flex-col gap-[30px]">
+          {/* Lọc: Filters Group */}
           {filterData.map((filter) => {
             return (
               <FilterGroup
@@ -175,14 +219,15 @@ const Products = () => {
               />
             );
           })}
+          {/* Lọc: Price Group */}
           <PriceGroup range={priceRange} setRange={setPriceRange} />
           {/* THÊM FILTERGROUP BRANDS THỦ CÔNG */}
-          <FilterGroup
+          {/* <FilterGroup
             field="brands" // Quan trọng: Phải khớp với key trong state 'filters'
             values={category?.brands.map((brand) => brand.name) || []}
             selectedValues={filters["brands"] || []}
             onChange={handleFilterChange}
-          />
+          /> */}
           {/* <LoadMoreButton /> */}
         </div>
 
@@ -211,7 +256,7 @@ const Products = () => {
               height={400}
               width={400}
               alt={category?.name || ""}
-              src={category?.image || ""}
+              src={category?.imageUrl || ""}
               className="w-[400px] h-[400px]  object-contain absolute top-0 right-0"
             />
           </div>
@@ -219,7 +264,7 @@ const Products = () => {
             <Loading />
           ) : (
             <div className="grid grid-cols-3 gap-y-3 gap-x-5">
-              {products?.data.map((product) => (
+              {products?.data.map((product: any) => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>

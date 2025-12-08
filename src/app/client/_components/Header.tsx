@@ -5,6 +5,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useDepartments } from "@/hooks/queries/useDepartment";
 import { useGetHeaderData } from "@/hooks/queries/useHome";
 import { Heart, ShoppingCart, User } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -51,7 +52,7 @@ const Content = ({
 
 const Header = () => {
   const router = useRouter();
-  const { data: headerData } = useGetHeaderData();
+  const { data: headerData } = useDepartments({});
   return (
     <header>
       <div className="w-[1240px] mx-auto flex justify-end gap-[41px]   py-[20px] ">
@@ -75,18 +76,18 @@ const Header = () => {
               <li className="uppercase text-[24px] font-medium cursor-pointer select-none">
                 Home
               </li>
-              {headerData?.map((department) => (
+              {headerData?.data.map((department) => (
                 <SubCatgories
-                  key={department.department}
+                  key={department.name}
                   content={
                     <Content
                       items={department.categories}
-                      origin={department.department}
+                      origin={department.name}
                     />
                   }
                 >
                   <li className="uppercase text-[24px] font-medium cursor-pointer select-none">
-                    {department.department}
+                    {department.name}
                   </li>
                 </SubCatgories>
               ))}

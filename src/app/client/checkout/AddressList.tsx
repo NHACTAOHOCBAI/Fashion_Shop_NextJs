@@ -9,6 +9,7 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Building, House, X } from "lucide-react";
 import AddNewAddress from "@/app/client/checkout/AddNewAddress";
+import { useState } from "react";
 const initialAddress = [
   {
     id: 1,
@@ -35,46 +36,48 @@ const AddressList = ({
   selectedAddressId,
   onSelectAddress,
 }: AddressListProps) => {
+  const [open, setOpen] = useState(false);
   return (
-    // Sử dụng component <AddressList /> làm nội dung AlertDialogContent
-    <AlertDialogContent className="w-[600px] max-h-[600px] flex flex-col">
-      <div className="flex justify-between ">
-        <p className="font-medium">My Address</p>
-        <AlertDialogPrimitive.Cancel>
-          <X />
-        </AlertDialogPrimitive.Cancel>
-      </div>
-      <div className="bg-[#FAFAFB] h-[2px] w-full" />
-      <div className="overflow-y-auto">
-        <RadioGroup
-          value={String(selectedAddressId)} // Gán giá trị đang chọn
-          onValueChange={(value) => onSelectAddress(Number(value))} // Gán hàm xử lý
-        >
-          {initialAddress.map((option) => {
-            const type = (
-              <div>
-                {option.type === "home" ? (
-                  <House size={16} strokeWidth={1} />
-                ) : (
-                  <Building size={16} strokeWidth={1} />
-                )}
-              </div>
-            );
-            return (
-              // 🆕 Dùng <label> và thêm CSS loại bỏ focus ring để khắc phục lỗi nhấp nháy
-              <label
-                htmlFor={String(option.id)}
-                key={option.id}
-                className="
+    <>
+      <AddNewAddress open={open} setOpen={setOpen} />
+      <AlertDialogContent className="w-[600px] max-h-[600px] flex flex-col">
+        <div className="flex justify-between ">
+          <p className="font-medium">My Address</p>
+          <AlertDialogPrimitive.Cancel>
+            <X />
+          </AlertDialogPrimitive.Cancel>
+        </div>
+        <div className="bg-[#FAFAFB] h-[2px] w-full" />
+        <div className="overflow-y-auto">
+          <RadioGroup
+            value={String(selectedAddressId)} // Gán giá trị đang chọn
+            onValueChange={(value) => onSelectAddress(Number(value))} // Gán hàm xử lý
+          >
+            {initialAddress.map((option) => {
+              const type = (
+                <div>
+                  {option.type === "home" ? (
+                    <House size={16} strokeWidth={1} />
+                  ) : (
+                    <Building size={16} strokeWidth={1} />
+                  )}
+                </div>
+              );
+              return (
+                // 🆕 Dùng <label> và thêm CSS loại bỏ focus ring để khắc phục lỗi nhấp nháy
+                <label
+                  htmlFor={String(option.id)}
+                  key={option.id}
+                  className="
                   flex py-[15px] px-[19px] mb-2 rounded-[4px] border-[1px] cursor-pointer 
                   hover:bg-gray-50 transition-colors 
                   ${selectedAddressId === option.id ? 'border-[#40BFFF] bg-[#E8EFFA]' : 'border-gray-100'} 
                 "
-              >
-                <RadioGroupItem
-                  value={String(option.id)}
-                  id={String(option.id)}
-                  className="
+                >
+                  <RadioGroupItem
+                    value={String(option.id)}
+                    id={String(option.id)}
+                    className="
                       mt-[4px] 
                       data-[state=checked]:border-[#40BFFF] 
                       data-[state=checked]:text-[#40BFFF]
@@ -84,43 +87,41 @@ const AddressList = ({
                       focus-visible:ring-offset-0
                       ring-offset-0
                     "
-                />
-                <div className="flex flex-col gap-[4px] ml-[8px]">
-                  <div className="flex gap-[8px]">
-                    <p className="font-medium">{option.name}</p>
-                    <p>|</p>
-                    <p>{option.phone}</p>
+                  />
+                  <div className="flex flex-col gap-[4px] ml-[8px]">
+                    <div className="flex gap-[8px]">
+                      <p className="font-medium">{option.name}</p>
+                      <p>|</p>
+                      <p>{option.phone}</p>
+                    </div>
+                    <p>{option.address}</p>
+                    <div className="flex justify-between">
+                      <MyTag
+                        value={
+                          <div className="flex gap-[4px] items-center">
+                            {type}
+                            <p>{option.type}</p>
+                          </div>
+                        }
+                      />
+                      <MyTag
+                        value={<p className="text-[#FF4858]">Default</p>}
+                      />
+                    </div>
                   </div>
-                  <p>{option.address}</p>
-                  <div className="flex justify-between">
-                    <MyTag
-                      value={
-                        <div className="flex gap-[4px] items-center">
-                          {type}
-                          <p>{option.type}</p>
-                        </div>
-                      }
-                    />
-                    <MyTag value={<p className="text-[#FF4858]">Default</p>} />
-                  </div>
-                </div>
-              </label>
-            );
-          })}
-        </RadioGroup>
-      </div>
-      <div className="ml-auto">
-        <AlertDialog>
-          <AlertDialogTrigger>
-            <NormalButton>
-              <p className="text-[14px] text-[#40BFFF]">Add New Address</p>
-            </NormalButton>
-          </AlertDialogTrigger>
-          <AddNewAddress />
-        </AlertDialog>
-      </div>
-      {/* END OF SCROLLABLE AREA */}
-    </AlertDialogContent>
+                </label>
+              );
+            })}
+          </RadioGroup>
+        </div>
+        <div className="ml-auto">
+          <NormalButton onClick={() => setOpen(true)}>
+            <p className="text-[14px] text-[#40BFFF]">Add New Address</p>
+          </NormalButton>
+        </div>
+        {/* END OF SCROLLABLE AREA */}
+      </AlertDialogContent>
+    </>
   );
 };
 export default AddressList;

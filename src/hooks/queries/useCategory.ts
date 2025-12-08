@@ -5,7 +5,6 @@ import {
   getCategories,
   getCategoryById,
   getCategoryBySlug,
-  getCategoryFilters,
   getCategorySelection,
   updateCategory,
 } from "@/services/category.service";
@@ -19,11 +18,6 @@ const useGetCategoryBySlug = (slug: string) =>
   useQuery({
     queryKey: ["category", slug],
     queryFn: () => getCategoryBySlug(slug),
-  });
-const useGetCategoryFilter = (id: number) =>
-  useQuery({
-    queryKey: ["category", id],
-    queryFn: () => getCategoryFilters(id),
   });
 const useGetCategoryById = (id: number) =>
   useQuery({
@@ -81,5 +75,4 @@ export {
   useUpdateCategory,
   useCategorySelections,
   useGetCategoryById,
-  useGetCategoryFilter,
 };

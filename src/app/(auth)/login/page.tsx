@@ -1,8 +1,13 @@
-import { LoginForm } from "@/app/(auth)/login/login-form"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { LoginForm } from "@/app/(auth)/login/login-form";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
-export default async function Page() {
-  await new Promise((resolve) => setTimeout(resolve, 3000));
+export default function Page() {
   return (
     <div className="flex flex-col gap-6">
       <Card>
@@ -17,5 +22,5 @@ export default async function Page() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
