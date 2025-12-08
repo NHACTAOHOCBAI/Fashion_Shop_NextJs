@@ -30,6 +30,7 @@ const updateAddress = async ({
     commune: string;
     type: "home" | "office";
     isDefault: boolean;
+    detailAddress: string;
   };
 }) => {
   const response = await axiosInstance.patch(`/address/${id}`, data);
