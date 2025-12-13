@@ -10,3 +10,6 @@ interface ProductQueryParams extends QueryParams {
   attributeCategoryIds?: number[];
   brandIds?: number[];
 }
+interface OrderQueryParams extends QueryParams {
+  status?: string;
+}

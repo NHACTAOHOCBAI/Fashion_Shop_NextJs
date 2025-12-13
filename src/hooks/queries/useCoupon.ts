@@ -3,10 +3,16 @@ import {
   deleteCoupon,
   deleteCoupons,
   getCoupons,
+  getMyCoupons,
   updateCoupon,
 } from "@/services/coupon.service";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
+const useMyCoupons = (params: QueryParams) =>
+  useQuery({
+    queryKey: ["my-coupons", params],
+    queryFn: () => getMyCoupons(params),
+  });
 // Lấy danh sách coupon (có thể truyền params lọc/pagination)
 const useCoupons = (params: QueryParams) =>
   useQuery({
@@ -64,4 +70,5 @@ export {
   useUpdateCoupon,
   useDeleteCoupon,
   useDeleteCoupons,
+  useMyCoupons,
 };

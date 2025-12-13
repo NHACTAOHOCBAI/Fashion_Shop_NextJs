@@ -6,6 +6,12 @@ const getCoupons = async (params: QueryParams) => {
   })) as GetAllResponse<Coupon>;
   return response.data;
 };
+const getMyCoupons = async (params: QueryParams) => {
+  const response = (await axiosInstance.get("/coupons/all", {
+    params,
+  })) as GetAllResponse<Coupon>;
+  return response.data;
+};
 const deleteCoupon = async ({ id }: { id: number }) => {
   console.log(id);
   return {};
@@ -44,4 +50,11 @@ const updateCoupon = async ({
   const response = await axiosInstance.patch(`/coupons/${id}`, data);
   return response;
 };
-export { getCoupons, updateCoupon, createCoupon, deleteCoupons, deleteCoupon };
+export {
+  getCoupons,
+  updateCoupon,
+  createCoupon,
+  deleteCoupons,
+  deleteCoupon,
+  getMyCoupons,
+};

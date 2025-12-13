@@ -1,5 +1,6 @@
 "use client";
-import { Calendar22 } from "@/app/client/my-account/profile/MyDatePicker";
+
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -9,35 +10,145 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useUpdateMyProfile } from "@/hooks/queries/useAuth";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import z from "zod";
+import { toast } from "sonner";
+import { z } from "zod";
+
+/* =======================
+ * SCHEMA
+ * ======================= */
 const UpdateMyProfileSchema = z.object({
-  fullName: z.string("full name is required"),
-  email: z.string("email is required"),
-  gender: z.string("gender is required"),
-  dob: z.string("email is required"),
+  fullName: z.string().min(1, "Full name is required"),
+  email: z.string().email("Invalid email address"),
+  avatar: z.instanceof(File).optional(),
 });
 
+type UpdateMyProfileForm = z.infer<typeof UpdateMyProfileSchema>;
+
 const MyProfile = () => {
-  const form = useForm<z.infer<typeof UpdateMyProfileSchema>>({
+  const { mutate: updateMyProfile, isPending } = useUpdateMyProfile();
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+
+  /* =======================
+   * FORM
+   * ======================= */
+  const form = useForm<UpdateMyProfileForm>({
     resolver: zodResolver(UpdateMyProfileSchema),
+    defaultValues: {
+      fullName: "",
+      email: "",
+    },
   });
+
+  /* =======================
+   * LOAD USER
+   * ======================= */
+  useEffect(() => {
+    const item = localStorage.getItem("user");
+    if (!item) return;
+
+    const user = JSON.parse(item) as {
+      avatar?: string;
+      fullName: string;
+      email: string;
+    };
+
+    form.reset({
+      fullName: user.fullName,
+      email: user.email,
+    });
+
+    if (user.avatar) {
+      setAvatarPreview(user.avatar);
+    }
+  }, [form]);
+
+  /* =======================
+   * SUBMIT
+   * ======================= */
+  const onSubmit = (values: UpdateMyProfileForm) => {
+    const formData = new FormData();
+
+    formData.append("fullName", values.fullName);
+    formData.append("email", values.email);
+
+    if (values.avatar) {
+      formData.append("avatar", values.avatar);
+    }
+    updateMyProfile(
+      {
+        fullName: values.fullName,
+        image: values.avatar,
+      },
+      {
+        onSuccess: () => {
+          toast.success("You have updated your profile sucessfully");
+        },
+        onError: (error) => {
+          toast.error(`Ohh!!! ${error.message}`);
+        },
+      }
+    );
+
+    // TODO:
+    // await updateProfile(formData)
+    // toast.success("Profile updated")
+  };
+
   return (
     <div>
-      <div className="flex">
-        <div>
-          <p className="text-[24px]">My Profile </p>
-          <p className="text-[18px] font-light mt-[11px]">
-            Manage information for your profile
-          </p>
-        </div>
-      </div>
-      <div className=" mt-[60px]">
+      <p className="text-[24px]">My Profile</p>
+      <p className="text-[18px] font-light mt-[11px]">
+        Manage information for your profile
+      </p>
+
+      <div className="mt-[60px]">
         <Form {...form}>
-          <form className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+            {/* AVATAR */}
+            <FormField
+              control={form.control}
+              name="avatar"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Avatar</FormLabel>
+
+                  <div className="flex items-center flex-col gap-4">
+                    {avatarPreview && (
+                      <Image
+                        src={avatarPreview}
+                        alt="avatar"
+                        width={200}
+                        height={200}
+                        className="rounded-full object-cover"
+                      />
+                    )}
+
+                    <FormControl>
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+
+                          field.onChange(file);
+                          setAvatarPreview(URL.createObjectURL(file));
+                        }}
+                      />
+                    </FormControl>
+                  </div>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* FULL NAME */}
             <FormField
               control={form.control}
               name="fullName"
@@ -51,6 +162,8 @@ const MyProfile = () => {
                 </FormItem>
               )}
             />
+
+            {/* EMAIL */}
             <FormField
               control={form.control}
               name="email"
@@ -58,59 +171,22 @@ const MyProfile = () => {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} disabled />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="gender"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Gender</FormLabel>
-                  <FormControl>
-                    <RadioGroup
-                      value={field.value}
-                      defaultValue=""
-                      className="flex gap-[20px]"
-                    >
-                      <div className="flex items-center gap-[14px]">
-                        <RadioGroupItem value="male" id="male" />
-                        <Label htmlFor="male" className="font-light">
-                          Male
-                        </Label>
-                      </div>
-                      <div className="flex items-center gap-[14px]">
-                        <RadioGroupItem value="female" id="female" />
-                        <Label htmlFor="female" className="font-light">
-                          Female
-                        </Label>
-                      </div>
-                    </RadioGroup>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Calendar22 />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+
+            {/* SUBMIT */}
+            <Button type="submit" className="mt-4">
+              Update Profile
+            </Button>
           </form>
         </Form>
       </div>
     </div>
   );
 };
+
 export default MyProfile;

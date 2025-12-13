@@ -1,15 +1,6 @@
 import finalMoney from "@/lib/finalMoney";
 import Image from "next/image";
 import { FaStar } from "react-icons/fa";
-const data = {
-  id: 1,
-  image:
-    "https://png.pngtree.com/png-clipart/20241231/original/pngtree-running-shoes-or-sneakers-on-a-transparent-background-png-image_18457027.png",
-  name: "Nike shoes",
-  rating: 3.8,
-  price: 299.99,
-  createdAt: "2025-12-02T12:52:36.000Z",
-};
 const NEWTIME = 24 * 60 * 60 * 1000;
 const isNewProduct = (createdAt: string): boolean => {
   const createdTime = new Date(createdAt).getTime();
@@ -17,7 +8,7 @@ const isNewProduct = (createdAt: string): boolean => {
   const timeDifference = currentTime - createdTime;
   return timeDifference < NEWTIME;
 };
-const ProductCard = ({ product = data as any }: { product?: Product }) => {
+const ProductCard = ({ product }: { product: Product }) => {
   const showNewTag = isNewProduct(product.createdAt);
   return (
     <div className="relative">
