@@ -4,13 +4,13 @@ const getCoupons = async (params: QueryParams) => {
   const response = (await axiosInstance.get("/coupons/all", {
     params,
   })) as GetAllResponse<Coupon>;
-  return response.data;
+  return response.data.data;
 };
 const getMyCoupons = async (params: QueryParams) => {
-  const response = (await axiosInstance.get("/coupons/all", {
+  const response = (await axiosInstance.get("/coupons/my", {
     params,
   })) as GetAllResponse<Coupon>;
-  return response.data;
+  return response.data.data;
 };
 const deleteCoupon = async ({ id }: { id: number }) => {
   console.log(id);

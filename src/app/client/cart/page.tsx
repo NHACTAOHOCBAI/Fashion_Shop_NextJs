@@ -235,13 +235,7 @@ const CheckoutButton = ({
 
     const totalAmount = subtotal + SHIPPING_FEE;
 
-    console.log("-----------------------------------------");
-    console.log(
-      `PROCEEDING TO CHECKOUT: Total Amount $${totalAmount.toFixed(2)}`
-    );
-    console.log("Checkout Payload (Variant ID & Quantity):");
-    console.table(checkoutData);
-    console.log("-----------------------------------------");
+    localStorage.setItem("products", JSON.stringify(selectedItems));
   };
 
   return (
