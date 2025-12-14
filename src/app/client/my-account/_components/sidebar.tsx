@@ -152,7 +152,7 @@ const CollapsibleMenuSection: React.FC<CollapsibleMenuSectionProps> = ({
           }`}
           onClick={handleParentClick}
         >
-          <div className="flex items-center justify-between w-full">
+          <div className=" flex items-center justify-between w-full">
             <div className="flex items-center">
               <Icon
                 className={`mr-3 h-5 w-5 ${
@@ -171,7 +171,7 @@ const CollapsibleMenuSection: React.FC<CollapsibleMenuSectionProps> = ({
       </CollapsibleTrigger>
 
       {/* Content (Nội dung sẽ được thu gọn/mở rộng) */}
-      <CollapsibleContent className="space-y-1 ml-4 pl-4 border-l border-gray-200">
+      <CollapsibleContent className="text-gray-700 space-y-1 ml-4 pl-4 border-l border-gray-200">
         {items.map((item) => {
           const isItemActive = item.href === pathname;
           return (
@@ -235,18 +235,16 @@ const SimpleMenuSection: React.FC<SimpleMenuSectionProps> = ({
     <Button
       variant="ghost"
       onClick={handleClick}
-      className={`w-full h-auto p-3 justify-start text-base font-medium transition-colors ${
+      className={`text-gray-700 w-full h-auto p-3 justify-start text-base font-medium transition-colors ${
         isActive
-          ? "bg-blue-100 text-app- font-bold hover:bg-blue-100/80"
-          : "text-gray-700 hover:bg-gray-100/70"
+          ? "bg-blue-100/70 hover:bg-blue-100/70 hover:text-[#40BFFF]   text-[#40BFFF] "
+          : "  hover:text-[#40BFFF] hover:bg-gray-100/70 "
       }`}
     >
       <div className="flex items-center justify-between w-full">
         <div className="flex items-center">
           <Icon
-            className={`mr-3 h-5 w-5 ${
-              isActive ? "text-blue-700" : "text-gray-500"
-            }`}
+            className={`mr-3 h-5 w-5 ${isActive ? "text-[#40BFFF]" : ""}`}
           />
           <span>{title}</span>
         </div>

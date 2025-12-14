@@ -56,11 +56,14 @@ const Header = () => {
   return (
     <header>
       <div className="w-[1240px] mx-auto flex justify-end gap-[41px]   py-[20px] ">
-        <Heart />
-        <ShoppingCart onClick={() => router.push("/client/cart")} />
+        <Heart className="cursor-pointer transition-transform duration-150 ease-out active:scale-90 active:opacity-70 hover:scale-105" />
+        <ShoppingCart
+          className="cursor-pointer transition-transform duration-150 ease-out active:scale-90 active:opacity-70 hover:scale-105"
+          onClick={() => router.push("/client/cart")}
+        />
         <Popover>
           <PopoverTrigger>
-            <User />
+            <User className="cursor-pointer transition-transform duration-150 ease-out active:scale-90 active:opacity-70 hover:scale-105" />
           </PopoverTrigger>
           <PopoverContent className="p-0 w-[360px]">
             <Notification />

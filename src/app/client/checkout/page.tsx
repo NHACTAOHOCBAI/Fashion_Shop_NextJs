@@ -7,6 +7,7 @@ import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useMyAddress } from "@/hooks/queries/useAddress";
 import { useCoupons } from "@/hooks/queries/useCoupon";
+import { usePlaceOrder } from "@/hooks/queries/useOrder";
 // Giả định các hooks này đã được tạo
 // import { useMyAddress } from "@/hooks/queries/useAddress";
 // import { useCoupons, useMyCoupons } from "@/hooks/queries/useCoupon";
@@ -14,6 +15,7 @@ import { Box, CreditCard, MapPinHouse, Truck } from "lucide-react";
 import Image from "next/image";
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { RiCoupon3Line } from "react-icons/ri";
+import { toast } from "sonner";
 
 // ===============================================
 // ĐỊNH NGHĨA INTERFACE CHO CODE NÀY
@@ -53,7 +55,7 @@ const shippingOptions: ShippingOption[] = [
     logo: "Logo A",
   },
   {
-    value: "fast",
+    value: "express",
     price: 9.0,
     delivery: "(5-10 days)",
     name: "Fast Delivery",
@@ -162,11 +164,13 @@ const calculateOrderSummary = (
 
 const Checkout = () => {
   // Hooks
+  const { mutate: placeOrder, isPending } = usePlaceOrder();
   const { data: myAddresses } = useMyAddress();
   const { data: myCoupons } = useCoupons({ limit: 3, page: 1 });
   const [products, setProducts] = useState<CartItem[] | undefined>();
 
   // States
+  const [note, setNote] = useState<string>("");
   const [selectedAddressId, setSelectedAddressId] = useState<
     number | undefined
   >(undefined);
@@ -269,12 +273,8 @@ const Checkout = () => {
       paymentMethod: selectedPayment,
       couponId: selectedCouponId,
       orderItems: (products || []).map((item) => ({
-        variantId: item.variant.product.name, // Giả định dùng name là ID
+        variantId: item.variant.product.id, // Giả định dùng name là ID
         quantity: item.quantity,
-        unitPrice:
-          typeof item.variant.product.price === "string"
-            ? parseFloat(item.variant.product.price)
-            : item.variant.product.price,
       })),
       summary: {
         ...orderSummary,
@@ -292,7 +292,24 @@ const Checkout = () => {
 
     console.log("--- CHECKOUT DATA READY ---");
     console.log(checkoutData);
-    alert("Checkout data collected! Check the console for details.");
+    placeOrder(
+      {
+        addressId: checkoutData.shippingAddressId,
+        couponCode: checkoutData.summary.appliedCoupon?.code,
+        items: checkoutData.orderItems,
+        paymentMethod: checkoutData.paymentMethod,
+        shippingMethod: checkoutData.shippingMethod,
+        note: note,
+      },
+      {
+        onSuccess: () => {
+          toast.success("You has placed orders sucessfully");
+        },
+        onError: (error) => {
+          toast.error(`Ohh!!! ${error.message}`);
+        },
+      }
+    );
 
     // Thêm logic gọi API đặt hàng tại đây (vd: axios.post('/api/orders', checkoutData))
   }, [
@@ -303,6 +320,7 @@ const Checkout = () => {
     products,
     orderSummary,
     currentCoupon,
+    note,
   ]);
 
   // Rendering Helpers
@@ -631,7 +649,7 @@ const Checkout = () => {
             <p>TOTAL</p>
             <p>${orderSummary.total.toFixed(2)}</p>
           </div>
-          <NoteInput />
+          <NoteInput value={note} onChange={setNote} />
           <PlaceOrderButton onClick={handleCheckout} />
         </div>
       </div>
@@ -708,9 +726,17 @@ const PlaceOrderButton: React.FC<PlaceOrderButtonProps> = ({ onClick }) => {
   );
 };
 
-const NoteInput = () => {
+const NoteInput = ({
+  onChange,
+  value,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+}) => {
   return (
     <textarea
+      onChange={(e) => onChange(e.target.value)}
+      value={value}
       rows={3}
       className="
                 text-[16px]
