@@ -4,6 +4,13 @@ const login = async (data: { email: string; password: string }) => {
   const response = await axiosInstance.post("/auth/login", data);
   return response.data as { user: User };
 };
+const register = async (data: {
+  email: string;
+  password: string;
+  fullName: string;
+}) => {
+  console.log(data);
+};
 const logout = async () => {
   console.log("log out");
 };
@@ -23,4 +30,4 @@ const updateMyProfile = async (data: { fullName: string; image?: File }) => {
   });
   return response;
 };
-export { login, getMyProfile, updateMyProfile, logout };
+export { login, getMyProfile, updateMyProfile, logout, register };
