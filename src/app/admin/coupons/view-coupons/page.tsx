@@ -6,26 +6,26 @@ import { toast } from "sonner";
 
 import CrudTable from "@/components/crud_table/crud-table";
 import { Button } from "@/components/ui/button";
+import { formatDateTimeWithAt } from "@/lib/formatDate";
+
 import {
   useCoupons,
   useDeleteCoupon,
   useDeleteCoupons,
 } from "@/hooks/queries/useCoupon";
-import { formatDateTimeWithAt } from "@/lib/formatDate";
 import { couponColumns } from "@/app/admin/coupons/view-coupons/coupon-columns";
 import { CreateCouponDialog } from "@/app/admin/coupons/create-coupon/create-coupon-dialog";
-// import { UpdateCouponDialog } from "@/app/admin/coupons/update-coupon/update-coupon-dialog";
 
 export default function Coupons() {
+  const [openCreate, setOpenCreate] = React.useState(false);
   const [openUpdate, setOpenUpdate] = React.useState(false);
   const [updatedItem, setUpdatedItem] = React.useState<Coupon>();
-  const [openCreate, setOpenCreate] = React.useState(false);
 
   const { mutate: deleteItem } = useDeleteCoupon();
 
   const handleUpdateBtn = (item: Coupon) => {
-    setOpenUpdate(true);
     setUpdatedItem(item);
+    setOpenUpdate(true);
   };
 
   const handleDeleteItem = (id: number) => {
@@ -51,7 +51,7 @@ export default function Coupons() {
       <CrudTable<Coupon>
         columns={couponColumns(handleUpdateBtn, handleDeleteItem)}
         useQuery={useCoupons}
-        useDelete={useDeleteCoupons as any}
+        useDelete={useDeleteCoupons}
         filterPlaceholder="Filter coupon code..."
       >
         <Button
@@ -66,9 +66,10 @@ export default function Coupons() {
       </CrudTable>
 
       <CreateCouponDialog open={openCreate} setOpen={setOpenCreate} />
+
       {/* <UpdateCouponDialog
-        setOpen={setOpenUpdate}
         open={openUpdate}
+        setOpen={setOpenUpdate}
         updatedItem={updatedItem}
         setUpdatedItem={setUpdatedItem}
       />  */}

@@ -13,16 +13,22 @@ const useLocalCreateCoupon = (closeDialog: () => void) => {
     resolver: zodResolver(CreateCouponSchema),
     defaultValues: {
       code: "",
+      name: "",
       description: "",
-      discountValue: 0,
+      discountType: "percentage",
+      discountValue: 10,
       minOrderAmount: 0,
       usageLimit: 1,
       usageLimitPerUser: 1,
+      startDate: new Date().toISOString().slice(0, 10),
+      endDate: new Date().toISOString().slice(0, 10),
+      status: "active",
+      targets: [],
     },
   });
 
   function onSubmit(values: z.infer<typeof CreateCouponSchema>) {
-    createItem(values, {
+    createItem(values as any, {
       onSuccess: () => {
         toast.success("Coupon has been created", {
           description: formatDateTimeWithAt(new Date()),
@@ -33,9 +39,7 @@ const useLocalCreateCoupon = (closeDialog: () => void) => {
           description: formatDateTimeWithAt(new Date()),
         });
       },
-      onSettled: () => {
-        handleCancel();
-      },
+      onSettled: handleCancel,
     });
   }
 
@@ -44,12 +48,7 @@ const useLocalCreateCoupon = (closeDialog: () => void) => {
     form.reset();
   };
 
-  return {
-    form,
-    onSubmit,
-    isPending,
-    handleCancel,
-  };
+  return { form, onSubmit, isPending, handleCancel };
 };
 
 export default useLocalCreateCoupon;

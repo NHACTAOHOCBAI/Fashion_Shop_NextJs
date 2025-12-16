@@ -1,6 +1,6 @@
-"use client";
+import type { ColumnDef } from "@tanstack/react-table";
+import { MoreHorizontal } from "lucide-react";
 
-import { DataTableColumnHeader } from "@/components/table/data-table-column-header";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -11,15 +11,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { shorthandFormatDateTime } from "@/lib/formatDate";
-import { MoreHorizontal } from "lucide-react";
-import type { ColumnDef } from "@tanstack/react-table";
+import { DataTableColumnHeader } from "@/components/table/data-table-column-header";
 
 export const couponColumns = (
   handleUpdateBtn: (item: Coupon) => void,
   handleDeleteItem: (id: number) => void
 ): ColumnDef<Coupon>[] => {
   return [
+    // Select
     {
       id: "select",
       header: ({ table }) => (
@@ -29,94 +28,112 @@ export const couponColumns = (
             (table.getIsSomePageRowsSelected() && "indeterminate")
           }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
         />
       ),
       cell: ({ row }) => (
         <Checkbox
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
         />
       ),
       enableSorting: false,
       enableHiding: false,
     },
+
+    // ID
     {
       accessorKey: "id",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="ID" />
       ),
     },
+
+    // Code
     {
       accessorKey: "code",
-      enableSorting: false,
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Code" />
       ),
     },
+
+    // Discount
     {
-      accessorKey: "discountValue",
-      enableSorting: false,
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Discount" />
-      ),
-      cell: ({ row }) => `${row.original.discountValue}%`,
+      id: "discount",
+      header: "Discount",
+      cell: ({ row }) => {
+        const c = row.original;
+        if (c.discountType === "percentage") {
+          return `${c.discountValue}%`;
+        }
+        if (c.discountType === "fixed_amount") {
+          return `$${c.discountValue}`;
+        }
+        return "Free Shipping";
+      },
     },
+
+    // Usage
     {
-      accessorKey: "minOrderAmount",
-      enableSorting: false,
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Min Order" />
-      ),
-      cell: ({ row }) => `$${row.original.minOrderAmount}`,
+      id: "usage",
+      header: "Usage",
+      cell: ({ row }) => {
+        const c = row.original;
+        return `${c.usageCount ?? 0}/${c.usageLimit}`;
+      },
     },
+
+    // Status
     {
-      accessorKey: "usageLimit",
-      enableSorting: false,
+      accessorKey: "status",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Usage Limit" />
+        <DataTableColumnHeader column={column} title="Status" />
       ),
     },
+
+    // Date range
     {
-      accessorKey: "usageLimitPerUser",
-      enableSorting: false,
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Per User" />
-      ),
+      id: "duration",
+      header: "Duration",
+      cell: ({ row }) => {
+        const c = row.original;
+        return (
+          <div className="text-xs">
+            <div>{new Date(c.startDate).toLocaleDateString()}</div>
+            <div>{new Date(c.endDate).toLocaleDateString()}</div>
+          </div>
+        );
+      },
     },
-    {
-      accessorKey: "updatedAt",
-      enableSorting: false,
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Updated" />
-      ),
-      cell: ({ row }) =>
-        shorthandFormatDateTime(new Date(row.original.updatedAt)),
-    },
+
+    // Actions
     {
       id: "actions",
       cell: ({ row }) => {
         const item = row.original;
+
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
+
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
+
               <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(String(item.code))}
+                onClick={() => navigator.clipboard.writeText(String(item.id))}
               >
-                Copy Code
+                Copy ID
               </DropdownMenuItem>
+
               <DropdownMenuSeparator />
+
               <DropdownMenuItem onClick={() => handleUpdateBtn(item)}>
                 Update Coupon
               </DropdownMenuItem>
+
               <DropdownMenuItem
                 className="focus:text-red-500"
                 onClick={() => handleDeleteItem(item.id)}

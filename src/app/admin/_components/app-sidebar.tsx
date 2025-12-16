@@ -11,6 +11,7 @@ import {
 import { NavMain } from "@/app/admin/_components/nav-main";
 import { NavUser } from "@/app/admin/_components/nav-user";
 import { ICONS } from "@/constants/icon.enum";
+import { Tag } from "lucide-react";
 
 // This is sample data.
 const data = {
@@ -112,9 +113,21 @@ const data = {
         },
       ],
     },
+    {
+      title: "Coupons",
+      icon: <Tag />,
+      items: [
+        {
+          title: "View Coupons",
+          url: "/admin/coupons/view-coupons",
+        },
+      ],
+    },
   ],
 };
-
+{
+  /* <Tag /> */
+}
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>

@@ -1,7 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import { useState } from "react";
+import { useParams } from "next/navigation";
 import { X } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -30,56 +32,49 @@ import {
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ImageUpload } from "@/components/image-upload/image-upload";
 import { Placeholder } from "@/constants/placeholder.num";
-import useLocalUpdateProduct from "@/app/admin/products/update-product/use-local-update-product";
+
+import useLocalUpdateProduct from "../use-local-update-product";
 
 export default function UpdateProduct() {
+  const { id } = useParams<{ id: string }>();
+  console.log(id);
+  const productId = Number(id);
+
+  const [step, setStep] = useState<"info" | "variants">("info");
+
   const {
     form,
     onSubmit,
-    step,
-    setSelectedCategory,
-    categorySelections,
-    brandSelections,
-    setStep,
     fields,
+    append,
     remove,
     attributes,
-    append,
+    setSelectedCategory,
     isPending,
-    isImageLoading,
-  } = useLocalUpdateProduct();
-  if (
-    !categorySelections ||
-    !brandSelections ||
-    attributes.length === 0 ||
-    isImageLoading
-  )
-    return <div>Loading</div>;
+    categorySelections,
+    brandSelections,
+  } = useLocalUpdateProduct(productId);
+
+  if (!categorySelections || !brandSelections || attributes.length === 0) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>Update Product</CardTitle>
       </CardHeader>
+
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <Tabs value={step} onValueChange={() => {}}>
+            <Tabs value={step} onValueChange={(v) => setStep(v as any)}>
               <TabsList className="mb-6">
-                <TabsTrigger
-                  value="info"
-                  className="pointer-events-none opacity-70"
-                >
-                  Step 1: Info
-                </TabsTrigger>
-                <TabsTrigger
-                  value="variants"
-                  className="pointer-events-none opacity-70"
-                >
-                  Step 2: Variants
-                </TabsTrigger>
+                <TabsTrigger value="info">Step 1: Info</TabsTrigger>
+                <TabsTrigger value="variants">Step 2: Variants</TabsTrigger>
               </TabsList>
 
-              {/* -------- STEP 1 -------- */}
+              {/* ---------- STEP 1 ---------- */}
               <TabsContent value="info">
                 <div className="space-y-4">
                   <FormField
@@ -120,7 +115,6 @@ export default function UpdateProduct() {
                         <FormControl>
                           <Input
                             type="number"
-                            placeholder="1"
                             value={field.value ?? ""}
                             onChange={(e) =>
                               field.onChange(Number(e.target.value))
@@ -138,31 +132,27 @@ export default function UpdateProduct() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Category</FormLabel>
-                        <FormControl>
-                          <Select
-                            value={
-                              field.value ? String(field.value) : undefined
-                            }
-                            onValueChange={(v) => {
-                              field.onChange(Number(v));
-                              setSelectedCategory(Number(v));
-                            }}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select Category" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {categorySelections?.map((opt) => (
-                                <SelectItem
-                                  key={opt.value}
-                                  value={String(opt.value)}
-                                >
-                                  {opt.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
+                        <Select
+                          value={field.value ? String(field.value) : undefined}
+                          onValueChange={(v) => {
+                            field.onChange(Number(v));
+                            setSelectedCategory(Number(v));
+                          }}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Category" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {categorySelections.map((opt) => (
+                              <SelectItem
+                                key={opt.value}
+                                value={String(opt.value)}
+                              >
+                                {opt.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -174,28 +164,24 @@ export default function UpdateProduct() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Brand</FormLabel>
-                        <FormControl>
-                          <Select
-                            value={
-                              field.value ? String(field.value) : undefined
-                            }
-                            onValueChange={(v) => field.onChange(Number(v))}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select Brand" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {brandSelections?.map((opt) => (
-                                <SelectItem
-                                  key={opt.value}
-                                  value={String(opt.value)}
-                                >
-                                  {opt.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
+                        <Select
+                          value={field.value ? String(field.value) : undefined}
+                          onValueChange={(v) => field.onChange(Number(v))}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Brand" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {brandSelections.map((opt) => (
+                              <SelectItem
+                                key={opt.value}
+                                value={String(opt.value)}
+                              >
+                                {opt.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -213,7 +199,6 @@ export default function UpdateProduct() {
                             {...field}
                           />
                         </FormControl>
-                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -223,15 +208,14 @@ export default function UpdateProduct() {
                   <Button
                     type="button"
                     onClick={async () => {
-                      const isValid = await form.trigger([
+                      const ok = await form.trigger([
                         "images",
                         "name",
                         "price",
                         "categoryId",
                         "brandId",
-                        "description",
                       ]);
-                      if (isValid) setStep("variants");
+                      if (ok) setStep("variants");
                     }}
                   >
                     Next
@@ -239,7 +223,7 @@ export default function UpdateProduct() {
                 </div>
               </TabsContent>
 
-              {/* -------- STEP 2 -------- */}
+              {/* ---------- STEP 2 ---------- */}
               <TabsContent value="variants">
                 <div className="space-y-4">
                   {fields.map((field, index) => (
@@ -264,12 +248,12 @@ export default function UpdateProduct() {
                           render={({ field }) => (
                             <ImageUpload
                               field={field}
-                              label="Upload Product Images"
+                              label="Variant Image"
                               numOfImage={1}
                             />
                           )}
                         />
-                        {/* Quantity */}
+
                         <FormField
                           control={form.control}
                           name={`variants.${index}.quantity`}
@@ -285,20 +269,17 @@ export default function UpdateProduct() {
                                   }
                                 />
                               </FormControl>
-                              <FormMessage />
                             </FormItem>
                           )}
                         />
-
-                        {/* Attributes */}
                         {attributes.map((attr) => (
                           <FormField
                             key={attr.attributeName}
                             control={form.control}
                             name={`variants.${index}.attributes`}
                             render={({ field }) => {
-                              // Lấy valueId đang chọn (nếu có)
-                              const selectedVal = field.value?.find((v: any) =>
+                              // tìm valueId đang được chọn cho nhóm attribute này
+                              const selected = field.value?.find((v: any) =>
                                 attr.values.some((val) => val.id === v.valueId)
                               )?.valueId;
 
@@ -308,11 +289,10 @@ export default function UpdateProduct() {
                                   <FormControl>
                                     <Select
                                       value={
-                                        selectedVal
-                                          ? String(selectedVal)
-                                          : undefined
+                                        selected ? String(selected) : undefined
                                       }
                                       onValueChange={(v) => {
+                                        // giữ lại các attribute khác
                                         const others =
                                           field.value?.filter(
                                             (a: any) =>
@@ -320,11 +300,10 @@ export default function UpdateProduct() {
                                                 (val) => val.id === a.valueId
                                               )
                                           ) || [];
+
                                         field.onChange([
                                           ...others,
                                           {
-                                            attributeCategoryId:
-                                              attr.values[0].id, // id nhóm attribute
                                             valueId: Number(v),
                                           },
                                         ]);
@@ -360,9 +339,8 @@ export default function UpdateProduct() {
                   <Button
                     type="button"
                     variant="outline"
-                    className="w-full"
                     onClick={() =>
-                      append({ quantity: 0, attributes: [], image: [] })
+                      append({ quantity: 1, attributes: [], image: [] })
                     }
                   >
                     + Add Variant
@@ -377,8 +355,8 @@ export default function UpdateProduct() {
                   >
                     Previous
                   </Button>
-                  <Button type="submit" onLoading={isPending}>
-                    Create
+                  <Button type="submit" disabled={isPending}>
+                    Update Product
                   </Button>
                 </div>
               </TabsContent>

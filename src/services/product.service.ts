@@ -154,8 +154,26 @@ const updateProduct = async ({
     }[];
   };
 }) => {
-  console.log(data);
-  return data;
+  const formData = new FormData();
+
+  formData.append("name", data.name);
+  formData.append("price", data.price.toString());
+  formData.append("categoryId", data.categoryId.toString());
+  formData.append("brandId", data.brandId.toString());
+  if (data.description) formData.append("description", data.description);
+  data.images.forEach((file) => {
+    formData.append("productImages", file);
+  });
+  data.variantImages?.forEach((file) => {
+    formData.append("variantImages", file);
+  });
+  if (data.variants) formData.append("variants", JSON.stringify(data.variants));
+  const response = await axiosInstance.patch(`/products/${id}`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response;
 };
 const deleteProduct = async ({ id }: { id: number }) => {
   const response = await axiosInstance.delete(`/products/${id}`);
@@ -166,9 +184,8 @@ const deleteProducts = async (ids: { ids: number[] }) => {
   return response;
 };
 const getProductById = async (id: number) => {
-  return productDataWithoutQuotes;
-  // const response = await axiosInstance.get(`/products/${id}`);
-  // return response.data as Product;
+  const response = await axiosInstance.get(`/products/${id}`);
+  return response.data as Product;
 };
 export {
   getProducts,
