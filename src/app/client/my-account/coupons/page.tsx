@@ -150,7 +150,7 @@ const Coupons = () => {
   const { data: allCoupons, isLoading } = useCoupons({});
 
   // Phân loại coupons để tạo nội dung cho các tab
-  const filteredCoupons = allCoupons || [];
+  const filteredCoupons = allCoupons?.data || [];
 
   const percentageCoupons = filteredCoupons.filter(
     (c) => c.discountType === DiscountType.PERCENTAGE

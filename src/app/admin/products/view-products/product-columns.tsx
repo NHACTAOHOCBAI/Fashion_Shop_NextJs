@@ -87,7 +87,7 @@ export const productColumns = (
       accessorKey: "Price",
       cell: ({ row }) => {
         const product = row.original;
-        return formatMoney(product.price);
+        return formatMoney(Number(product.price));
       },
     },
     {

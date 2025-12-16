@@ -13,3 +13,4 @@ interface ProductQueryParams extends QueryParams {
 interface OrderQueryParams extends QueryParams {
   status?: string;
 }
+interface NotificationParams extends QueryParams {}

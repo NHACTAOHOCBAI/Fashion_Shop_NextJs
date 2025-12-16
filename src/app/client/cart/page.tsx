@@ -5,6 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useGetMyCart, useRemoveFromCart } from "@/hooks/queries/useCart";
 import { Trash2 } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react"; // ✨ THÊM useEffect
 
 // Thêm các Interface cần thiết vào file này để code chạy
@@ -77,7 +78,7 @@ const Cart = () => {
     );
     const calculatedSubtotal = selectedItems.reduce(
       // ✨ SỬ DỤNG GIÁ TỪ PRODUCT: item.variant.product.price
-      (acc, item) => acc + item.variant.product.price * item.quantity,
+      (acc, item) => acc + Number(item.variant.product.price) * item.quantity,
       0
     );
     const calculatedTotal = calculatedSubtotal + SHIPPING_FEE;
@@ -152,7 +153,7 @@ const CartItem: React.FC<CartItemProps> = ({
   setQuantity,
 }) => {
   // ✨ TÍNH itemTotal DỰA TRÊN CẤU TRÚC DỮ LIỆU MỚI
-  const itemTotal = item.quantity * item.variant.product.price;
+  const itemTotal = item.quantity * Number(item.variant.product.price);
 
   return (
     <div className="flex py-[20px] px-[30px] items-center border-b-[1px] border-[#F6F7F8] justify-between">
@@ -215,6 +216,7 @@ const CheckoutButton = ({
   selectedItems: CartItem[];
   disabled?: boolean;
 }) => {
+  const router = useRouter();
   // Tính toán trạng thái disable: Disabled từ prop HOẶC không có mục nào được chọn
   const isDisabled = disabled || selectedItems.length === 0;
 
@@ -236,6 +238,7 @@ const CheckoutButton = ({
     const totalAmount = subtotal + SHIPPING_FEE;
 
     localStorage.setItem("products", JSON.stringify(selectedItems));
+    router.replace("/client/checkout");
   };
 
   return (

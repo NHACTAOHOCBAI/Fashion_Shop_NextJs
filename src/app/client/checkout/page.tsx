@@ -197,8 +197,12 @@ const Checkout = () => {
   }, [myAddresses]);
 
   useEffect(() => {
-    if (myCoupons && myCoupons.length > 0 && selectedCouponId === undefined) {
-      const defaultCoupon = myCoupons.find((c) => c.status === "active");
+    if (
+      myCoupons &&
+      myCoupons.data.length > 0 &&
+      selectedCouponId === undefined
+    ) {
+      const defaultCoupon = myCoupons.data.find((c) => c.status === "active");
       if (defaultCoupon) {
         // Tùy chọn: Không tự động chọn, để người dùng tự chọn
         // setSelectedCouponId(defaultCoupon.id);
@@ -225,7 +229,7 @@ const Checkout = () => {
       calculateOrderSummary(
         products || [],
         selectedShipping,
-        myCoupons,
+        myCoupons?.data,
         selectedCouponId
       ),
     [products, selectedShipping, selectedCouponId, myCoupons]
@@ -246,7 +250,7 @@ const Checkout = () => {
   const selectedAddress = myAddresses?.find(
     (addr) => addr.id === selectedAddressId
   );
-  const currentCoupon = myCoupons?.find(
+  const currentCoupon = myCoupons?.data.find(
     (coupon) => coupon.id === selectedCouponId
   );
   const selectedShippingInfo = shippingOptions.find(
@@ -484,14 +488,14 @@ const Checkout = () => {
                   <CouponList
                     handleCouponClick={handleCouponClick}
                     selectedCouponId={selectedCouponId}
-                    availableCoupons={myCoupons}
+                    availableCoupons={myCoupons?.data}
                   />
                 </AlertDialog>
               </div>
             </div>
             <div className="mt-[22px] flex gap-[20px] flex-wrap">
               {myCoupons &&
-                myCoupons.slice(0, 3).map((coupon) => {
+                myCoupons.data.slice(0, 3).map((coupon) => {
                   const isSelected = selectedCouponId === coupon.id;
                   const isActive = coupon.status === "active";
                   const discountText =
@@ -565,7 +569,7 @@ const Checkout = () => {
               {!myCoupons && (
                 <p className="text-gray-500">Loading coupons...</p>
               )}
-              {myCoupons && myCoupons.length === 0 && (
+              {myCoupons && myCoupons.data.length === 0 && (
                 <p className="text-gray-500">You have no coupons available.</p>
               )}
             </div>
@@ -606,12 +610,12 @@ const Checkout = () => {
                                                 "
                       />
                       <div className="ml-[8px] flex-1">
-                        <p className="text-[16px] font-semibold">
+                        <div className="text-[16px] font-semibold">
                           {option.name}
                           <p className="font-thin text-[14px] mt-[4px]">
                             {option.description}
                           </p>
-                        </p>
+                        </div>
                       </div>
                       <p className="ml-auto">Logo here</p>
                     </label>

@@ -18,12 +18,9 @@ import Image from "next/image";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useMemo, useState, useEffect } from "react"; // 👈 Thêm useEffect
 
-// HẠN CHẾ SỬ DỤNG TRÊN BÀI TẬP NÀY VÌ KHÔNG ĐƯỢC CUNG CẤP TYPE
-// type AttributeCategory = any;
-// type ProductQueryParams = any;
-
-// Hàm chuyển đổi dữ liệu thuộc tính thành cấu trúc lọc
-const formatToFilterData = (data: any[] /* AttributeCategory[] */) => {
+const formatToFilterData = (
+  data: AttributeCategory[] /* AttributeCategory[] */
+) => {
   const groupedData = new Map<string, string[]>();
 
   data.forEach((item) => {
@@ -70,29 +67,6 @@ const filtersToAttributeCategoryIds = (
   }
   return Array.from(new Set(selectedIds));
 };
-
-// Hàm chuyển đổi brand names thành brandIds (giữ nguyên không thay đổi)
-const filtersToBrandIds = (
-  selectedBrandNames: string[],
-  brandData: {
-    id: number;
-    name: string;
-  }[]
-): number[] => {
-  if (!selectedBrandNames || selectedBrandNames.length === 0) {
-    return [];
-  }
-  const brandIds = selectedBrandNames
-    .map((selectedName) => {
-      const foundBrand = brandData.find(
-        (brand) => brand.name.toLowerCase() === selectedName.toLowerCase()
-      );
-      return foundBrand ? foundBrand.id : null;
-    })
-    .filter((id): id is number => id !== null);
-  return brandIds;
-};
-
 const Products = () => {
   const [sort, setSort] = useState<{
     sortBy: string;
@@ -221,14 +195,6 @@ const Products = () => {
           })}
           {/* Lọc: Price Group */}
           <PriceGroup range={priceRange} setRange={setPriceRange} />
-          {/* THÊM FILTERGROUP BRANDS THỦ CÔNG */}
-          {/* <FilterGroup
-            field="brands" // Quan trọng: Phải khớp với key trong state 'filters'
-            values={category?.brands.map((brand) => brand.name) || []}
-            selectedValues={filters["brands"] || []}
-            onChange={handleFilterChange}
-          /> */}
-          {/* <LoadMoreButton /> */}
         </div>
 
         <div className="flex-1 flex flex-col gap-[30px]">
@@ -252,13 +218,15 @@ const Products = () => {
           <div className="relative bg-[#40BFFF] opacity-80 pl-[100px] py-[30px] rounded-[10px] text-white h-[300px]">
             <p className="text-[30px] font-medium">{category?.name}</p>
             <p className="w-[370px] mt-[14px]">{category?.description}</p>
-            <Image
-              height={400}
-              width={400}
-              alt={category?.name || ""}
-              src={category?.imageUrl || ""}
-              className="w-[400px] h-[400px]  object-contain absolute top-0 right-0"
-            />
+            {category?.imageUrl && (
+              <Image
+                height={400}
+                width={400}
+                alt={category?.name || ""}
+                src={category?.imageUrl || ""}
+                className="w-[400px] h-[400px]  object-contain absolute top-0 right-0"
+              />
+            )}
           </div>
           {isLoading ? (
             <Loading />

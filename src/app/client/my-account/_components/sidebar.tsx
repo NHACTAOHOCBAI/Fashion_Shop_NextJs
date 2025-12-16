@@ -1,3 +1,4 @@
+"use client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -230,7 +231,6 @@ const SimpleMenuSection: React.FC<SimpleMenuSectionProps> = ({
   const handleClick = () => {
     router.push(href);
   };
-
   return (
     <Button
       variant="ghost"
@@ -256,20 +256,29 @@ const SimpleMenuSection: React.FC<SimpleMenuSectionProps> = ({
 // --- IV. Component chính ---
 
 export function MyAccountSidebar() {
+  const [user, setUser] = React.useState<User>();
+  React.useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (error) {
+        console.error("Invalid user data in localStorage");
+      }
+    }
+  }, []);
   return (
     <div className="w-[250px] rounded-[15px] overflow-hidden border bg-white shadow-lg">
       {/* Phần Thông tin người dùng */}
       <div className="bg-[#40BFFF]/60 p-5 flex items-center space-x-3 rounded-t-2xl text-white">
         <Avatar className="h-12 w-12 border-2 border-white">
           {/* Thay đổi src ảnh placeholder nếu cần */}
-          <AvatarImage src="/placeholder-user.jpg" alt="Nobi Nobita" />
-          <AvatarFallback className="bg-blue-500/50 text-white font-bold text-lg">
-            NN
-          </AvatarFallback>
+          <AvatarImage src={user?.avatar} alt="Nobi Nobita" />
+          <AvatarFallback className="bg-blue-500/50 text-white font-bold text-lg"></AvatarFallback>
         </Avatar>
         <div>
-          <h3 className="text-[18px] font-semibold">Nobi Nobita</h3>
-          <p className="font-light text-[12px]">nobi@gmail.com</p>
+          <h3 className="text-[18px] font-semibold">{user?.fullName}</h3>
+          <p className="font-light text-[12px]">{user?.email}</p>
         </div>
       </div>
 

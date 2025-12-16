@@ -14,8 +14,13 @@ import {
   useRelatedProducts,
 } from "@/hooks/queries/useProduct";
 import { useGetReviewsByProduct } from "@/hooks/queries/useReview";
+import {
+  useToggleWishlistItem,
+  useWishlists,
+} from "@/hooks/queries/useWishlist";
 import finalMoney from "@/lib/finalMoney";
 import { shorthandFormatDateTime } from "@/lib/formatDate";
+import { Heart } from "lucide-react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useMemo, useState, useCallback } from "react";
@@ -97,18 +102,24 @@ const ReviewItem = ({ review }: { review: Review }) => {
 };
 
 const ProductDetail = () => {
+  const { data: myWishlists } = useWishlists();
+  const products = myWishlists?.product;
   const { mutate: addToCart, isPending } = useAddToCart();
   const pathname = usePathname();
   const productId = pathname.split("/").pop();
   const { data: product } = useGetProductById(Number(productId));
-
+  const { mutate: toggleWishList } = useToggleWishlistItem();
   const [quantity, setQuantity] = useState(1);
   const [selectedAttributes, setSelectedAttributes] = useState<
     Record<string, string>
   >({});
 
   const images = useMemo(() => getAllImageUrls(product as any), [product]);
-
+  const isWishlisted = () => {
+    if (!product || !products) return false;
+    console.log(products, product);
+    return products.some((p: any) => p.id === product.id);
+  };
   const options = useMemo(() => {
     if (!product) return [];
     return convertAttributeCategories(
@@ -209,6 +220,13 @@ const ProductDetail = () => {
       count: 0, // Thêm count để hiển thị (0)
     },
   ];
+  const handleToggleWishlist = () => {
+    if (!product) return;
+    toggleWishList({
+      productId: product.id,
+    });
+  };
+
   if (!product) return <div>Loading...</div>;
 
   return (
@@ -222,7 +240,31 @@ const ProductDetail = () => {
       </div>
       <div className="w-[1240px] mx-auto py-[50px] flex flex-col gap-[60px]">
         <div className="flex gap-[90px]">
-          <DisplayImages images={images} />
+          <div className="relative">
+            <DisplayImages images={images} />
+
+            <button
+              className="
+      absolute top-4 right-4
+      w-[40px] h-[40px]
+      rounded-full
+      bg-white
+      flex items-center justify-center
+      shadow-md
+      transition-all
+      hover:scale-110
+      active:scale-95
+    "
+              onClick={() => handleToggleWishlist()}
+            >
+              <Heart
+                size={20}
+                className={
+                  isWishlisted() ? "fill-red-500 text-red-500" : "text-gray-400"
+                }
+              />
+            </button>
+          </div>
           <div className="flex-1">
             <p className="text-[36px] font-medium">{product?.name}</p>
             <div className="flex gap-[40px] items-center mt-[20px]">
@@ -394,9 +436,9 @@ const RelatedProducts = ({ idProduct }: { idProduct: number }) => {
     <div>
       <p className="text-[36px] font-medium text-center">Related Products</p>
       <div className="flex justify-between mt-[20px]">
-        {relatedProducts?.map((item) => (
+        {/* {relatedProducts?.map((item) => (
           <ProductCard key={item.id} product={item} />
-        ))}
+        ))} */}
       </div>
     </div>
   );

@@ -7,19 +7,97 @@ import {
 } from "@/components/ui/popover";
 import { useDepartments } from "@/hooks/queries/useDepartment";
 import { useGetHeaderData } from "@/hooks/queries/useHome";
-import { Heart, ShoppingCart, User } from "lucide-react";
+import { useGetNotification } from "@/hooks/queries/useNotification";
+import {
+  Bell,
+  Heart,
+  ListOrdered,
+  ShoppingCart,
+  Tag,
+  User,
+  UserIcon,
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React from "react";
-const NotificationItem = () => {
+import React, { useEffect, useState } from "react";
+const accountMenus = [
+  {
+    href: "/client/my-account/order-news",
+    label: "Notifications",
+    icon: Bell,
+  },
+  {
+    href: "/client/my-account/profile",
+    label: "Profile",
+    icon: User,
+  },
+  {
+    href: "/client/my-account/orders",
+    label: "Orders",
+    icon: ListOrdered,
+  },
+  {
+    href: "/client/my-account/coupons",
+    label: "Coupons",
+    icon: Tag,
+  },
+  {
+    href: "/client/my-account/wishlists",
+    label: "Wishlists",
+    icon: Heart,
+  },
+];
+const formatTimeAgo = (date: Date | string) => {
+  const now = new Date().getTime();
+  const past = new Date(date).getTime();
+  const diff = Math.floor((now - past) / 1000); // seconds
+
+  if (diff < 60) return "Just now";
+
+  const minutes = Math.floor(diff / 60);
+  if (minutes < 60) return `${minutes} min${minutes > 1 ? "s" : ""} ago`;
+
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours} hour${hours > 1 ? "s" : ""} ago`;
+
+  const days = Math.floor(hours / 24);
+  return `${days} day${days > 1 ? "s" : ""} ago`;
+};
+const NotificationItem = ({ item }: { item: Notification }) => {
+  const router = useRouter();
+
   return (
-    <div className="flex gap-[13px] pt-[10px] pb-[20px] border-gray-100 border-b-[1px]">
-      <div className="w-[35px] h-[35px] bg-gray-100"></div>
+    <div
+      onClick={() => router.replace("/client/my-account/order-news")}
+      className={`
+        flex gap-[13px] pt-[10px] pb-[20px] border-b border-gray-100 cursor-pointer
+        ${!item.isRead ? "bg-[#F5F9FF]" : "bg-white"}
+      `}
+    >
+      {/* Unread dot */}
+      {!item.isRead && (
+        <div className="w-[8px] h-[8px] bg-[#40BFFF] rounded-full mt-[12px]" />
+      )}
+
+      {/* Icon */}
+      <div className="w-[35px] h-[35px] bg-gray-100 rounded-full flex-shrink-0" />
+
+      {/* Content */}
       <div className="flex gap-[5px] flex-col">
-        <p className="font-medium">Order is shipping</p>
-        <p className="text-[12px] font-light">
-          Your order has been shipped. Watch out your phone
+        <p
+          className={`text-[14px] ${
+            !item.isRead ? "font-semibold" : "font-medium"
+          }`}
+        >
+          {item.title}
         </p>
-        <p className="text-[12px] font-light">5 mins ago</p>
+
+        <p className="text-[12px] font-light">{item.message}</p>
+
+        <p className="text-[12px] font-light text-gray-500">
+          {formatTimeAgo(item.createdAt)}
+        </p>
       </div>
     </div>
   );
@@ -51,8 +129,22 @@ const Content = ({
 };
 
 const Header = () => {
+  const { data: myNotification } = useGetNotification({});
   const router = useRouter();
   const { data: headerData } = useDepartments({});
+  const unreadCount = myNotification?.data.length || 0;
+  const [user, setUser] = useState<User>();
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (error) {
+        console.error("Invalid user data in localStorage");
+      }
+    }
+  }, []);
+
   return (
     <header>
       <div className="w-[1240px] mx-auto flex justify-end gap-[41px]   py-[20px] ">
@@ -61,12 +153,82 @@ const Header = () => {
           className="cursor-pointer transition-transform duration-150 ease-out active:scale-90 active:opacity-70 hover:scale-105"
           onClick={() => router.push("/client/cart")}
         />
+        {/* Notification */}
         <Popover>
-          <PopoverTrigger>
-            <User className="cursor-pointer transition-transform duration-150 ease-out active:scale-90 active:opacity-70 hover:scale-105" />
+          <PopoverTrigger asChild>
+            <div className="relative">
+              <Bell className="cursor-pointer transition-transform duration-150 ease-out active:scale-90 active:opacity-70 hover:scale-105" />
+
+              {/* Badge */}
+              {unreadCount > 0 && (
+                <span
+                  className="
+                  absolute -top-[6px] -right-[6px]
+                  min-w-[18px] h-[18px]
+                  bg-red-500 text-white text-[10px] font-semibold
+                  rounded-full flex items-center justify-center
+                "
+                >
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </span>
+              )}
+            </div>
           </PopoverTrigger>
+
           <PopoverContent className="p-0 w-[360px]">
             <Notification />
+          </PopoverContent>
+        </Popover>
+
+        <Popover>
+          <PopoverTrigger asChild>
+            <div className="relative">
+              <User className="cursor-pointer transition-transform duration-150 ease-out active:scale-90 active:opacity-70 hover:scale-105" />
+            </div>
+          </PopoverTrigger>
+
+          <PopoverContent className=" w-auto p-[5px]">
+            <div className="cursor-pointer p-[10px] flex gap-[10px] items-center">
+              {user?.avatar ? (
+                <Image
+                  src={user.avatar}
+                  alt="User avatar"
+                  width={32}
+                  height={32}
+                  className="
+            rounded-full object-cover
+            transition-transform duration-150
+            hover:scale-105 active:scale-95
+          "
+                />
+              ) : (
+                <div className="w-[32px] h-[32px] rounded-full bg-gray-300"></div>
+              )}
+              <p className="text-[18x]">{user?.fullName}</p>
+            </div>
+            <div className="w-full bg-gray-200 h-[0.5px] my-[4px]"></div>
+            <div className="flex flex-col">
+              {accountMenus.map(({ href, label, icon: Icon }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  className="
+        flex items-center gap-[10px]
+        px-[20px] py-[10px]
+        text-sm
+        transition-all duration-200
+        hover:bg-gray-100 hover:text-primary
+        rounded-md
+      "
+                >
+                  <Icon
+                    size={20}
+                    className="transition-transform duration-200 group-hover:scale-110"
+                  />
+                  <span>{label}</span>
+                </Link>
+              ))}
+            </div>
           </PopoverContent>
         </Popover>
       </div>
@@ -128,62 +290,16 @@ const SubCatgories = ({ children, content }: SubCatgoriesProps) => {
     </div>
   );
 };
-const productTabs = [
-  {
-    title: "All",
-    content: (
-      <div>
-        <NotificationItem />
-      </div>
-    ),
-  },
-  {
-    title: "Orders",
-    content: (
-      <p className="text-[#9098B1]">
-        air max are always very comfortable fit, clean and just perfect in every
-        way. just the box was too small and scrunched the sneakers up a little
-        bit, not sure if the box was always this small but the 90s are and will
-        always be one of my favorites. air max are always very comfortable fit,
-        clean and just perfect in every way. just the box was too small and
-        scrunched the sneakers up a little bit, not sure if the box was always
-        this small but the 90s are and will always be one of my favorites.
-      </p>
-    ),
-  },
-  {
-    title: "Discount",
-    content: (
-      <p className="text-[#9098B1]">
-        air max are always very comfortable fit, clean and just perfect in every
-        way. just the box was too small and scrunched the sneakers up a little
-        bit, not sure if the box was always this small but the 90s are and will
-        always be one of my favorites. air max are always very comfortable fit,
-        clean and just perfect in every way. just the box was too small and
-        scrunched the sneakers up a little bit, not sure if the box was always
-        this small but the 90s are and will always be one of my favorites.
-      </p>
-    ),
-  },
-  {
-    title: "Others",
-    content: (
-      <p className="text-[#9098B1]">
-        air max are always very comfortable fit, clean and just perfect in every
-        way. just the box was too small and scrunched the sneakers up a little
-        bit, not sure if the box was always this small but the 90s are and will
-        always be one of my favorites. air max are always very comfortable fit,
-        clean and just perfect in every way. just the box was too small and
-        scrunched the sneakers up a little bit, not sure if the box was always
-        this small but the 90s are and will always be one of my favorites.
-      </p>
-    ),
-  },
-];
 const Notification = () => {
+  const { data: myNotification } = useGetNotification({
+    limit: 5,
+    page: 1,
+  });
   return (
     <div className="w-[360px] px-[14px] py-[10px]">
-      <TabbedContent tabs={productTabs} defaultTabTitle="All" />
+      {myNotification?.data.map((notification) => (
+        <NotificationItem key={notification.id} item={notification} />
+      ))}
     </div>
   );
 };

@@ -1,8 +1,9 @@
 interface Notification {
-    id: number;
-    image: string;
-    title: string;
-    message: string;
-    isRead: boolean;
-    time: string
-};
+  id: number;
+  title: string;
+  message: string;
+  isRead: boolean;
+  time: string;
+  createdAt: Date;
+  type: "ORDER" | "DISCOUNT";
+}
