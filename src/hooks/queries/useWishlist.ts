@@ -7,7 +7,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 const useWishlists = () =>
   useQuery({
     queryKey: ["wishlists"],
-    queryFn: () => getMyWishlists(),
+    queryFn: getMyWishlists,
   });
 
 const useToggleWishlistItem = () => {
@@ -16,6 +16,7 @@ const useToggleWishlistItem = () => {
     mutationFn: toggleWishlistItem,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["wishlists"] });
+      console.log(19);
     },
   });
 };

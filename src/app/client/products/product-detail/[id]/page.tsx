@@ -103,7 +103,6 @@ const ReviewItem = ({ review }: { review: Review }) => {
 
 const ProductDetail = () => {
   const { data: myWishlists } = useWishlists();
-  const products = myWishlists?.product;
   const { mutate: addToCart, isPending } = useAddToCart();
   const pathname = usePathname();
   const productId = pathname.split("/").pop();
@@ -115,11 +114,12 @@ const ProductDetail = () => {
   >({});
 
   const images = useMemo(() => getAllImageUrls(product as any), [product]);
-  const isWishlisted = () => {
-    if (!product || !products) return false;
-    console.log(products, product);
-    return products.some((p: any) => p.id === product.id);
-  };
+  const isWishlisted = useMemo(() => {
+    if (!myWishlists || !product) return false;
+
+    return myWishlists.some((w) => w.product.id === product.id);
+  }, [myWishlists, product]);
+
   const options = useMemo(() => {
     if (!product) return [];
     return convertAttributeCategories(
@@ -260,7 +260,7 @@ const ProductDetail = () => {
               <Heart
                 size={20}
                 className={
-                  isWishlisted() ? "fill-red-500 text-red-500" : "text-gray-400"
+                  isWishlisted ? "fill-red-500 text-red-500" : "text-gray-400"
                 }
               />
             </button>

@@ -17,8 +17,8 @@ const MyWishlist = () => {
         </div>
       </div>
       <div className="grid grid-cols-3 gap-y-3 gap-x-5 mt-[60px]">
-        {myWishlist?.product.map((product) => (
-          <ProductCard product={product} />
+        {myWishlist?.map((product) => (
+          <ProductCard key={product.id} product={product.product} />
         ))}
       </div>
     </div>

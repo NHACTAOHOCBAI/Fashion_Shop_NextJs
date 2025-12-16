@@ -43,7 +43,7 @@ const accountMenus = [
     icon: Tag,
   },
   {
-    href: "/client/my-account/wishlists",
+    href: "/client/my-account/wishlist",
     label: "Wishlists",
     icon: Heart,
   },
