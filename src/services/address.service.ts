@@ -41,7 +41,7 @@ const deleteAddress = async ({ id }: { id: number }) => {
   return response;
 };
 const setDefaultAddress = async ({ id }: { id: number }) => {
-  const response = await axiosInstance.patch(`/address/set-default/${id}`);
+  const response = await axiosInstance.patch(`/address/default/${id}`);
   return response;
 };
 export {

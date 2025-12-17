@@ -9,10 +9,10 @@ import {
   updateProduct,
 } from "@/services/product.service";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-const useProducts = (params: ProductQueryParams) =>
+const useProducts = (params: ProductQueryParams, image: File | null) =>
   useQuery({
-    queryKey: ["products", params],
-    queryFn: () => getProducts(params),
+    queryKey: ["products", params, image],
+    queryFn: () => getProducts(params, image),
   });
 const useGetProductById = (id: number) =>
   useQuery({

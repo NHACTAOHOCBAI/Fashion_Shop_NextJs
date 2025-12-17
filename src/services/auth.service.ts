@@ -41,6 +41,7 @@ const updateMyProfile = async (data: { fullName: string; image?: File }) => {
       "Content-Type": "multipart/form-data",
     },
   });
-  return response;
+  console.log(response.data);
+  return response.data;
 };
 export { login, getMyProfile, updateMyProfile, logout, register };

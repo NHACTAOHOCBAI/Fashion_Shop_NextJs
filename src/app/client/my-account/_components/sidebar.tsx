@@ -188,18 +188,6 @@ const CollapsibleMenuSection: React.FC<CollapsibleMenuSectionProps> = ({
             >
               <div className="flex items-center justify-between w-full">
                 <span>{item.label}</span>
-                {item.count && (
-                  <Badge
-                    variant="secondary"
-                    className={`h-5 w-5 justify-center rounded-full text-xs font-semibold ${
-                      isItemActive
-                        ? "bg-red-500 text-white" // Badge đỏ cho highlight/active
-                        : "bg-gray-200 text-gray-600"
-                    }`}
-                  >
-                    {item.count}
-                  </Badge>
-                )}
               </div>
             </Button>
           );

@@ -1,6 +1,7 @@
 import axiosInstance from "@/config/axios";
 
 const getMyNotifications = async (params: NotificationParams) => {
+  console.log(params);
   const response = (await axiosInstance.get("/notifications/me", {
     params,
   })) as GetAllResponse<Notification>;

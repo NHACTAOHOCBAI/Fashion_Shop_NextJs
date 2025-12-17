@@ -54,7 +54,7 @@ const getMyCoupons = async (params: QueryParams) => {
   const response = (await axiosInstance.get("/coupons/my", {
     params,
   })) as GetAllResponse<Coupon>;
-  return response.data.data;
+  return response.data;
 };
 const deleteCoupon = async ({ id }: { id: number }) => {
   const response = await axiosInstance.delete(`/coupons/${id}`);

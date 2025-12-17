@@ -1,92 +1,26 @@
 import axiosInstance from "@/config/axios";
-import { productDataWithoutQuotes } from "@/needAPi";
-const products = [
-  {
-    id: 1,
-    image:
-      "https://png.pngtree.com/png-clipart/20241231/original/pngtree-running-shoes-or-sneakers-on-a-transparent-background-png-image_18457027.png",
-    name: "Nike shoes",
-    rating: 3.8,
-    price: 299.99,
-    createdAt: "2025-12-02T12:52:36.000Z",
-  },
-  {
-    id: 2,
-    image:
-      "https://png.pngtree.com/png-clipart/20241231/original/pngtree-running-shoes-or-sneakers-on-a-transparent-background-png-image_18457027.png",
-    name: "Nike shoes",
-    rating: 3.8,
-    price: 299.99,
-    createdAt: "2025-11-05T00:39:01.746Z",
-  },
-  {
-    id: 3,
-    image:
-      "https://png.pngtree.com/png-clipart/20241231/original/pngtree-running-shoes-or-sneakers-on-a-transparent-background-png-image_18457027.png",
-    name: "Nike shoes",
-    rating: 3.8,
-    price: 299.99,
-    createdAt: "2025-12-02T12:52:36.000Z",
-  },
-  {
-    id: 4,
-    image:
-      "https://png.pngtree.com/png-clipart/20241231/original/pngtree-running-shoes-or-sneakers-on-a-transparent-background-png-image_18457027.png",
-    name: "Nike shoes",
-    rating: 3.8,
-    price: 299.99,
-    createdAt: "2025-11-05T00:39:01.746Z",
-  },
-  {
-    id: 5,
-    image:
-      "https://png.pngtree.com/png-clipart/20241231/original/pngtree-running-shoes-or-sneakers-on-a-transparent-background-png-image_18457027.png",
-    name: "Nike shoes",
-    rating: 3.8,
-    price: 299.99,
-    createdAt: "2025-12-02T12:52:36.000Z",
-  },
-  {
-    id: 6,
-    image:
-      "https://png.pngtree.com/png-clipart/20241231/original/pngtree-running-shoes-or-sneakers-on-a-transparent-background-png-image_18457027.png",
-    name: "Nike shoes",
-    rating: 3.8,
-    price: 299.99,
-    createdAt: "2025-11-05T00:39:01.746Z",
-  },
-  {
-    id: 7,
-    image:
-      "https://png.pngtree.com/png-clipart/20241231/original/pngtree-running-shoes-or-sneakers-on-a-transparent-background-png-image_18457027.png",
-    name: "Nike shoes",
-    rating: 3.8,
-    price: 299.99,
-    createdAt: "2025-12-02T12:52:36.000Z",
-  },
-  {
-    id: 8,
-    image:
-      "https://png.pngtree.com/png-clipart/20241231/original/pngtree-running-shoes-or-sneakers-on-a-transparent-background-png-image_18457027.png",
-    name: "Nike shoes",
-    rating: 3.8,
-    price: 299.99,
-    createdAt: "2025-11-05T00:39:01.746Z",
-  },
-  {
-    id: 9,
-    image:
-      "https://png.pngtree.com/png-clipart/20241231/original/pngtree-running-shoes-or-sneakers-on-a-transparent-background-png-image_18457027.png",
-    name: "Nike shoes",
-    rating: 3.8,
-    price: 299.99,
-    createdAt: "2025-12-02T12:52:36.000Z",
-  },
-];
 const getRelatedProducts = async (idProduct: number) => {
-  return products.slice(0, 4);
+  const response = (await axiosInstance.get(
+    `/products/related/${idProduct}`
+  )) as Product[];
+  return response;
 };
-const getProducts = async (params: ProductQueryParams) => {
+const getProducts = async (params: ProductQueryParams, image: File | null) => {
+  console.log(image);
+  if (image) {
+    const formData = new FormData();
+    formData.append("image", image);
+    const response = await axiosInstance.post(
+      "/products/search/image",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    console.log(response);
+  }
   const query = {
     ...params,
     ...(params.attributeCategoryIds?.length

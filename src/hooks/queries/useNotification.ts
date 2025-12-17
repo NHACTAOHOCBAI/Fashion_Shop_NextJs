@@ -7,7 +7,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const useGetNotification = (params: NotificationParams) =>
   useQuery({
-    queryKey: ["my-notification"],
+    queryKey: ["my-notification", params],
     queryFn: () => getMyNotifications(params),
   });
 const useMarkOneAsRead = () => {

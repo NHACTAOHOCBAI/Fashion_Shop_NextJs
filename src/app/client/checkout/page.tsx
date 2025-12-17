@@ -6,7 +6,7 @@ import CouponList from "@/app/client/checkout/CouponList";
 import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useMyAddress } from "@/hooks/queries/useAddress";
-import { useCoupons } from "@/hooks/queries/useCoupon";
+import { useCoupons, useMyCoupons } from "@/hooks/queries/useCoupon";
 import { usePlaceOrder } from "@/hooks/queries/useOrder";
 // Giả định các hooks này đã được tạo
 // import { useMyAddress } from "@/hooks/queries/useAddress";
@@ -166,7 +166,7 @@ const Checkout = () => {
   // Hooks
   const { mutate: placeOrder, isPending } = usePlaceOrder();
   const { data: myAddresses } = useMyAddress();
-  const { data: myCoupons } = useCoupons({ limit: 3, page: 1 });
+  const { data: myCoupons } = useMyCoupons({ limit: 3, page: 1 });
   const [products, setProducts] = useState<CartItem[] | undefined>();
 
   // States

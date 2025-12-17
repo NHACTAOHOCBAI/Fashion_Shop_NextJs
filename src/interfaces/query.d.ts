@@ -13,4 +13,12 @@ interface ProductQueryParams extends QueryParams {
 interface OrderQueryParams extends QueryParams {
   status?: string;
 }
-interface NotificationParams extends QueryParams {}
+interface NotificationParams extends QueryParams {
+  type?: NotificationType;
+  isRead?: "true" | "false";
+}
+enum NotificationType {
+  DISCOUNT = "DISCOUNT",
+  ORDER = "ORDER",
+  REVIEW = "REVIEW",
+}

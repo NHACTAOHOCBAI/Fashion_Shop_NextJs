@@ -18,7 +18,9 @@ interface Notification {
 }
 
 const OrderNews = () => {
-  const { data: myNotification } = useGetNotification({});
+  const { data: myNotification } = useGetNotification({
+    type: "ORDER" as NotificationType,
+  });
   const { mutate: markAsRead } = useMarkAsRead();
   return (
     <div>
@@ -57,7 +59,7 @@ interface OrderNewsItemProps {
   notification: Notification;
 }
 
-const OrderNewsItem = ({ notification }: OrderNewsItemProps) => {
+export const OrderNewsItem = ({ notification }: OrderNewsItemProps) => {
   const { mutate: markOneAsRead } = useMarkOneAsRead();
   return (
     <div

@@ -6,6 +6,10 @@ import {
   FilterGroup,
   PriceGroup,
 } from "@/app/client/products/_components/FilterGroup";
+import {
+  ImageSearchButton,
+  ImageSearchPreview,
+} from "@/app/client/products/_components/ImageSearch";
 // import LoadMoreButton from "@/app/client/products/_components/LoadMoreButton";
 import { CustomPagination } from "@/app/client/products/_components/MyPagination";
 import ProductCard from "@/app/client/products/_components/ProductCard";
@@ -68,6 +72,8 @@ const filtersToAttributeCategoryIds = (
   return Array.from(new Set(selectedIds));
 };
 const Products = () => {
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [sort, setSort] = useState<{
     sortBy: string;
     sortOrder: "ASC" | "DESC";
@@ -97,22 +103,19 @@ const Products = () => {
 
   // Vùng FIX LỖI RENDER VÔ HẠN: Thiết lập/Reset state filters khi category thay đổi
   useEffect(() => {
-    // Chỉ reset khi có dữ liệu category hợp lệ (để đảm bảo filterData được tính đúng)
     if (category?.attributeCategories) {
       const newInitialFilters: { [key: string]: string[] } = {};
 
-      // Tạo cấu trúc filters dựa trên filterData mới
       filterData.forEach((f) => {
         newInitialFilters[f.field] = [];
       });
-      newInitialFilters["brands"] = []; // THÊM BRANDS VÀO STATE KHỞI TẠO BẰNG TAY
+      newInitialFilters["brands"] = [];
 
-      // Cập nhật state filters
       setFilters(newInitialFilters);
-      setPage(1); // Reset trang về 1 khi danh mục/filters thay đổi
-      setPriceRange([0, 25]); // Reset Price Range
+      setPage(1);
+      setPriceRange([0, 25]);
     }
-  }, [category?.id, category?.attributeCategories]); // Chạy lại khi categoryId hoặc attributes của category thay đổi.
+  }, [category?.id, category?.attributeCategories]);
 
   const handleFilterChange = (
     field: string,
@@ -163,7 +166,7 @@ const Products = () => {
     searchInput,
   ]);
 
-  const { data: products, isLoading } = useProducts(queryParams);
+  const { data: products, isLoading } = useProducts(queryParams, imageFile);
 
   const handlePageChange = (newPage: number) => {
     const totalPages = products?.pagination?.total ?? 1;
@@ -171,63 +174,103 @@ const Products = () => {
       setPage(newPage);
     }
   };
+  console.log(imageFile);
+  const handleImageSearch = (file: File) => {
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
+
+    // TODO:
+    // call API search-by-image here
+  };
+  const clearImageSearch = () => {
+    setImageFile(null);
+    setImagePreview(null);
+  };
 
   return (
     <div>
+      {/* Breadcrumb */}
       <div className="bg-[#F6F7F8]">
         <div className="w-[1240px] mx-auto py-[16px]">
           <MyBreadcrumb data={[pathname.split("/")[3], category?.name || ""]} />
         </div>
       </div>
+
       <div className="w-[1240px] mx-auto py-[50px] flex gap-[30px]">
+        {/* FILTERS */}
         <div className="w-[270px] flex flex-col gap-[30px]">
-          {/* Lọc: Filters Group */}
-          {filterData.map((filter) => {
-            return (
-              <FilterGroup
-                key={filter.field}
-                field={filter.field}
-                values={filter.values}
-                selectedValues={filters[filter.field] || []}
-                onChange={handleFilterChange}
-              />
-            );
-          })}
-          {/* Lọc: Price Group */}
+          {filterData.map((filter: any) => (
+            <FilterGroup
+              key={filter.field}
+              field={filter.field}
+              values={filter.values}
+              selectedValues={filters[filter.field] || []}
+              onChange={handleFilterChange}
+            />
+          ))}
           <PriceGroup range={priceRange} setRange={setPriceRange} />
         </div>
 
+        {/* PRODUCTS */}
         <div className="flex-1 flex flex-col gap-[30px]">
+          {/* SEARCH + SORT */}
           <div className="bg-[#F6F7F8] rounded-[10px] p-[20px]">
-            <div className="flex justify-between">
-              <SearchInput
-                value={searchInput}
-                onChange={(value) => setSearchInput(value)}
-              />
+            <div className="flex justify-between items-center gap-3">
+              <div className="flex items-center flex-1">
+                <SearchInput
+                  value={searchInput}
+                  onChange={(value) => setSearchInput(value)}
+                />
+
+                <ImageSearchButton
+                  onImageSelected={handleImageSearch}
+                  imageUrl={""}
+                  onClear={function (): void {
+                    throw new Error("Function not implemented.");
+                  }}
+                />
+              </div>
+
               <SortByButton
                 onSortChange={(sortBy: string, sortOrder: "ASC" | "DESC") =>
                   setSort({ sortBy, sortOrder })
                 }
               />
             </div>
+
+            {imagePreview && (
+              <ImageSearchPreview
+                imageUrl={imagePreview}
+                onClear={clearImageSearch}
+                onImageSelected={function (file: File): void {
+                  throw new Error("Function not implemented.");
+                }}
+              />
+            )}
+
             <p className="text-[18px] mt-[10px]">
               <span className="font-medium">{products?.pagination.total}</span>{" "}
               items found
             </p>
           </div>
+
+          {/* CATEGORY BANNER */}
           <div className="relative bg-[#40BFFF] opacity-80 pl-[100px] py-[30px] rounded-[10px] text-white h-[300px]">
             <p className="text-[30px] font-medium">{category?.name}</p>
             <p className="w-[370px] mt-[14px]">{category?.description}</p>
+
             {category?.imageUrl && (
               <Image
                 height={400}
                 width={400}
                 alt={category?.name || ""}
-                src={category?.imageUrl || ""}
-                className="w-[400px] h-[400px]  object-contain absolute top-0 right-0"
+                src={category?.imageUrl}
+                className="w-[400px] h-[400px] object-contain absolute top-0 right-0"
               />
             )}
           </div>
+
+          {/* PRODUCTS GRID */}
           {isLoading ? (
             <Loading />
           ) : (
@@ -237,6 +280,8 @@ const Products = () => {
               ))}
             </div>
           )}
+
+          {/* PAGINATION */}
           <div className="flex flex-col items-center gap-4 p-8">
             <CustomPagination
               currentPage={page}

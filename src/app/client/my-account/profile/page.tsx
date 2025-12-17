@@ -85,8 +85,9 @@ const MyProfile = () => {
         image: values.avatar,
       },
       {
-        onSuccess: () => {
+        onSuccess: (data) => {
           toast.success("You have updated your profile sucessfully");
+          localStorage.setItem("user", JSON.stringify(data));
         },
         onError: (error) => {
           toast.error(`Ohh!!! ${error.message}`);
