@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
+import ImageSearchModal from "@/app/client/_components/ImageSearchModal";
 import Loading from "@/app/client/_components/Loading";
 import MyBreadcrumb from "@/app/client/_components/MyBreadcumb";
 import {
@@ -72,8 +73,6 @@ const filtersToAttributeCategoryIds = (
   return Array.from(new Set(selectedIds));
 };
 const Products = () => {
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [sort, setSort] = useState<{
     sortBy: string;
     sortOrder: "ASC" | "DESC";
@@ -103,19 +102,22 @@ const Products = () => {
 
   // Vùng FIX LỖI RENDER VÔ HẠN: Thiết lập/Reset state filters khi category thay đổi
   useEffect(() => {
+    // Chỉ reset khi có dữ liệu category hợp lệ (để đảm bảo filterData được tính đúng)
     if (category?.attributeCategories) {
       const newInitialFilters: { [key: string]: string[] } = {};
 
+      // Tạo cấu trúc filters dựa trên filterData mới
       filterData.forEach((f) => {
         newInitialFilters[f.field] = [];
       });
-      newInitialFilters["brands"] = [];
+      newInitialFilters["brands"] = []; // THÊM BRANDS VÀO STATE KHỞI TẠO BẰNG TAY
 
+      // Cập nhật state filters
       setFilters(newInitialFilters);
-      setPage(1);
-      setPriceRange([0, 25]);
+      setPage(1); // Reset trang về 1 khi danh mục/filters thay đổi
+      setPriceRange([0, 25]); // Reset Price Range
     }
-  }, [category?.id, category?.attributeCategories]);
+  }, [category?.id]); // Chạy lại khi categoryId hoặc attributes của category thay đổi.
 
   const handleFilterChange = (
     field: string,
@@ -166,25 +168,13 @@ const Products = () => {
     searchInput,
   ]);
 
-  const { data: products, isLoading } = useProducts(queryParams, imageFile);
+  const { data: products, isLoading } = useProducts(queryParams);
 
   const handlePageChange = (newPage: number) => {
     const totalPages = products?.pagination?.total ?? 1;
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);
     }
-  };
-  console.log(imageFile);
-  const handleImageSearch = (file: File) => {
-    setImageFile(file);
-    setImagePreview(URL.createObjectURL(file));
-
-    // TODO:
-    // call API search-by-image here
-  };
-  const clearImageSearch = () => {
-    setImageFile(null);
-    setImagePreview(null);
   };
 
   return (
@@ -221,14 +211,7 @@ const Products = () => {
                   value={searchInput}
                   onChange={(value) => setSearchInput(value)}
                 />
-
-                <ImageSearchButton
-                  onImageSelected={handleImageSearch}
-                  imageUrl={""}
-                  onClear={function (): void {
-                    throw new Error("Function not implemented.");
-                  }}
-                />
+                <ImageSearchModal />
               </div>
 
               <SortByButton
@@ -237,16 +220,6 @@ const Products = () => {
                 }
               />
             </div>
-
-            {imagePreview && (
-              <ImageSearchPreview
-                imageUrl={imagePreview}
-                onClear={clearImageSearch}
-                onImageSelected={function (file: File): void {
-                  throw new Error("Function not implemented.");
-                }}
-              />
-            )}
 
             <p className="text-[18px] mt-[10px]">
               <span className="font-medium">{products?.pagination.total}</span>{" "}

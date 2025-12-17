@@ -6,13 +6,19 @@ import {
   getProductById,
   getProducts,
   getRelatedProducts,
+  searchImage,
   updateProduct,
 } from "@/services/product.service";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-const useProducts = (params: ProductQueryParams, image: File | null) =>
+const useSearchImage = (image: File | null, searchKey: number) =>
   useQuery({
-    queryKey: ["products", params, image],
-    queryFn: () => getProducts(params, image),
+    queryKey: ["products-image", searchKey],
+    queryFn: () => searchImage(image),
+  });
+const useProducts = (params: ProductQueryParams) =>
+  useQuery({
+    queryKey: ["products", params],
+    queryFn: () => getProducts(params),
   });
 const useGetProductById = (id: number) =>
   useQuery({
@@ -69,4 +75,5 @@ export {
   useGetProductById,
   useUpdateProduct,
   useRelatedProducts,
+  useSearchImage,
 };

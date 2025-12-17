@@ -5,22 +5,7 @@ const getRelatedProducts = async (idProduct: number) => {
   )) as Product[];
   return response;
 };
-const getProducts = async (params: ProductQueryParams, image: File | null) => {
-  console.log(image);
-  if (image) {
-    const formData = new FormData();
-    formData.append("image", image);
-    const response = await axiosInstance.post(
-      "/products/search/image",
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
-    console.log(response);
-  }
+const getProducts = async (params: ProductQueryParams) => {
   const query = {
     ...params,
     ...(params.attributeCategoryIds?.length
@@ -121,6 +106,20 @@ const getProductById = async (id: number) => {
   const response = await axiosInstance.get(`/products/${id}`);
   return response.data as Product;
 };
+const searchImage = async (image: File | null) => {
+  const formData = new FormData();
+  if (image) formData.append("image", image);
+  const response = await axiosInstance.post(
+    "/products/search/image",
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+  return response.data as Product[];
+};
 export {
   getProducts,
   createProduct,
@@ -129,4 +128,5 @@ export {
   updateProduct,
   getProductById,
   getRelatedProducts,
+  searchImage,
 };
