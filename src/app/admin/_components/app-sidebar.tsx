@@ -11,7 +11,7 @@ import {
 import { NavMain } from "@/app/admin/_components/nav-main";
 import { NavUser } from "@/app/admin/_components/nav-user";
 import { ICONS } from "@/constants/icon.enum";
-import { Tag } from "lucide-react";
+import { Boxes, Tag } from "lucide-react";
 
 // This is sample data.
 const data = {
@@ -120,6 +120,20 @@ const data = {
         {
           title: "View Coupons",
           url: "/admin/coupons/view-coupons",
+        },
+      ],
+    },
+    {
+      title: "Stock",
+      icon: <Boxes />,
+      items: [
+        {
+          title: "View Stocks",
+          url: "/admin/stocks/view-stocks",
+        },
+        {
+          title: "Stock In",
+          url: "/admin/stocks/in",
         },
       ],
     },

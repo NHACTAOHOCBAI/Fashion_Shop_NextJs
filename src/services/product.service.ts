@@ -19,6 +19,42 @@ const getProducts = async (params: ProductQueryParams) => {
   })) as GetAllResponse<Product>;
   return response.data;
 };
+export interface StockVariant {
+  variantId: number;
+  productId: number;
+  productName: string;
+  imageUrl?: string;
+  remaining: number;
+
+  // Dùng cho UI
+  attributesText: string; // "Red / L"
+  attributesDetail: string[]; // ["Color: Red", "Size: L"]
+}
+
+export const mapProductsToStockVariants = (
+  products: Product[]
+): StockVariant[] => {
+  return products.flatMap((product) =>
+    product.variants.map((variant) => {
+      const attributesDetail = variant.variantAttributeValues.map(
+        (v) =>
+          `${v.attributeCategory.attribute.name}: ${v.attributeCategory.value}`
+      );
+
+      return {
+        variantId: variant.id,
+        productId: product.id,
+        productName: product.name,
+        imageUrl: variant.imageUrl,
+        remaining: variant.remaining,
+        attributesDetail,
+        attributesText: attributesDetail
+          .map((a) => a.split(": ")[1]) // lấy value
+          .join(" / "),
+      };
+    })
+  );
+};
 
 const createProduct = async (data: {
   name: string;
