@@ -129,7 +129,7 @@ const Content = ({
 };
 
 const Header = () => {
-  const { data: myNotification } = useGetNotification({});
+  const { data: myNotification } = useGetNotification({ isRead: "false" });
   const router = useRouter();
   const { data: headerData } = useDepartments({});
   const unreadCount = myNotification?.data.length || 0;

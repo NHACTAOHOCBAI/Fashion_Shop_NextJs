@@ -2,7 +2,6 @@
 
 import NormalButton from "@/app/client/_components/NormalButton";
 import { OrderNewsItem } from "@/app/client/my-account/(notifications)/order-news/page";
-import { newAddress } from "@/constants/address";
 import { useGetNotification } from "@/hooks/queries/useNotification";
 import Image from "next/image";
 
@@ -10,7 +9,6 @@ const Discount = () => {
   const { data: myNotification } = useGetNotification({
     type: "DISCOUNT" as NotificationType,
   });
-  newAddress();
   return (
     <div>
       {/* Header */}

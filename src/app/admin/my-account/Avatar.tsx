@@ -40,11 +40,11 @@ export function AvatarUploader({
             src={preview}
             alt="Avatar preview"
             fill
-            className="object-cover rounded-full"
+            className="object-cover rounded-full "
           />
         ) : (
           <>
-            <AvatarImage src={currentAvatar} />
+            <AvatarImage className="object-cover" src={currentAvatar} />
             <AvatarFallback>{fullName.charAt(0)}</AvatarFallback>
           </>
         )}

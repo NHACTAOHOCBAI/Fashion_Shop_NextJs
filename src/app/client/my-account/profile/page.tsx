@@ -125,7 +125,7 @@ const MyProfile = () => {
                         alt="avatar"
                         width={200}
                         height={200}
-                        className="rounded-full object-cover"
+                        className="rounded-full object-cover w-[200px] h-[200px]"
                       />
                     )}
 

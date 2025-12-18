@@ -50,9 +50,7 @@ export function LoginForm({}: React.ComponentProps<"div">) {
         router.push("/admin/users/view-users");
       },
       onError: (error) => {
-        toast.error(`Ohh!!! ${error.message}`, {
-          description: formatDateTimeWithAt(new Date()),
-        });
+        toast.error(`Ohh!!! ${error.message}`);
       },
     });
   }
@@ -81,12 +79,12 @@ export function LoginForm({}: React.ComponentProps<"div">) {
             <FormItem>
               <div className="flex items-center">
                 <FormLabel>Password</FormLabel>
-                <a
-                  href="#"
-                  className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                <Link
+                  href="/forgot-password"
+                  className="ml-auto inline-block text-sm underline-offset-4 hover:underline cursor-pointer"
                 >
                   Forgot your password?
-                </a>
+                </Link>
               </div>
               <FormControl>
                 <Input

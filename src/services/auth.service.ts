@@ -1,5 +1,21 @@
 import axiosInstance from "@/config/axios";
 
+const forgotPassword = async (email: string) => {
+  const response = await axiosInstance.post("/auth/forgot-password", {
+    email,
+  });
+  return response;
+};
+
+const resetPassword = async (data: {
+  token: string;
+  newPassword: string;
+  confirmNewPassword: string;
+}) => {
+  const response = await axiosInstance.post("/auth/reset-password", data);
+  return response;
+};
+
 const login = async (data: { email: string; password: string }) => {
   const response = await axiosInstance.post("/auth/login", data);
   return response.data as { user: User };
@@ -51,4 +67,6 @@ export {
   logout,
   register,
   changePassword,
+  forgotPassword,
+  resetPassword,
 };

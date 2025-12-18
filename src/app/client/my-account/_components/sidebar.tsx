@@ -261,7 +261,11 @@ export function MyAccountSidebar() {
       <div className="bg-[#40BFFF]/60 p-5 flex items-center space-x-3 rounded-t-2xl text-white">
         <Avatar className="h-12 w-12 border-2 border-white">
           {/* Thay đổi src ảnh placeholder nếu cần */}
-          <AvatarImage src={user?.avatar} alt="Nobi Nobita" />
+          <AvatarImage
+            src={user?.avatar}
+            className="object-cover"
+            alt="Nobi Nobita"
+          />
           <AvatarFallback className="bg-blue-500/50 text-white font-bold text-lg"></AvatarFallback>
         </Avatar>
         <div>
