@@ -1,6 +1,7 @@
 import {
   cancelOrder,
-  cancelOrders,
+  cancelOrderByAdmin,
+  confirmDelivery,
   getMyOrderById,
   getMyOrders,
   getOrders,
@@ -13,11 +14,11 @@ const useMyOrders = (params: OrderQueryParams) =>
     queryKey: ["my-orders", params],
     queryFn: () => getMyOrders(params),
   });
-const useMyOrderById = (id: number) =>
-  useQuery({
-    queryKey: ["my-order"],
-    queryFn: () => getMyOrderById(id),
-  });
+// const useMyOrderById = (id: number) =>
+//   useQuery({
+//     queryKey: ["my-order"],
+//     queryFn: () => getMyOrderById(id),
+//   });
 const usePlaceOrder = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -41,10 +42,10 @@ const useUpdateOrder = () => {
     },
   });
 };
-const useDeleteOrders = () => {
+const useDeleteOrderByAdmin = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: cancelOrders,
+    mutationFn: cancelOrderByAdmin,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["orders"] });
     },
@@ -55,16 +56,25 @@ const useDeleteOrder = () => {
   return useMutation({
     mutationFn: cancelOrder,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["orders"] });
+      queryClient.invalidateQueries({ queryKey: ["my-orders"] });
+    },
+  });
+};
+const useConfirmOrder = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: confirmDelivery,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["my-orders"] });
     },
   });
 };
 export {
   useMyOrders,
   usePlaceOrder,
-  useMyOrderById,
   useOrders,
   useUpdateOrder,
-  useDeleteOrders,
   useDeleteOrder,
+  useConfirmOrder,
+  useDeleteOrderByAdmin,
 };

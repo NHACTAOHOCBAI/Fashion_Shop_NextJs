@@ -29,15 +29,18 @@ export const statusConfig: Record<
     className: "text-red-500",
   },
 };
-export type OrderAction = "review" | "rebuy" | "cancel" | "inbox";
+export type OrderAction = "review" | "rebuy" | "cancel" | "inbox" | "received";
 
 export const statusActionsMap: Record<OrderStatus, OrderAction[]> = {
+  [OrderStatus.PENDING]: ["cancel", "inbox"],
+  [OrderStatus.CONFIRMED]: ["inbox"],
+  [OrderStatus.PROCESSING]: ["inbox"],
+
+  // 👇 user xác nhận nhận hàng
+  [OrderStatus.SHIPPED]: ["received", "inbox"],
+
+  // 👇 đã nhận → review từng product
   [OrderStatus.DELIVERED]: ["review", "rebuy", "inbox"],
 
-  [OrderStatus.PENDING]: ["cancel", "inbox"],
-  [OrderStatus.CONFIRMED]: ["cancel", "inbox"],
-
-  [OrderStatus.PROCESSING]: ["inbox"],
-  [OrderStatus.SHIPPED]: ["inbox"],
   [OrderStatus.CANCELED]: ["inbox"],
 };

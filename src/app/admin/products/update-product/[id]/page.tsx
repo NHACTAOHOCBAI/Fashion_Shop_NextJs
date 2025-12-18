@@ -254,24 +254,6 @@ export default function UpdateProduct() {
                           )}
                         />
 
-                        <FormField
-                          control={form.control}
-                          name={`variants.${index}.quantity`}
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Quantity</FormLabel>
-                              <FormControl>
-                                <Input
-                                  type="number"
-                                  value={field.value ?? ""}
-                                  onChange={(e) =>
-                                    field.onChange(Number(e.target.value))
-                                  }
-                                />
-                              </FormControl>
-                            </FormItem>
-                          )}
-                        />
                         {attributes.map((attr) => (
                           <FormField
                             key={attr.attributeName}

@@ -1,5 +1,8 @@
+"use client";
 import { OrderAction } from "@/app/client/my-account/orders/constant";
 import { Button } from "@/components/ui/button";
+import { useConfirmOrder, useDeleteOrder } from "@/hooks/queries/useOrder";
+import { useRouter } from "next/navigation";
 
 type Props = {
   order: Order;
@@ -7,25 +10,45 @@ type Props = {
 };
 
 export const OrderActions = ({ order, actions }: Props) => {
-  const handleReview = () => console.log("Review", order.id);
-  const handleRebuy = () => console.log("Rebuy", order.id);
-  const handleCancel = () => console.log("Cancel", order.id);
+  const router = useRouter();
+  const { mutate: receiveOrder, isPending } = useConfirmOrder();
+  const { mutate: cancelOrder } = useDeleteOrder();
+
+  const handleReceive = () => {
+    receiveOrder(order.id);
+  };
+
+  const handleRebuy = () => {
+    const data: { quantity: number; variant: Variant }[] = order.items.map(
+      (item) => {
+        return {
+          quantity: item.quantity,
+          variant: item.variant,
+        };
+      }
+    );
+    localStorage.setItem("products", JSON.stringify(data));
+    router.replace("/client/checkout");
+  };
+  const handleCancel = () => cancelOrder(order.id);
   const handleInbox = () => console.log("Inbox", order.id);
 
   const renderAction = (action: OrderAction) => {
     switch (action) {
-      case "review":
+      case "received":
         return (
-          <Button variant="outline" onClick={handleReview}>
-            Review
+          <Button onClick={handleReceive} disabled={isPending}>
+            {isPending ? "Đang xử lý..." : "Nhận hàng"}
           </Button>
         );
+
       case "rebuy":
         return (
           <Button variant="outline" onClick={handleRebuy}>
             Rebuy
           </Button>
         );
+
       case "cancel":
         return (
           <Button
@@ -36,6 +59,7 @@ export const OrderActions = ({ order, actions }: Props) => {
             Cancel
           </Button>
         );
+
       case "inbox":
         return (
           <Button variant="outline" onClick={handleInbox}>

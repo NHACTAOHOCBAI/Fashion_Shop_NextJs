@@ -9,6 +9,10 @@ export enum ShippingMethod {
   STANDARD = "standard",
   EXPRESS = "express",
 }
+const confirmDelivery = async (id: number) => {
+  const response = await axiosInstance.post(`orders/${id}/confirm-delivery`);
+  return response;
+};
 const placeOrder = async (data: {
   addressId: number;
   note?: string;
@@ -48,12 +52,15 @@ const updateOrder = async ({
   const response = await axiosInstance.patch(`/orders/${id}/status`, data);
   return response.data;
 };
-const cancelOrders = async (ids: { ids: number[] }) => {
-  console.log("Cancel orders");
-  return {} as Promise<AxiosResponse<any, any>>;
+const cancelOrderByAdmin = async (id: number) => {
+  const response = await axiosInstance.patch(`/orders/${id}/status`, {
+    status: "canceled",
+  });
+  return response.data;
 };
 const cancelOrder = async (id: number) => {
-  console.log("Cancel order");
+  const response = await axiosInstance.post(`orders/${id}/cancel`);
+  return response;
 };
 export {
   placeOrder,
@@ -61,6 +68,7 @@ export {
   getMyOrderById,
   getOrders,
   updateOrder,
-  cancelOrders,
   cancelOrder,
+  confirmDelivery,
+  cancelOrderByAdmin,
 };

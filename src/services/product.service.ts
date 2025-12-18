@@ -46,7 +46,13 @@ const createProduct = async (data: {
   data.variantImages?.forEach((file) => {
     formData.append("variantImages", file);
   });
-  if (data.variants) formData.append("variants", JSON.stringify(data.variants));
+  const variants = data.variants?.map((variant) => {
+    return {
+      quantity: 0,
+      attributes: variant.attributes,
+    };
+  });
+  if (data.variants) formData.append("variants", JSON.stringify(variants));
   const response = await axiosInstance.post("/products", formData, {
     headers: {
       "Content-Type": "multipart/form-data",
