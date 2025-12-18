@@ -7,7 +7,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import React from "react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -17,7 +16,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { DialogSkeleton } from "@/components/skeleton/dialog-skeleton";
 import {
   Select,
   SelectContent,
@@ -25,7 +23,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import useLocalUpdateOrder from "@/app/admin/orders/update-order/use-local-update-order";
+import { DialogSkeleton } from "@/components/skeleton/dialog-skeleton";
+import useLocalUpdateOrder, {
+  ORDER_STATUS_LABEL,
+} from "./use-local-update-order";
 
 interface UpdateOrderDialogProps {
   open: boolean;
@@ -36,17 +37,23 @@ interface UpdateOrderDialogProps {
 
 export function UpdateOrderDialog({
   open,
-  setUpdatedItem,
-  updatedItem,
   setOpen,
+  updatedItem,
+  setUpdatedItem,
 }: UpdateOrderDialogProps) {
   const closeDialog = () => {
     setOpen(false);
     setUpdatedItem(undefined);
   };
 
-  const { form, isPending, isLoading, onSubmit, handleCancel } =
-    useLocalUpdateOrder(updatedItem, closeDialog);
+  const {
+    form,
+    isPending,
+    currentStatus,
+    nextStatuses,
+    onSubmit,
+    handleCancel,
+  } = useLocalUpdateOrder(updatedItem, closeDialog);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -54,46 +61,52 @@ export function UpdateOrderDialog({
         <DialogHeader>
           <DialogTitle>Update Order Status</DialogTitle>
           <DialogDescription>
-            Choose a new status for this order below.
+            You can only move the order to the next valid step.
           </DialogDescription>
         </DialogHeader>
 
-        {isLoading ? (
+        {!updatedItem ? (
           <DialogSkeleton />
         ) : (
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              {/* Current status */}
+              <div className="text-sm">
+                Current status:{" "}
+                <span className="font-semibold">
+                  {ORDER_STATUS_LABEL[currentStatus!]}
+                </span>
+              </div>
+
+              {/* Next status */}
               <FormField
-                disabled={isPending}
                 control={form.control}
                 name="status"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Status</FormLabel>
+                    <FormLabel>Next status</FormLabel>
                     <FormControl>
                       <Select
-                        disabled={isPending}
+                        disabled={isPending || nextStatuses.length === 0}
                         onValueChange={field.onChange}
                         value={field.value}
                       >
                         <SelectTrigger>
-                          <SelectValue
-                            className="min-w-[300px]"
-                            placeholder="Select order status"
-                          />
+                          <SelectValue placeholder="Select next step" />
                         </SelectTrigger>
+
                         <SelectContent>
-                          <SelectItem value="pending">Pending</SelectItem>
-                          <SelectItem value="confirmed">Confirmed</SelectItem>
-                          <SelectItem value="processing">Processing</SelectItem>
-                          <SelectItem value="shipped">Shipped</SelectItem>
-                          <SelectItem value="delivered">Delivered</SelectItem>
-                          <SelectItem value="canceled">Canceled</SelectItem>
-                          <SelectItem value="return_requested">
-                            Return_requested
-                          </SelectItem>
-                          <SelectItem value="returned">Returned</SelectItem>
-                          <SelectItem value="refunded">Refunded</SelectItem>
+                          {nextStatuses.length === 0 ? (
+                            <div className="px-3 py-2 text-sm text-muted-foreground">
+                              This order can no longer be updated
+                            </div>
+                          ) : (
+                            nextStatuses.map((status) => (
+                              <SelectItem key={status} value={status}>
+                                {ORDER_STATUS_LABEL[status]}
+                              </SelectItem>
+                            ))
+                          )}
                         </SelectContent>
                       </Select>
                     </FormControl>
@@ -103,15 +116,21 @@ export function UpdateOrderDialog({
               />
 
               <div className="flex flex-col gap-3">
-                <Button onLoading={isPending} type="submit" className="w-full">
+                <Button
+                  type="submit"
+                  className="w-full"
+                  onLoading={isPending}
+                  disabled={isPending || nextStatuses.length === 0}
+                >
                   Update
                 </Button>
+
                 <Button
-                  disabled={isPending}
                   type="button"
-                  onClick={handleCancel}
                   variant="outline"
                   className="w-full"
+                  onClick={handleCancel}
+                  disabled={isPending}
                 >
                   Cancel
                 </Button>

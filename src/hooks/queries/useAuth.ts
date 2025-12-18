@@ -1,4 +1,5 @@
 import {
+  changePassword,
   getMyProfile,
   login,
   logout,
@@ -6,6 +7,15 @@ import {
   updateMyProfile,
 } from "@/services/auth.service";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+const useChangePassword = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: changePassword,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["getMyProfile"] });
+    },
+  });
+};
 const useLogin = () => {
   return useMutation({
     mutationFn: login,
@@ -35,4 +45,11 @@ const useUpdateMyProfile = () => {
     },
   });
 };
-export { useLogin, useMyProfile, useUpdateMyProfile, useLogout, useRegister };
+export {
+  useLogin,
+  useMyProfile,
+  useUpdateMyProfile,
+  useLogout,
+  useRegister,
+  useChangePassword,
+};

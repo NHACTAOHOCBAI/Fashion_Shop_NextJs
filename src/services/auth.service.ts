@@ -16,13 +16,6 @@ const register = async (data: {
   });
   return response.data;
 };
-// const refreshToken = async () => {
-//   const response = await axiosInstance.post("/auth/refresh");
-//   return response.data as {
-//     access_token: string;
-//     refresh_token: string;
-//   };
-// };
 const logout = async () => {
   const response = await axiosInstance.post("/auth/logout");
   return response;
@@ -41,7 +34,21 @@ const updateMyProfile = async (data: { fullName: string; image?: File }) => {
       "Content-Type": "multipart/form-data",
     },
   });
-  console.log(response.data);
   return response.data;
 };
-export { login, getMyProfile, updateMyProfile, logout, register };
+const changePassword = async (data: {
+  oldPassword: string;
+  newPassword: string;
+  confirmNewPassword: string;
+}) => {
+  const response = await axiosInstance.post(`/auth/change-password`, data);
+  return response.data;
+};
+export {
+  login,
+  getMyProfile,
+  updateMyProfile,
+  logout,
+  register,
+  changePassword,
+};
