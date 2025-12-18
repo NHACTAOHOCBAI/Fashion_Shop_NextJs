@@ -9,21 +9,22 @@ import {
 
 export default function NotificationPage() {
   const { data: myNotification, isLoading } = useGetNotification({});
-
   const { mutate: markOneAsRead } = useMarkOneAsRead();
 
   if (isLoading) return null;
 
   return (
     <div className="w-[600px] mx-auto">
-      <Card>
+      <Card className="h-[600px] flex flex-col">
+        {/* Header cố định */}
         <CardHeader>
           <CardTitle>Notifications</CardTitle>
         </CardHeader>
 
-        <CardContent className="space-y-3">
+        {/* Content cuộn */}
+        <CardContent className="flex-1 overflow-y-auto space-y-3">
           {!myNotification || myNotification.data.length === 0 ? (
-            <p className="text-sm text-muted-foreground text-center">
+            <p className="text-sm text-muted-foreground text-center mt-10">
               No notifications
             </p>
           ) : (

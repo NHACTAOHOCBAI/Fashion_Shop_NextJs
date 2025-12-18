@@ -56,6 +56,15 @@ const getMyCoupons = async (params: QueryParams) => {
   })) as GetAllResponse<Coupon>;
   return response.data;
 };
+const getAvailable = async (data: {
+  items: { variantId: number; quantity: number }[];
+}) => {
+  const response = (await axiosInstance.post(
+    "/coupons/check-available",
+    data
+  )) as GetAllResponse<Coupon>;
+  return response.data;
+};
 const deleteCoupon = async ({ id }: { id: number }) => {
   const response = await axiosInstance.delete(`/coupons/${id}`);
   return response;
@@ -113,4 +122,5 @@ export {
   deleteCoupons,
   deleteCoupon,
   getMyCoupons,
+  getAvailable,
 };

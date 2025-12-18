@@ -40,10 +40,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             title: "Dashboard",
             url: "/admin/overviews/dashboard",
           },
-          {
-            title: "Reports",
-            url: "/admin/overviews/reports",
-          },
         ],
       },
       {

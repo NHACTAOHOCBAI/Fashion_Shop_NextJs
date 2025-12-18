@@ -2,6 +2,7 @@ import {
   createCoupon,
   deleteCoupon,
   deleteCoupons,
+  getAvailable,
   getCoupons,
   getMyCoupons,
   updateCoupon,
@@ -12,6 +13,16 @@ const useMyCoupons = (params: QueryParams) =>
   useQuery({
     queryKey: ["my-coupons", params],
     queryFn: () => getMyCoupons(params),
+  });
+const useAvailable = (data: {
+  items: {
+    variantId: number;
+    quantity: number;
+  }[];
+}) =>
+  useQuery({
+    queryKey: ["available"],
+    queryFn: () => getAvailable(data),
   });
 // Lấy danh sách coupon (có thể truyền params lọc/pagination)
 const useCoupons = (params: QueryParams) =>
@@ -71,4 +82,5 @@ export {
   useDeleteCoupon,
   useDeleteCoupons,
   useMyCoupons,
+  useAvailable,
 };

@@ -27,14 +27,18 @@ const Discount = () => {
         </div>
       </div>
 
-      {/* List */}
-      <div className="flex flex-col gap-[35px] mt-[60px]">
-        {myNotification?.data.map((item: Notification) => (
-          <OrderNewsItem key={item.id} notification={item} />
-        ))}
-
-        {!myNotification?.data.length && (
-          <p className="text-center text-gray-400">No notifications yet</p>
+      {/* List container */}
+      <div className="max-h-[520px] overflow-y-auto pr-2 mt-[10px]">
+        {myNotification?.data && myNotification.data.length > 0 ? (
+          <div className="flex flex-col gap-6">
+            {myNotification.data.map((item) => (
+              <OrderNewsItem key={item.id} notification={item} />
+            ))}
+          </div>
+        ) : (
+          <p className="text-center text-sm text-muted-foreground mt-20">
+            No notifications yet
+          </p>
         )}
       </div>
     </div>

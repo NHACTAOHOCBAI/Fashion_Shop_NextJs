@@ -164,7 +164,7 @@ const Coupons = () => {
 
   // Hàm render nội dung tab
   const renderCouponList = (coupons: Coupon[]) => (
-    <div className="flex flex-col gap-[20px]">
+    <div className="flex flex-col gap-[20px]  overflow-y-auto ">
       {coupons.length > 0 ? (
         coupons.map((coupon) => (
           <div key={coupon.id}>

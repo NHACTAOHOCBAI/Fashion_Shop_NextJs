@@ -12,7 +12,7 @@ import { useState, useEffect } from "react"; // ✨ THÊM useEffect
 
 // END Interfaces
 
-const SHIPPING_FEE = 20.0;
+const SHIPPING_FEE = 0;
 
 const Cart = () => {
   const { data: myCart, isLoading } = useGetMyCart();
@@ -119,10 +119,6 @@ const Cart = () => {
         <div className="flex justify-between items-center">
           <p>Subtotal</p>
           <p>${subtotal.toFixed(2)}</p>
-        </div>
-        <div className="flex justify-between items-center mt-[17px]">
-          <p>Shipping fee</p>
-          <p>${SHIPPING_FEE.toFixed(2)}</p>
         </div>
         <div className="bg-[#FAFAFB] h-[2px] my-[17px]" />
         <div className="flex justify-between items-center mt-[17px] text-[30px] font-medium mb-[28px]">

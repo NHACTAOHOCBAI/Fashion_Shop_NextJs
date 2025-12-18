@@ -8,12 +8,15 @@ import {
 import { useDepartments } from "@/hooks/queries/useDepartment";
 import { useGetHeaderData } from "@/hooks/queries/useHome";
 import { useGetNotification } from "@/hooks/queries/useNotification";
+import { cn } from "@/lib/utils";
 import {
   Bell,
   Heart,
   ListOrdered,
+  ShoppingBag,
   ShoppingCart,
   Tag,
+  TicketPercent,
   User,
   UserIcon,
 } from "lucide-react";
@@ -63,44 +66,6 @@ const formatTimeAgo = (date: Date | string) => {
 
   const days = Math.floor(hours / 24);
   return `${days} day${days > 1 ? "s" : ""} ago`;
-};
-const NotificationItem = ({ item }: { item: Notification }) => {
-  const router = useRouter();
-
-  return (
-    <div
-      onClick={() => router.replace("/client/my-account/order-news")}
-      className={`
-        flex gap-[13px] pt-[10px] pb-[20px] border-b border-gray-100 cursor-pointer
-        ${!item.isRead ? "bg-[#F5F9FF]" : "bg-white"}
-      `}
-    >
-      {/* Unread dot */}
-      {!item.isRead && (
-        <div className="w-[8px] h-[8px] bg-[#40BFFF] rounded-full mt-[12px]" />
-      )}
-
-      {/* Icon */}
-      <div className="w-[35px] h-[35px] bg-gray-100 rounded-full flex-shrink-0" />
-
-      {/* Content */}
-      <div className="flex gap-[5px] flex-col">
-        <p
-          className={`text-[14px] ${
-            !item.isRead ? "font-semibold" : "font-medium"
-          }`}
-        >
-          {item.title}
-        </p>
-
-        <p className="text-[12px] font-light">{item.message}</p>
-
-        <p className="text-[12px] font-light text-gray-500">
-          {formatTimeAgo(item.createdAt)}
-        </p>
-      </div>
-    </div>
-  );
 };
 
 const Content = ({
@@ -294,12 +259,77 @@ const Notification = () => {
   const { data: myNotification } = useGetNotification({
     limit: 5,
     page: 1,
+    isRead: "false",
   });
+
+  const notifications = myNotification?.data || [];
+
   return (
-    <div className="w-[360px] px-[14px] py-[10px]">
-      {myNotification?.data.map((notification) => (
-        <NotificationItem key={notification.id} item={notification} />
-      ))}
+    <div className="w-[360px] py-2">
+      {notifications.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-8 text-center">
+          <p className="text-sm text-gray-500">
+            You have no new notifications.
+          </p>
+        </div>
+      ) : (
+        notifications.map((notification) => (
+          <NotificationItem key={notification.id} item={notification} />
+        ))
+      )}
+    </div>
+  );
+};
+
+const NotificationItem = ({ item }: { item: Notification }) => {
+  const router = useRouter();
+
+  const Icon = item.type === "ORDER" ? ShoppingBag : TicketPercent;
+
+  return (
+    <div
+      onClick={() => router.replace("/client/my-account/order-news")}
+      className={cn(
+        "flex gap-3 px-4 py-3 cursor-pointer transition rounded-lg",
+        "hover:bg-gray-50",
+        !item.isRead && "bg-blue-50/60"
+      )}
+    >
+      {/* Icon */}
+      <div
+        className={cn(
+          "w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0",
+          item.type === "ORDER"
+            ? "bg-blue-100 text-blue-600"
+            : "bg-orange-100 text-orange-600"
+        )}
+      >
+        <Icon size={18} />
+      </div>
+
+      {/* Content */}
+      <div className="flex flex-col gap-1 flex-1">
+        <div className="flex items-center justify-between">
+          <p
+            className={cn(
+              "text-sm",
+              !item.isRead ? "font-semibold" : "font-medium"
+            )}
+          >
+            {item.title}
+          </p>
+
+          {!item.isRead && (
+            <span className="w-2 h-2 bg-blue-500 rounded-full" />
+          )}
+        </div>
+
+        <p className="text-xs text-gray-600 line-clamp-2">{item.message}</p>
+
+        <p className="text-[11px] text-gray-400">
+          {formatTimeAgo(item.createdAt)}
+        </p>
+      </div>
     </div>
   );
 };

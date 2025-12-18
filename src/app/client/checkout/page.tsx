@@ -6,7 +6,11 @@ import CouponList from "@/app/client/checkout/CouponList";
 import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useMyAddress } from "@/hooks/queries/useAddress";
-import { useCoupons, useMyCoupons } from "@/hooks/queries/useCoupon";
+import {
+  useAvailable,
+  useCoupons,
+  useMyCoupons,
+} from "@/hooks/queries/useCoupon";
 import { usePlaceOrder } from "@/hooks/queries/useOrder";
 // Giả định các hooks này đã được tạo
 // import { useMyAddress } from "@/hooks/queries/useAddress";
@@ -49,14 +53,14 @@ interface OrderSummary {
 const shippingOptions: ShippingOption[] = [
   {
     value: "standard",
-    price: 5.0,
+    price: 10.0,
     delivery: "(10-20 days)",
     name: "Standard Delivery",
     logo: "Logo A",
   },
   {
     value: "express",
-    price: 9.0,
+    price: 20.0,
     delivery: "(5-10 days)",
     name: "Fast Delivery",
     logo: "Logo B",
@@ -166,8 +170,16 @@ const Checkout = () => {
   // Hooks
   const { mutate: placeOrder, isPending } = usePlaceOrder();
   const { data: myAddresses } = useMyAddress();
-  const { data: myCoupons } = useMyCoupons({ limit: 3, page: 1 });
   const [products, setProducts] = useState<CartItem[] | undefined>();
+  const test2 = products?.map((product) => {
+    return {
+      variantId: product.variant.id,
+      quantity: product.quantity,
+    };
+  });
+  const { data: myCoupons } = useAvailable({
+    items: test2 || [],
+  });
 
   // States
   const [note, setNote] = useState<string>("");

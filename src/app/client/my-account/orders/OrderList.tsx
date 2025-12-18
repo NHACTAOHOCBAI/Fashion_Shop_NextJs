@@ -9,7 +9,7 @@ export const OrderList = ({ status }: { status?: OrderStatus }) => {
   if (isLoading) return <Loading />;
 
   return (
-    <div className="flex flex-col gap-[10px]">
+    <div className="flex flex-col gap-[10px] overflow-y-auto  mt-[10px]">
       {data?.data.map((order) => (
         <OrderItem key={order.id} order={order} />
       ))}

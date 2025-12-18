@@ -49,7 +49,7 @@ const MyAddress = () => {
             </NormalButton>
           </div>
         </div>
-        <div className="flex flex-col gap-[35px] mt-[60px]">
+        <div className="max-h-[520px] overflow-y-auto pr-2 mt-[10px]">
           {MyAddress?.map((address) => (
             <MyAddressItem key={address.id} address={address} />
           ))}
