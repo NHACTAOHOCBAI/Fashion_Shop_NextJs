@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { usePaypal } from "@/hooks/queries/usePayment";
+import Loading2 from "@/app/client/_components/Loading2";
 
 export default function PaypalSuccessPage() {
   const searchParams = useSearchParams();
@@ -22,7 +23,7 @@ export default function PaypalSuccessPage() {
       {
         onSuccess: () => {
           toast.success("Payment successful!");
-          router.replace("/orders");
+          router.replace("/client/cart");
         },
         onError: () => {
           toast.error("Payment failed!");
@@ -31,7 +32,7 @@ export default function PaypalSuccessPage() {
       }
     );
   }, [token]);
-
+  if (isPending) return <Loading2 />;
   return (
     <div className="flex items-center justify-center h-screen">
       {isPending ? "Processing payment..." : "Redirecting..."}

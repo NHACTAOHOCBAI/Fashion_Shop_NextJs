@@ -8,7 +8,10 @@ import {
 import { useDepartments } from "@/hooks/queries/useDepartment";
 import { useGetHeaderData } from "@/hooks/queries/useHome";
 import { useGetNotification } from "@/hooks/queries/useNotification";
+import { getSocket } from "@/lib/socket";
 import { cn } from "@/lib/utils";
+import { useSocket } from "@/providers/socketProvider";
+import { getMyNotifications } from "@/services/notification.service";
 import {
   Bell,
   Heart,
@@ -94,10 +97,9 @@ const Content = ({
 };
 
 const Header = () => {
-  const { data: myNotification } = useGetNotification({ isRead: "false" });
+  // const { data: myNotification } = useGetNotification({ isRead: "false" });
   const router = useRouter();
   const { data: headerData } = useDepartments({});
-  const unreadCount = myNotification?.data.length || 0;
   const [user, setUser] = useState<User>();
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -109,7 +111,35 @@ const Header = () => {
       }
     }
   }, []);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const socket = useSocket();
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      const res = await getMyNotifications({});
+      const unreadCount = res.data.reduce((total, item) => {
+        if (item.isRead === false) return total + 1;
+        return total;
+      }, 0);
+      setNotifications(res.data);
+      setUnreadCount(unreadCount);
+    };
 
+    fetchNotifications();
+  }, []);
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on("notification:new", (data: Notification) => {
+      setNotifications((prev) => [data, ...prev]);
+      setUnreadCount((c) => c + 1);
+    });
+
+    return () => {
+      socket.off("notification:new");
+    };
+  }, [socket]);
+  // console.log(notifications);
   return (
     <header>
       <div className="w-[1240px] mx-auto flex justify-end gap-[41px]   py-[20px] ">
@@ -141,7 +171,7 @@ const Header = () => {
           </PopoverTrigger>
 
           <PopoverContent className="p-0 w-[360px]">
-            <Notification />
+            <Notification notifications={notifications} />
           </PopoverContent>
         </Popover>
 
@@ -255,25 +285,18 @@ const SubCatgories = ({ children, content }: SubCatgoriesProps) => {
     </div>
   );
 };
-const Notification = () => {
-  const { data: myNotification } = useGetNotification({
-    limit: 5,
-    page: 1,
-    isRead: "false",
-  });
-
-  const notifications = myNotification?.data || [];
-
+const Notification = ({ notifications }: { notifications: Notification[] }) => {
+  const myNotification = notifications.slice(0, 5);
   return (
     <div className="w-[360px] py-2">
-      {notifications.length === 0 ? (
+      {myNotification.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-8 text-center">
           <p className="text-sm text-gray-500">
             You have no new notifications.
           </p>
         </div>
       ) : (
-        notifications.map((notification) => (
+        myNotification.map((notification) => (
           <NotificationItem key={notification.id} item={notification} />
         ))
       )}

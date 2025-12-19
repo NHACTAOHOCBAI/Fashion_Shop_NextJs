@@ -15,7 +15,10 @@ const useMarkOneAsRead = () => {
   return useMutation({
     mutationFn: markOneAsRead,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["my-notification"] });
+      queryClient.invalidateQueries({
+        queryKey: ["my-notification"],
+        exact: false,
+      });
     },
   });
 };
@@ -24,7 +27,10 @@ const useMarkAsRead = () => {
   return useMutation({
     mutationFn: markAsRead,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["my-notification"] });
+      queryClient.invalidateQueries({
+        queryKey: ["my-notification"],
+        exact: false,
+      });
     },
   });
 };

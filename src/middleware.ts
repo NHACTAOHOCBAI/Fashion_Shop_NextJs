@@ -10,32 +10,32 @@ function decodeJWT(token: string) {
 }
 
 export function middleware(req: NextRequest) {
-  const pathname = req.nextUrl.pathname;
-  const token = req.cookies.get("access_token")?.value;
-  // ❌ Chưa login
-  if (!token) {
-    if (pathname.startsWith("/admin") || pathname.startsWith("/client")) {
-      return NextResponse.redirect(new URL("/login", req.url));
-    }
-    return NextResponse.next();
-  }
+  // const pathname = req.nextUrl.pathname;
+  // const token = req.cookies.get("access_token")?.value;
+  // // ❌ Chưa login
+  // if (!token) {
+  //   if (pathname.startsWith("/admin") || pathname.startsWith("/client")) {
+  //     return NextResponse.redirect(new URL("/login", req.url));
+  //   }
+  //   return NextResponse.next();
+  // }
 
-  const payload = decodeJWT(token);
-  if (!payload || !payload.role) {
-    return NextResponse.redirect(new URL("/login", req.url));
-  }
+  // const payload = decodeJWT(token);
+  // if (!payload || !payload.role) {
+  //   return NextResponse.redirect(new URL("/login", req.url));
+  // }
 
-  const role = payload.role;
+  // const role = payload.role;
 
-  // 👤 USER → client
-  if (role === "role" && pathname.startsWith("/admin")) {
-    return NextResponse.redirect(new URL("/client", req.url));
-  }
+  // // 👤 USER → client
+  // if (role === "role" && pathname.startsWith("/admin")) {
+  //   return NextResponse.redirect(new URL("/client", req.url));
+  // }
 
-  // 👮 ADMIN / STAFF → admin
-  if (role === "admin" && pathname.startsWith("/client")) {
-    return NextResponse.redirect(new URL("/admin", req.url));
-  }
+  // // 👮 ADMIN / STAFF → admin
+  // if (role === "admin" && pathname.startsWith("/client")) {
+  //   return NextResponse.redirect(new URL("/admin", req.url));
+  // }
 
   return NextResponse.next();
 }

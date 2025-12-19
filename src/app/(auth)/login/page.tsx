@@ -34,9 +34,6 @@ export default function LoginPage() {
                     Login with Google
                   </Button>
                 </Link>
-                <Button variant="outline" className="w-full">
-                  Login with Facebook
-                </Button>
               </div>
 
               <div className="flex items-center gap-4">
