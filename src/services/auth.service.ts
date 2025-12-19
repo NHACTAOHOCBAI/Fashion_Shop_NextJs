@@ -1,4 +1,8 @@
 import axiosInstance from "@/config/axios";
+const loginWithGoogle = async () => {
+  const response = await axiosInstance.get("/auth/google");
+  return response;
+};
 
 const forgotPassword = async (email: string) => {
   const response = await axiosInstance.post("/auth/forgot-password", {
@@ -69,4 +73,5 @@ export {
   changePassword,
   forgotPassword,
   resetPassword,
+  loginWithGoogle,
 };

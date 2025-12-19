@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { LoginForm } from "@/app/(auth)/login/login-form";
 import Loading from "@/app/client/_components/Loading";
 import Loading2 from "@/app/client/_components/Loading2";
+import { loginWithGoogle } from "@/services/auth.service";
+import Link from "next/link";
 
 export default function LoginPage() {
   return (
@@ -27,9 +29,11 @@ export default function LoginPage() {
             <CardContent className="space-y-6">
               {/* Social login */}
               <div className="space-y-3">
-                <Button variant="outline" className="w-full">
-                  Login with Google
-                </Button>
+                <Link href={"http://localhost:4000/api/v1/auth/google"}>
+                  <Button variant="outline" className="w-full">
+                    Login with Google
+                  </Button>
+                </Link>
                 <Button variant="outline" className="w-full">
                   Login with Facebook
                 </Button>

@@ -1,9 +1,11 @@
 import { DataTableColumnHeader } from "@/components/table/data-table-column-header";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import convertAlias from "@/lib/convertAlias";
-import type { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import dayjs from "dayjs";
+import type { ColumnDef } from "@tanstack/react-table";
+import convertAlias from "@/lib/convertAlias";
+
+/* ===================== COLUMNS ===================== */
 
 export const stockColumns = (): ColumnDef<Stock>[] => {
   return [
@@ -15,42 +17,6 @@ export const stockColumns = (): ColumnDef<Stock>[] => {
       ),
     },
 
-    // ================= VARIANT =================
-    {
-      id: "variant",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Variant" />
-      ),
-      cell: ({ row }) => {
-        const variant = row.original.variant;
-
-        return (
-          <div className="flex items-center gap-3">
-            <Avatar className="h-10 w-10">
-              <AvatarImage src={variant.imageUrl} />
-              <AvatarFallback>
-                {convertAlias(variant.product.name)}
-              </AvatarFallback>
-            </Avatar>
-
-            <div className="flex flex-col text-sm">
-              <span className="font-medium">{variant.product.name}</span>
-
-              {/* Attributes */}
-              <span className="text-muted-foreground text-xs">
-                {variant.variantAttributeValues
-                  ?.map(
-                    (v) =>
-                      `${v.attributeCategory.attribute.name}: ${v.attributeCategory.value}`
-                  )
-                  .join(" · ")}
-              </span>
-            </div>
-          </div>
-        );
-      },
-    },
-
     // ================= TYPE =================
     {
       accessorKey: "type",
@@ -59,7 +25,6 @@ export const stockColumns = (): ColumnDef<Stock>[] => {
       ),
       cell: ({ row }) => {
         const type = row.original.type;
-
         return (
           <Badge variant={type === "IN" ? "default" : "destructive"}>
             {type}
@@ -70,22 +35,23 @@ export const stockColumns = (): ColumnDef<Stock>[] => {
 
     // ================= QUANTITY =================
     {
-      accessorKey: "quantity",
+      id: "quantity",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Quantity" />
       ),
       cell: ({ row }) => {
-        const { quantity, type } = row.original;
+        const { items, type } = row.original;
+        const total = items.reduce((a, item) => a + item.quantity, 0);
         return (
-          <span
+          <div
             className={
               type === "IN"
                 ? "text-green-600 font-medium"
                 : "text-red-600 font-medium"
             }
           >
-            {type === "IN" ? `+${quantity}` : `-${quantity}`}
-          </span>
+            {type === "IN" ? `+${total}` : `-${total}`}
+          </div>
         );
       },
     },

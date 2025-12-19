@@ -1,11 +1,13 @@
 interface Stock {
   id: number;
-  variant: Variant;
-  quantity: number;
   type: StockLogType;
   note: string;
   createdBy: User;
   createdAt: Date;
+  items: {
+    variant: Variant;
+    quantity: number;
+  }[];
 }
 enum StockLogType {
   IN = "IN",
