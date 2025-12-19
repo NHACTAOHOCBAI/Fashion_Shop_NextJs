@@ -22,4 +22,5 @@ interface OrderItem {
   price: number;
   createdAt: string;
   updatedAt: string;
+  isReviewed: boolean;
 }

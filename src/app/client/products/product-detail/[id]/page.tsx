@@ -67,14 +67,29 @@ function getAllImageUrls(product: any): string[] {
 // ====================================================================
 
 // ... (ReviewItem và productTabs không thay đổi)
-const ReviewItem = ({ review }: { review: Review }) => {
+const ReviewItem = ({
+  review,
+}: {
+  review: {
+    id: number;
+    rating: number;
+    comment: string;
+    user: {
+      id: number;
+      name: string;
+    };
+    images: string[];
+    helpfulCount: number;
+    createdAt: Date;
+  };
+}) => {
   return (
     <div className="rounded-[16px] border-[#D0D5DD] py-[18px] px-[24px] border-[1px]">
       <div className="flex justify-between">
         <div className="flex gap-[12px] items-center">
           <div className="rounded-full w-[41px] h-[41px] bg-gray-400" />
           <div>
-            <p className="text-[16px] font-semibold">{review.user.fullName}</p>
+            <p className="text-[16px] font-semibold">{review.user.name}</p>
             <p className="text-[14px]">
               {shorthandFormatDateTime(review.createdAt)}
             </p>
@@ -86,12 +101,12 @@ const ReviewItem = ({ review }: { review: Review }) => {
         </div>
       </div>
       <div className="mt-[13px]">
-        {review.image && (
+        {review.images && (
           <Image
             height={100}
             width={100}
             alt={`Shoe view`}
-            src={review.image}
+            src={review.images[0]}
             className="w-[100px] h-[100px] object-contain rounded-[8px] bg-[#F6F7F8] " // Đảm bảo ảnh nhỏ vừa khung
           />
         )}
@@ -400,21 +415,21 @@ const OptionGroup = ({
 };
 const ReviewPage = ({ idProduct }: { idProduct: number }) => {
   const { data: reviews } = useGetReviewsByProduct(idProduct);
-  const [page, setPage] = useState(1);
-  const handlePageChange = (newPage: number) => {
-    const totalPages = reviews?.pagination?.total ?? 1;
-    if (newPage >= 1 && newPage <= totalPages) {
-      setPage(newPage);
-    }
-  };
+  // const [page, setPage] = useState(1);
+  // const handlePageChange = (newPage: number) => {
+  //   const totalPages = reviews?.pagination?.total ?? 1;
+  //   if (newPage >= 1 && newPage <= totalPages) {
+  //     setPage(newPage);
+  //   }
+  // };
   return (
     <div>
-      {reviews?.data.map((review) => (
+      {reviews?.map((review) => (
         <div key={review.id} className="mb-4">
           <ReviewItem key={review.id} review={review} />
         </div>
       ))}
-      <div className="flex flex-col items-center gap-4 p-8">
+      {/* <div className="flex flex-col items-center gap-4 p-8">
         <CustomPagination
           currentPage={page}
           totalPages={Math.max(
@@ -426,7 +441,7 @@ const ReviewPage = ({ idProduct }: { idProduct: number }) => {
           )}
           onPageChange={handlePageChange}
         />
-      </div>
+      </div> */}
     </div>
   );
 };

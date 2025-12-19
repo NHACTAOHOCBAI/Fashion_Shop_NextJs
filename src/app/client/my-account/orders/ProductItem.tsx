@@ -41,9 +41,8 @@ export const ProductItem = ({ item, orderStatus, orderId }: Props) => {
             </div>
           </div>
         </div>
-
         {/* Review button */}
-        {orderStatus === OrderStatus.DELIVERED && (
+        {orderStatus === OrderStatus.DELIVERED && !item.isReviewed && (
           <div className="flex items-center">
             <Button variant="outline" onClick={() => setOpenReview(true)}>
               Review
@@ -57,7 +56,7 @@ export const ProductItem = ({ item, orderStatus, orderId }: Props) => {
         open={openReview}
         onClose={() => setOpenReview(false)}
         orderId={orderId}
-        productId={product.id}
+        variantId={item.variant.id}
       />
     </>
   );

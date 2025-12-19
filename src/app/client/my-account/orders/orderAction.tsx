@@ -30,6 +30,7 @@ export const OrderActions = ({ order, actions }: Props) => {
     localStorage.setItem("products", JSON.stringify(data));
     router.replace("/client/checkout");
   };
+
   const handleCancel = () => cancelOrder(order.id);
   const handleInbox = () => console.log("Inbox", order.id);
 
@@ -38,7 +39,7 @@ export const OrderActions = ({ order, actions }: Props) => {
       case "received":
         return (
           <Button onClick={handleReceive} disabled={isPending}>
-            {isPending ? "Đang xử lý..." : "Nhận hàng"}
+            {isPending ? "Processing..." : "Receive"}
           </Button>
         );
 

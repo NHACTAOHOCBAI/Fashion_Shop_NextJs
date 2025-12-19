@@ -11,10 +11,10 @@ interface Props {
   open: boolean;
   onClose: () => void;
   orderId: number;
-  productId: number;
+  variantId: number;
 }
 
-export const ReviewModal = ({ open, onClose, orderId, productId }: Props) => {
+export const ReviewModal = ({ open, onClose, orderId, variantId }: Props) => {
   const { mutate: createReview, isPending } = useCreateReview();
 
   const [rating, setRating] = useState(5);
@@ -58,7 +58,7 @@ export const ReviewModal = ({ open, onClose, orderId, productId }: Props) => {
     createReview(
       {
         orderId,
-        productId,
+        variantId,
         rating,
         comment,
         files,

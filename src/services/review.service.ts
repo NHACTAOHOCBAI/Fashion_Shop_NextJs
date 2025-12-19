@@ -17,14 +17,14 @@ const getReviewsByProductId = async (productId: number) => {
 };
 const createReview = async (data: {
   orderId: number;
-  productId: number;
+  variantId: number;
   rating: number;
   comment: string | undefined;
   files: File[];
 }) => {
   const formData = new FormData();
   formData.append("orderId", String(data.orderId));
-  formData.append("productId", String(data.productId));
+  formData.append("variantId", String(data.variantId));
   formData.append("rating", String(data.rating));
   if (data.comment) formData.append("comment", String(data.comment));
   data.files.forEach((file) => {
