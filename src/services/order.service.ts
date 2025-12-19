@@ -22,7 +22,7 @@ const placeOrder = async (data: {
   couponCode?: string;
 }) => {
   const response = await axiosInstance.post("/orders", data);
-  return response.data;
+  return response.data as Order;
 };
 const getMyOrders = async (params: QueryParams) => {
   const response = (await axiosInstance.get("/orders/me", {

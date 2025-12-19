@@ -6,27 +6,15 @@ import CouponList from "@/app/client/checkout/CouponList";
 import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useMyAddress } from "@/hooks/queries/useAddress";
-import {
-  useAvailable,
-  useCoupons,
-  useMyCoupons,
-} from "@/hooks/queries/useCoupon";
+import { useAvailable } from "@/hooks/queries/useCoupon";
 import { usePlaceOrder } from "@/hooks/queries/useOrder";
-// Giả định các hooks này đã được tạo
-// import { useMyAddress } from "@/hooks/queries/useAddress";
-// import { useCoupons, useMyCoupons } from "@/hooks/queries/useCoupon";
+import { createPaypal } from "@/services/payment.service";
 import { Box, CreditCard, MapPinHouse, Truck } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { RiCoupon3Line } from "react-icons/ri";
 import { toast } from "sonner";
-
-// ===============================================
-// ĐỊNH NGHĨA INTERFACE CHO CODE NÀY
-// (Do các interface Address, Coupon, CartItem không có trong file)
-// ===============================================
-
-// Dùng tạm các interface đã dùng ở các bước trước
 
 interface ShippingOption {
   value: string;
@@ -167,6 +155,7 @@ const calculateOrderSummary = (
 // ===============================================
 
 const Checkout = () => {
+  const router = useRouter();
   // Hooks
   const { mutate: placeOrder, isPending } = usePlaceOrder();
   const { data: myAddresses } = useMyAddress();
@@ -318,16 +307,33 @@ const Checkout = () => {
         note: note,
       },
       {
-        onSuccess: () => {
-          toast.success("You has placed orders sucessfully");
+        onSuccess: async (order) => {
+          console.log(order);
+          // order = response từ BE (phải có order.id)
+          if (selectedPayment === "paypal") {
+            try {
+              const res = await createPaypal({
+                orderId: order.id,
+              });
+
+              // 🚨 BẮT BUỘC redirect browser
+              window.location.href = res.approveUrl;
+            } catch (err: any) {
+              toast.error("Cannot redirect to PayPal");
+            }
+            return;
+          }
+
+          // ✅ COD / BANK
+          toast.success("Order placed successfully!");
+          // router.push(`/orders/${order.id}`);
         },
-        onError: (error) => {
-          toast.error(`Ohh!!! ${error.message}`);
+
+        onError: (error: any) => {
+          toast.error(error.message || "Checkout failed");
         },
       }
     );
-
-    // Thêm logic gọi API đặt hàng tại đây (vd: axios.post('/api/orders', checkoutData))
   }, [
     selectedAddress,
     selectedShipping,
