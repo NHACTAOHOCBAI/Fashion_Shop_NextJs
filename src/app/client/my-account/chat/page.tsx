@@ -21,13 +21,15 @@ export default function ClientChatPage() {
   if (!id || !me) return null;
 
   return (
-    <ChatWindow
-      conversationId={id}
-      currentUserId={me.id}
-      headerUser={{
-        id: 0,
-        fullName: "Shop hỗ trợ",
-      }}
-    />
+    <div className="h-[calc(100vh-120px)]">
+      <ChatWindow
+        conversationId={id}
+        currentUserId={me.id}
+        headerUser={{
+          id: 0,
+          fullName: "Shop hỗ trợ",
+        }}
+      />
+    </div>
   );
 }

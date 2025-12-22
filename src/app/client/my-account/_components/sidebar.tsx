@@ -7,7 +7,15 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { Bell, User, ListOrdered, Tag, Heart, ChevronDown } from "lucide-react";
+import {
+  Bell,
+  User,
+  ListOrdered,
+  Tag,
+  Heart,
+  ChevronDown,
+  MessageSquare,
+} from "lucide-react";
 import * as React from "react";
 // Giả định sử dụng Next.js App Router hooks
 import { usePathname, useRouter } from "next/navigation";
@@ -96,6 +104,18 @@ const menuData: MenuSection[] = [
       {
         label: "Coupons",
         href: "/client/my-account/wishlist",
+      },
+    ],
+    isCollapsible: false,
+  },
+  {
+    icon: MessageSquare,
+    title: "Chat",
+    href: "/client/my-account/chat",
+    items: [
+      {
+        label: "Coupons",
+        href: "/client/my-account/chat",
       },
     ],
     isCollapsible: false,
