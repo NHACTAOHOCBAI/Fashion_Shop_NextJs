@@ -4,6 +4,5 @@ interface Review {
   comment: string;
   user: User;
   image?: string;
-  helpfulCount: number;
   createdAt: Date;
 }

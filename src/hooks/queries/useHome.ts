@@ -1,8 +1,25 @@
-import { getHeaderData } from "@/services/home.service";
+import { getFeaturedReviews, getHomeStatistics } from "@/services/home.service";
+import { getProducts } from "@/services/product.service";
 import { useQuery } from "@tanstack/react-query";
-const useGetHeaderData = () =>
+export const useNewArrivals = () =>
   useQuery({
-    queryKey: ["get header data"],
-    queryFn: () => getHeaderData(),
+    queryKey: ["new-arrivals"],
+    queryFn: () =>
+      getProducts({
+        page: 1,
+        limit: 8,
+        sortBy: "createdAt",
+        sortOrder: "DESC",
+      }),
   });
-export { useGetHeaderData };
+
+export const useFeaturedReviews = () =>
+  useQuery({
+    queryKey: ["featured-reviews"],
+    queryFn: getFeaturedReviews,
+  });
+export const useHomeStatistics = () =>
+  useQuery({
+    queryKey: ["home-statistics"],
+    queryFn: getHomeStatistics,
+  });

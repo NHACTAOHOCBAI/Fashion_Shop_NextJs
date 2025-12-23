@@ -2,85 +2,102 @@ import finalMoney from "@/lib/finalMoney";
 import Image from "next/image";
 import Link from "next/link";
 import { FaStar } from "react-icons/fa";
-const NEWTIME = 24 * 60 * 60 * 1000;
+
+const NEW_TIME = 24 * 60 * 60 * 1000;
+
 const isNewProduct = (createdAt: string): boolean => {
-  const createdTime = new Date(createdAt).getTime();
-  const currentTime = Date.now();
-  const timeDifference = currentTime - createdTime;
-  return timeDifference < NEWTIME;
+  if (!createdAt) return false;
+  return Date.now() - new Date(createdAt).getTime() < NEW_TIME;
 };
+
+const FALLBACK_IMAGE = "/images/product-placeholder.png";
+
 const ProductCard = ({ product }: { product: Product }) => {
   const showNewTag = isNewProduct(product.createdAt);
+
+  const imageUrl = product.images?.[0]?.imageUrl || FALLBACK_IMAGE;
+
+  const rating = Number(product.averageRating) || 0;
 
   return (
     <Link
       href={`/client/products/product-detail/${product.id}`}
-      className="group relative block"
+      className="group block"
     >
       <div
         className="
-          w-[300px] h-[400px]
-          border border-[#F6F7F8]
-          rounded-[10px]
+          relative
+          h-full
+          rounded-xl
+          border border-gray-100
           bg-white
           overflow-hidden
-          transition-all duration-300 ease-out
+          transition-all duration-300
           hover:-translate-y-1
-          hover:shadow-lg
+          hover:shadow-xl
         "
       >
-        {/* Image */}
-        <div className="w-[300px] h-[300px] bg-[#F6F7F8] overflow-hidden">
+        {/* IMAGE */}
+        <div className="relative aspect-square bg-gray-100 overflow-hidden">
           <Image
-            height={300}
-            width={300}
+            src={imageUrl}
             alt={product.name}
-            src={product.images[0]?.imageUrl || ""}
+            fill
+            sizes="(max-width: 768px) 50vw, 25vw"
             className="
-              w-full h-full object-contain
+              object-contain
               transition-transform duration-300
               group-hover:scale-105
             "
           />
+
+          {/* NEW TAG */}
+          {showNewTag && (
+            <span
+              className="
+                absolute top-3 left-3
+                rounded-md bg-red-500
+                px-2 py-1
+                text-xs font-semibold text-white
+                shadow
+              "
+            >
+              NEW
+            </span>
+          )}
         </div>
 
-        {/* Info */}
-        <div className="px-[17px] py-[11px]">
-          <p
+        {/* CONTENT */}
+        <div className="p-4 flex flex-col gap-2">
+          {/* NAME */}
+          <h3
             className="
-              font-medium line-clamp-2
-              transition-colors duration-200
+              min-h-[44px]
+              text-sm font-medium
+              line-clamp-2
+              transition-colors
               group-hover:text-primary
             "
+            title={product.name}
           >
             {product.name}
-          </p>
+          </h3>
 
-          <div className="flex gap-[5px] items-center">
-            <p>{product.averageRating}</p>
+          {/* RATING */}
+          <div className="flex items-center gap-1 text-sm text-gray-600">
             <FaStar className="text-yellow-400" />
+            <span>{rating.toFixed(1)}</span>
+            <span className="text-gray-400">({product.reviewCount || 0})</span>
           </div>
 
-          <p className="font-medium text-right">{finalMoney(+product.price)}</p>
+          {/* PRICE */}
+          <div className="mt-auto flex justify-end">
+            <p className="text-lg font-semibold text-primary">
+              {finalMoney(Number(product.price))}
+            </p>
+          </div>
         </div>
       </div>
-
-      {/* NEW tag */}
-      {showNewTag && (
-        <div
-          className="
-            bg-[#FF4858]
-            rounded-br-[5px] rounded-tr-[5px]
-            p-[10px]
-            absolute top-[20px] left-0
-            text-white text-sm font-medium
-            transition-transform duration-300
-            group-hover:translate-x-1
-          "
-        >
-          NEW
-        </div>
-      )}
     </Link>
   );
 };
