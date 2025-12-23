@@ -3,11 +3,11 @@
 // schemas/forgot-password.schema.ts
 import { z } from "zod";
 
-export const forgotPasswordSchema = z.object({
+const forgotPasswordSchema = z.object({
   email: z.string().min(1, "Email is required").email("Invalid email format"),
 });
 
-export type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>;
+type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>;
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

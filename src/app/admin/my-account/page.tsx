@@ -18,11 +18,11 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
 
-export const UpdateProfileSchema = z.object({
+const UpdateProfileSchema = z.object({
   fullName: z.string().min(2, "Full name must be at least 2 characters"),
 });
 
-export const ChangePasswordSchema = z
+const ChangePasswordSchema = z
   .object({
     currentPassword: z.string().min(6, "Current password is required"),
     newPassword: z

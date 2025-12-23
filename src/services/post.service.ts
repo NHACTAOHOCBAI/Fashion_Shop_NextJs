@@ -1,0 +1,105 @@
+import axiosInstance from "@/config/axios";
+
+// Get posts feed with pagination
+export const getPosts = async (params: PostQueryParams) => {
+  const response = (await axiosInstance.get("/posts", {
+    params,
+  })) as GetAllResponse<Post>;
+  return response.data;
+};
+
+// Get single post by ID
+export const getPostById = async (id: number) => {
+  const response = (await axiosInstance.get(`/posts/${id}`)) as Post;
+  return response;
+};
+
+// Create a new post
+export const createPost = async (data: {
+  content: string;
+  productIds?: number[];
+  images?: File[];
+}) => {
+  const formData = new FormData();
+
+  formData.append("content", data.content);
+
+  if (data.productIds && data.productIds.length > 0) {
+    data.productIds.forEach((id) => {
+      formData.append("productIds", id.toString());
+    });
+  }
+
+  if (data.images && data.images.length > 0) {
+    data.images.forEach((file) => {
+      formData.append("images", file);
+    });
+  }
+
+  const response = (await axiosInstance.post("/posts", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  })) as Post;
+  return response;
+};
+
+// Update a post
+export const updatePost = async (id: number, data: UpdatePostDto) => {
+  const response = (await axiosInstance.put(`/posts/${id}`, data)) as {
+    message: string;
+    post: Post;
+  };
+  return response;
+};
+
+// Delete a post
+export const deletePost = async (id: number) => {
+  const response = (await axiosInstance.delete(`/posts/${id}`)) as {
+    message: string;
+  };
+  return response;
+};
+
+// Toggle like on a post
+export const toggleLike = async (id: number) => {
+  const response = (await axiosInstance.post(`/posts/${id}/like`)) as {
+    message: string;
+    action: "liked" | "unliked";
+    totalLikes: number;
+  };
+  return response;
+};
+
+// Add comment to a post
+export const addComment = async (id: number, data: CreateCommentDto) => {
+  const response = (await axiosInstance.post(
+    `/posts/${id}/comments`,
+    data
+  )) as PostComment;
+  return response;
+};
+
+// Get comments for a post
+export const getComments = async (
+  id: number,
+  page: number = 1,
+  limit: number = 20
+) => {
+  const response = (await axiosInstance.get(`/posts/${id}/comments`, {
+    params: { page, limit },
+  })) as GetAllResponse<PostComment>;
+  return response.data;
+};
+
+// Get posts by product
+export const getPostsByProduct = async (
+  productId: number,
+  page: number = 1,
+  limit: number = 20
+) => {
+  const response = (await axiosInstance.get(`/posts/products/${productId}`, {
+    params: { page, limit },
+  })) as GetAllResponse<Post>;
+  return response.data;
+};

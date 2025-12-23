@@ -3,7 +3,7 @@
 // schemas/reset-password.schema.ts
 import { z } from "zod";
 
-export const resetPasswordSchema = z
+const resetPasswordSchema = z
   .object({
     newPassword: z.string().min(6, "Password must be at least 6 characters"),
     confirmNewPassword: z
@@ -15,7 +15,7 @@ export const resetPasswordSchema = z
     path: ["confirmNewPassword"],
   });
 
-export type ResetPasswordFormValues = z.infer<typeof resetPasswordSchema>;
+type ResetPasswordFormValues = z.infer<typeof resetPasswordSchema>;
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
