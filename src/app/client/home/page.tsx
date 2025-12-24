@@ -8,15 +8,25 @@ import {
   Loader2,
   Star,
   Quote,
+  Sparkles,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import ProductCard from "@/app/client/products/_components/ProductCard";
 import { useProducts } from "@/hooks/queries/useProduct";
 import { useFeaturedReviews, useHomeStatistics } from "@/hooks/queries/useHome";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import ImageSearchModal from "@/app/client/_components/ImageSearchModal";
 import ImageSearchModal2 from "@/app/client/_components/ImageSearchModal2";
+import { ProductListSkeleton } from "@/components/ui/skeleton-variants";
+import {
+  staggerContainer,
+  staggerItem,
+  float,
+  buttonHover,
+} from "@/lib/animations";
+import { cn } from "@/lib/utils";
 
 const HomePage = () => {
   const { data: statistics } = useHomeStatistics();
@@ -50,88 +60,151 @@ const HomePage = () => {
   return (
     <div className="min-h-screen">
       {/* SECTION 1: HERO BANNER */}
-      <section className="bg-gradient-to-br from-[#40BFFF]/10 via-white to-[#FFD470]/10 py-[100px]">
-        <div className="w-[1240px] mx-auto flex items-center justify-between gap-[60px]">
+      <section className="relative overflow-hidden bg-gradient-hero py-24">
+        {/* Animated background elements */}
+        <motion.div
+          className="absolute top-20 right-20 w-64 h-64 bg-[var(--cyan-200)] dark:bg-[var(--cyan-800)] rounded-full blur-3xl opacity-30"
+          animate={{
+            scale: [1, 1.2, 1],
+            rotate: [0, 90, 0],
+          }}
+          transition={{ duration: 8, repeat: Infinity }}
+        />
+        <motion.div
+          className="absolute bottom-20 left-20 w-96 h-96 bg-[var(--yellow-200)] dark:bg-[var(--yellow-800)] rounded-full blur-3xl opacity-30"
+          animate={{
+            scale: [1, 1.3, 1],
+            rotate: [0, -90, 0],
+          }}
+          transition={{ duration: 10, repeat: Infinity }}
+        />
+
+        <div className="w-[1240px] mx-auto flex items-center justify-between gap-16 relative z-10">
           {/* Left: Content */}
-          <div className="flex-1">
-            <h1 className="text-[56px] font-bold leading-tight">
+          <motion.div
+            className="flex-1"
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full mb-6 border border-gray-200 dark:border-gray-700"
+            >
+              <Sparkles className="w-4 h-4 text-[var(--cyan-500)]" />
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                AI-Powered Fashion Discovery
+              </span>
+            </motion.div>
+
+            <h1 className="text-6xl font-bold leading-tight">
               Discover Fashion
               <br />
-              <span className="text-[#40BFFF]">Powered by AI</span>
+              <span className="text-gradient-vibrant">Powered by AI</span>
             </h1>
 
-            <p className="text-[20px] text-gray-600 mt-[20px] max-w-[500px]">
+            <p className="text-xl text-gray-600 dark:text-gray-400 mt-6 max-w-[500px] leading-relaxed">
               Experience smart shopping with AI-powered image search and
-              personalized recommendations. Find your perfect style
-              effortlessly.
+              personalized recommendations. Find your perfect style effortlessly.
             </p>
 
-            <div className="flex gap-[20px] mt-[40px]">
+            <div className="flex gap-6 mt-10">
               <Link href="/client/products/men">
-                <button
-                  className="px-[40px] py-[16px] bg-[#40BFFF] text-white text-[18px]
-                             font-medium rounded-[4px] hover:bg-[#3AADEB]
-                             transition-all duration-200 active:scale-95
-                             shadow-lg hover:shadow-xl"
+                <motion.button
+                  className="px-10 py-4 bg-gradient-primary text-white text-lg font-semibold rounded-xl shadow-lg hover:shadow-2xl transition-shadow"
+                  variants={buttonHover}
+                  initial="initial"
+                  whileHover="hover"
+                  whileTap="tap"
                 >
                   Shop Now
-                </button>
+                </motion.button>
               </Link>
 
-              <button
+              <motion.button
                 onClick={scrollToAIFeatures}
-                className="px-[28px] py-[14px] border-2 border-[#40BFFF] text-[#40BFFF]
-                           rounded-[4px] font-medium hover:bg-[#40BFFF] hover:text-white
-                           transition-all duration-300 active:scale-95 text-[18px]"
+                className="px-8 py-4 border-2 border-[var(--cyan-400)] dark:border-[var(--cyan-500)] text-[var(--cyan-500)] dark:text-[var(--cyan-400)] rounded-xl font-semibold hover:bg-[var(--cyan-400)] dark:hover:bg-[var(--cyan-500)] hover:text-white transition-all duration-300 text-lg"
+                variants={buttonHover}
+                initial="initial"
+                whileHover="hover"
+                whileTap="tap"
               >
                 Explore AI Features
-              </button>
+              </motion.button>
             </div>
 
-            {/* Trust badges */}
-            <div className="flex gap-[40px] mt-[50px]">
-              <div>
-                <p className="text-[32px] font-bold text-[#40BFFF]">
-                  {statistics?.totalProducts.toLocaleString() ?? "--"}
-                </p>
-                <p className="text-gray-600">Products</p>
-              </div>
-
-              <div>
-                <p className="text-[32px] font-bold text-[#40BFFF]">
-                  {statistics?.totalCustomers.toLocaleString() ?? "--"}
-                </p>
-                <p className="text-gray-600">Happy Customers</p>
-              </div>
-
-              <div>
-                <p className="text-[32px] font-bold text-[#40BFFF]">
-                  {statistics?.rating.averageRating ?? "--"}
-                </p>
-                <p className="text-gray-600">Average Rating</p>
-              </div>
-            </div>
-          </div>
+            {/* Trust badges with animations */}
+            <motion.div
+              className="flex gap-12 mt-12"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              <StatBadge
+                value={statistics?.totalProducts || 0}
+                label="Products"
+                gradient="from-[var(--cyan-400)] to-[var(--cyan-600)]"
+              />
+              <StatBadge
+                value={statistics?.totalCustomers || 0}
+                label="Happy Customers"
+                gradient="from-[var(--yellow-400)] to-[var(--yellow-600)]"
+              />
+              <StatBadge
+                value={statistics?.rating.averageRating || 0}
+                label="Average Rating"
+                gradient="from-green-400 to-green-600"
+                decimals={1}
+              />
+            </motion.div>
+          </motion.div>
 
           {/* Right: Hero Visual */}
-          <div className="relative w-[500px] h-[500px]">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#40BFFF]/20 to-[#FFD470]/20 rounded-[20px] blur-3xl" />
-            <div className="relative bg-white/80 backdrop-blur-sm rounded-[20px] p-[30px] shadow-xl border border-gray-100">
-              <div className="w-full h-full bg-[#F6F7F8] rounded-[10px] flex items-center justify-center">
-                <div className="text-center">
-                  <div className="w-[100px] h-[100px] mx-auto mb-[20px] bg-gradient-to-br from-[#40BFFF] to-[#5ECCFF] rounded-full flex items-center justify-center">
-                    <Camera className="w-[50px] h-[50px] text-white" />
-                  </div>
-                  <p className="text-gray-700 font-medium text-[20px]">
+          <motion.div
+            className="relative w-[500px] h-[500px]"
+            initial={{ opacity: 0, x: 50, rotate: -5 }}
+            animate={{ opacity: 1, x: 0, rotate: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-br from-[var(--cyan-400)]/30 to-[var(--yellow-400)]/30 rounded-3xl blur-3xl"
+              animate={{
+                scale: [1, 1.1, 1],
+                rotate: [0, 5, 0],
+              }}
+              transition={{ duration: 5, repeat: Infinity }}
+            />
+            <div className="relative bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-gray-100 dark:border-gray-700">
+              <div className="w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-2xl flex items-center justify-center overflow-hidden">
+                <motion.div
+                  className="text-center"
+                  whileHover={{ scale: 1.05 }}
+                >
+                  <motion.div
+                    className="w-32 h-32 mx-auto mb-6 bg-gradient-primary rounded-full flex items-center justify-center shadow-xl"
+                    animate={{
+                      boxShadow: [
+                        "0 10px 30px rgba(64,191,255,0.3)",
+                        "0 20px 50px rgba(64,191,255,0.5)",
+                        "0 10px 30px rgba(64,191,255,0.3)",
+                      ],
+                    }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  >
+                    <Camera className="w-16 h-16 text-white" />
+                  </motion.div>
+                  <p className="text-gray-800 dark:text-gray-200 font-bold text-2xl mb-2">
                     AI-Powered Shopping
                   </p>
-                  <p className="text-gray-500 text-[14px] mt-[8px]">
+                  <p className="text-gray-500 dark:text-gray-400 text-base">
                     Upload images to find products
                   </p>
-                </div>
+                </motion.div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -268,30 +341,41 @@ const HomePage = () => {
       </section>
 
       {/* SECTION 3: FEATURED PRODUCTS / NEW ARRIVALS */}
-      <section className="py-[80px] bg-[#F6F7F8]">
+      <section className="py-20 bg-gray-50 dark:bg-gray-900">
         <div className="w-[1240px] mx-auto">
-          <div className="flex justify-between items-end mb-[50px]">
+          <motion.div
+            className="flex justify-between items-end mb-12"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
             <div>
-              <h2 className="text-[42px] font-bold">New Arrivals</h2>
-              <p className="text-[20px] text-gray-600 mt-[10px]">
+              <h2 className="text-5xl font-bold dark:text-white">New Arrivals</h2>
+              <p className="text-xl text-gray-600 dark:text-gray-400 mt-3">
                 Fresh styles just added to our collection
               </p>
             </div>
-          </div>
+          </motion.div>
 
           {productsLoading ? (
-            <div className="flex justify-center items-center py-[100px]">
-              <Loader2 className="w-[50px] h-[50px] animate-spin text-[#40BFFF]" />
-            </div>
+            <ProductListSkeleton count={8} columns={4} />
           ) : newProducts?.data && newProducts.data.length > 0 ? (
-            <div className="grid grid-cols-4 gap-[30px]">
-              {newProducts.data.slice(0, 8).map((product: Product) => (
-                <ProductCard key={product.id} product={product} />
+            <motion.div
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true }}
+            >
+              {newProducts.data.slice(0, 8).map((product: Product, index: number) => (
+                <motion.div key={product.id} variants={staggerItem} custom={index}>
+                  <ProductCard product={product} />
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           ) : (
-            <div className="text-center py-[100px]">
-              <p className="text-[18px] text-gray-500">
+            <div className="text-center py-24">
+              <p className="text-lg text-gray-500 dark:text-gray-400">
                 No new arrivals at the moment. Check back soon!
               </p>
             </div>
@@ -348,35 +432,75 @@ export const getInitials = (fullName?: string) => {
 
 const Review = ({ item }: { item: Review }) => {
   return (
-    <div className="bg-white rounded-[20px] p-[30px] border-2 border-gray-100 hover:border-[#40BFFF] transition-all duration-300 hover:shadow-lg">
-      <div className="flex items-center gap-[2px] mb-[20px]">
+    <motion.div
+      className="bg-white dark:bg-gray-800 rounded-2xl p-8 border-2 border-gray-100 dark:border-gray-700 hover:border-[var(--cyan-400)] dark:hover:border-[var(--cyan-500)] transition-all duration-300 hover:shadow-xl"
+      whileHover={{ y: -8 }}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+    >
+      <div className="flex items-center gap-1 mb-5">
         {Array.from({ length: item.rating }).map((_, i) => (
-          <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+          <motion.div
+            key={i}
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: i * 0.1 }}
+          >
+            <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+          </motion.div>
         ))}
       </div>
 
-      <Quote className="w-[30px] h-[30px] text-[#40BFFF]/30 mb-[16px]" />
+      <Quote className="w-8 h-8 text-[var(--cyan-400)]/30 dark:text-[var(--cyan-500)]/30 mb-4" />
 
-      <p className="text-[16px] text-gray-700 leading-relaxed mb-[24px]">
+      <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
         {item.comment}
       </p>
 
-      <div className="flex items-center gap-[12px]">
-        <Avatar className="h-8 w-8 rounded-lg">
+      <div className="flex items-center gap-3">
+        <Avatar className="h-10 w-10 rounded-full border-2 border-gray-200 dark:border-gray-600">
           <AvatarImage
             className="object-cover rounded-full"
             src={item.user.avatar}
             alt={item.user.fullName}
           />
-          <AvatarFallback className="rounded-full">
+          <AvatarFallback className="rounded-full bg-gradient-primary text-white">
             {getInitials(item.user.fullName)}
           </AvatarFallback>
         </Avatar>
         <div>
-          <p className="font-semibold text-[16px]">{item.user.fullName}</p>
+          <p className="font-semibold text-base dark:text-white">{item.user.fullName}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Verified Customer</p>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
+
+// StatBadge Component
+const StatBadge = ({
+  value,
+  label,
+  gradient,
+  decimals = 0,
+}: {
+  value: number;
+  label: string;
+  gradient: string;
+  decimals?: number;
+}) => {
+  return (
+    <motion.div whileHover={{ scale: 1.1 }} transition={{ type: "spring", stiffness: 300 }}>
+      <p className={cn("text-4xl font-bold bg-gradient-to-r bg-clip-text text-transparent", gradient)}>
+        {value.toLocaleString(undefined, {
+          minimumFractionDigits: decimals,
+          maximumFractionDigits: decimals,
+        })}
+      </p>
+      <p className="text-gray-600 dark:text-gray-400 mt-1">{label}</p>
+    </motion.div>
+  );
+};
+
 export default HomePage;

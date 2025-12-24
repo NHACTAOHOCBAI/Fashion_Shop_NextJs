@@ -55,6 +55,63 @@
   --app-primary: #ffd470;
   --text-secondary: #8c8c8c;
 
+  /* Extended Cyan Palette (Blue-ish) - Main brand color */
+  --cyan-50: #e6f7ff;
+  --cyan-100: #bae7ff;
+  --cyan-200: #91d5ff;
+  --cyan-300: #69c0ff;
+  --cyan-400: #40bfff;    /* Main brand cyan */
+  --cyan-500: #1890ff;
+  --cyan-600: #0073e6;
+  --cyan-700: #005bb5;
+  --cyan-800: #004085;
+  --cyan-900: #002855;
+
+  /* Extended Yellow Palette (Warm) - Secondary brand color */
+  --yellow-50: #fffbeb;
+  --yellow-100: #fff4c8;
+  --yellow-200: #ffeba5;
+  --yellow-300: #ffe182;
+  --yellow-400: #ffd470;  /* Main brand yellow */
+  --yellow-500: #ffc940;
+  --yellow-600: #f0b429;
+  --yellow-700: #cc9a1f;
+  --yellow-800: #a67c19;
+  --yellow-900: #735614;
+
+  /* Semantic UI Colors */
+  --success: #52c41a;
+  --success-light: #d9f7be;
+  --warning: #faad14;
+  --warning-light: #fff7e6;
+  --error: #ff4d4f;
+  --error-light: #fff1f0;
+  --info: var(--cyan-400);
+  --info-light: var(--cyan-50);
+
+  /* Gradient Presets for vibrant UI */
+  --gradient-primary: linear-gradient(135deg, var(--cyan-400) 0%, var(--cyan-500) 100%);
+  --gradient-secondary: linear-gradient(135deg, var(--yellow-400) 0%, var(--yellow-500) 100%);
+  --gradient-vibrant: linear-gradient(135deg, var(--cyan-400) 0%, var(--yellow-400) 100%);
+  --gradient-subtle: linear-gradient(135deg, var(--cyan-50) 0%, var(--yellow-50) 100%);
+  --gradient-hero: linear-gradient(135deg, var(--cyan-50) 0%, #ffffff 50%, var(--yellow-50) 100%);
+
+  /* Spacing scale (8px grid system) */
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+  --spacing-3xl: 64px;
+
+  /* Container widths */
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1240px;
+  --container-2xl: 1440px;
+
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -90,10 +147,34 @@
 }
 
 .dark {
-  --app-background: #f6f7f8;
-  --app-secondary: #40bfff;
-  --app-primary: #ffd470;
-  --text-secondary: #6b6565;
+  --app-background: #1a1a1a;
+  --app-secondary: #5eccff;
+  --app-primary: #ffe599;
+  --text-secondary: #a0a0a0;
+
+  /* Adjusted Cyan Palette for Dark Mode */
+  --cyan-50: #002855;
+  --cyan-100: #004085;
+  --cyan-200: #005bb5;
+  --cyan-300: #0073e6;
+  --cyan-400: #5eccff;
+  --cyan-500: #40bfff;
+  --cyan-600: #69c0ff;
+  --cyan-700: #91d5ff;
+  --cyan-800: #bae7ff;
+  --cyan-900: #e6f7ff;
+
+  /* Adjusted Yellow Palette for Dark Mode */
+  --yellow-50: #735614;
+  --yellow-100: #a67c19;
+  --yellow-200: #cc9a1f;
+  --yellow-300: #f0b429;
+  --yellow-400: #ffe599;
+  --yellow-500: #ffd470;
+  --yellow-600: #ffe182;
+  --yellow-700: #ffeba5;
+  --yellow-800: #fff4c8;
+  --yellow-900: #fffbeb;
 
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
@@ -128,14 +209,227 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
+/* Base Styles - Tailwind v4 compatible */
+* {
+  border-color: var(--border);
+  outline-color: color-mix(in oklch, var(--ring) 50%, transparent);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+.card {
+  background-color: var(--foreground);
+}
+
+/* Typography Hierarchy with Poppins */
+h1 {
+  font-size: clamp(3rem, 5vw, 3.75rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+}
+
+h2 {
+  font-size: clamp(2.5rem, 4vw, 3rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+}
+
+h3 {
+  font-size: clamp(1.875rem, 3vw, 2.25rem);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+h4 {
+  font-size: clamp(1.5rem, 2.5vw, 1.875rem);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+h5 {
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+h6 {
+  font-size: clamp(1.125rem, 1.5vw, 1.25rem);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+/* Text utility classes */
+.text-large {
+  font-size: 1.125rem;
+  line-height: 1.75;
+}
+
+.text-small {
+  font-size: 0.875rem;
+  line-height: 1.375;
+}
+
+/* Gradient text effects */
+.text-gradient-primary {
+  background: linear-gradient(to right, var(--cyan-400), var(--cyan-600));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.text-gradient-secondary {
+  background: linear-gradient(to right, var(--yellow-400), var(--yellow-600));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.text-gradient-vibrant {
+  background: linear-gradient(to right, var(--cyan-400), var(--yellow-400));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Custom Utilities - Tailwind v4 compatible */
+
+/* Smooth transitions */
+.transition-smooth {
+  transition: all 300ms ease-out;
+}
+
+.transition-fast {
+  transition: all 200ms ease-out;
+}
+
+.transition-slow {
+  transition: all 500ms ease-out;
+}
+
+/* Hover effects */
+.hover-lift:hover {
+  transform: translateY(-0.5rem);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  transition: all 300ms ease-out;
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 20px rgba(64, 191, 255, 0.3);
+  transition: all 300ms ease-out;
+}
+
+.hover-scale:hover {
+  transform: scale(1.05);
+  transition: all 300ms ease-out;
+}
+
+/* Gradient backgrounds */
+.bg-gradient-primary {
+  background: var(--gradient-primary);
+}
+
+.bg-gradient-secondary {
+  background: var(--gradient-secondary);
+}
+
+.bg-gradient-vibrant {
+  background: var(--gradient-vibrant);
+}
+
+.bg-gradient-subtle {
+  background: var(--gradient-subtle);
+}
+
+.bg-gradient-hero {
+  background: var(--gradient-hero);
+}
+
+/* Shimmer effect for loading */
+.shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+.dark .shimmer {
+  background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 50%, #2a2a2a 75%);
+  background-size: 200% 100%;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
   }
-  body {
-    @apply bg-background text-foreground;
+  100% {
+    background-position: 200% 0;
   }
-  .card {
-    @apply bg-foreground;
+}
+
+/* Pulse animation for badges */
+@keyframes pulse-scale {
+  0%, 100% {
+    transform: scale(1);
   }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.animate-pulse-scale {
+  animation: pulse-scale 1.5s ease-in-out infinite;
+}
+
+/* Bounce animation */
+@keyframes bounce-subtle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-bounce-subtle {
+  animation: bounce-subtle 3s ease-in-out infinite;
+}
+
+/* Sonner Toast Customization */
+[data-sonner-toast] {
+  border-radius: 12px !important;
+  padding: 16px !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15) !important;
+  font-family: var(--font-sans) !important;
+}
+
+[data-sonner-toast][data-type="success"] {
+  background: linear-gradient(135deg, #52c41a 0%, #73d13d 100%) !important;
+  border: none !important;
+  color: white !important;
+}
+
+[data-sonner-toast][data-type="error"] {
+  background: linear-gradient(135deg, #ff4d4f 0%, #ff7875 100%) !important;
+  border: none !important;
+  color: white !important;
+}
+
+[data-sonner-toast][data-type="info"] {
+  background: linear-gradient(135deg, var(--cyan-400) 0%, var(--cyan-500) 100%) !important;
+  border: none !important;
+  color: white !important;
+}
+
+[data-sonner-toast][data-type="warning"] {
+  background: linear-gradient(135deg, var(--warning) 0%, #ffc53d 100%) !important;
+  border: none !important;
+  color: white !important;
+}
+
+.dark [data-sonner-toast] {
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5) !important;
 }

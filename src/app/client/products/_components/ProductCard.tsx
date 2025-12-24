@@ -1,7 +1,14 @@
+"use client";
+
 import finalMoney from "@/lib/finalMoney";
 import Image from "next/image";
 import Link from "next/link";
 import { FaStar } from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
+import { Heart, ShoppingCart, Eye } from "lucide-react";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
+import { cardHover, badgeAppear } from "@/lib/animations";
 
 const NEW_TIME = 24 * 60 * 60 * 1000;
 
@@ -13,92 +20,155 @@ const isNewProduct = (createdAt: string): boolean => {
 const FALLBACK_IMAGE = "/images/product-placeholder.png";
 
 const ProductCard = ({ product }: { product: Product }) => {
+  const [isHovered, setIsHovered] = useState(false);
   const showNewTag = isNewProduct(product.createdAt);
-
   const imageUrl = product.images?.[0]?.imageUrl || FALLBACK_IMAGE;
-
   const rating = Number(product.averageRating) || 0;
 
   return (
-    <Link
-      href={`/client/products/product-detail/${product.id}`}
-      className="group block"
+    <motion.div
+      variants={cardHover}
+      initial="initial"
+      whileHover="hover"
+      onHoverStart={() => setIsHovered(true)}
+      onHoverEnd={() => setIsHovered(false)}
+      className="h-full"
     >
-      <div
-        className="
-          relative
-          h-full
-          rounded-xl
-          border border-gray-100
-          bg-white
-          overflow-hidden
-          transition-all duration-300
-          hover:-translate-y-1
-          hover:shadow-xl
-        "
-      >
-        {/* IMAGE */}
-        <div className="relative aspect-square bg-gray-100 overflow-hidden">
-          <Image
-            src={imageUrl}
-            alt={product.name}
-            fill
-            sizes="(max-width: 768px) 50vw, 25vw"
-            className="
-              object-contain
-              transition-transform duration-300
-              group-hover:scale-105
-            "
-          />
+      <div className="group relative h-full rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-hidden shadow-sm hover:shadow-2xl transition-shadow duration-300">
+        {/* IMAGE SECTION */}
+        <Link href={`/client/products/product-detail/${product.id}`} className="block">
+          <div className="relative aspect-square bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-800 dark:via-gray-850 dark:to-gray-900 overflow-hidden">
+            <Image
+              src={imageUrl}
+              alt={product.name}
+              fill
+              sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+              className="object-contain p-4 transition-transform duration-700 group-hover:scale-110"
+              priority={false}
+            />
 
-          {/* NEW TAG */}
-          {showNewTag && (
-            <span
-              className="
-                absolute top-3 left-3
-                rounded-md bg-red-500
-                px-2 py-1
-                text-xs font-semibold text-white
-                shadow
-              "
+            {/* Quick Action Buttons - ONLY show on hover */}
+            <AnimatePresence>
+              {isHovered && (
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent flex items-center justify-center gap-2"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <motion.button
+                    className="w-11 h-11 rounded-full bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm shadow-xl flex items-center justify-center text-gray-700 dark:text-gray-300 hover:bg-[var(--cyan-400)] hover:text-white transition-colors"
+                    initial={{ scale: 0, y: 20 }}
+                    animate={{ scale: 1, y: 0 }}
+                    exit={{ scale: 0, y: 20 }}
+                    transition={{ delay: 0.05 }}
+                    whileHover={{ scale: 1.15 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      // TODO: Add to wishlist logic
+                    }}
+                  >
+                    <Heart size={20} />
+                  </motion.button>
+                  <motion.button
+                    className="w-11 h-11 rounded-full bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm shadow-xl flex items-center justify-center text-gray-700 dark:text-gray-300 hover:bg-[var(--cyan-400)] hover:text-white transition-colors"
+                    initial={{ scale: 0, y: 20 }}
+                    animate={{ scale: 1, y: 0 }}
+                    exit={{ scale: 0, y: 20 }}
+                    transition={{ delay: 0.1 }}
+                    whileHover={{ scale: 1.15 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      // TODO: Quick add to cart logic
+                    }}
+                  >
+                    <ShoppingCart size={20} />
+                  </motion.button>
+                  <motion.button
+                    className="w-11 h-11 rounded-full bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm shadow-xl flex items-center justify-center text-gray-700 dark:text-gray-300 hover:bg-[var(--cyan-400)] hover:text-white transition-colors"
+                    initial={{ scale: 0, y: 20 }}
+                    animate={{ scale: 1, y: 0 }}
+                    exit={{ scale: 0, y: 20 }}
+                    transition={{ delay: 0.15 }}
+                    whileHover={{ scale: 1.15 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      // TODO: Quick view modal
+                    }}
+                  >
+                    <Eye size={20} />
+                  </motion.button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* NEW TAG with gradient & animation */}
+            {showNewTag && (
+              <motion.span
+                className="absolute top-4 left-4 px-3 py-1.5 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-bold rounded-full shadow-lg uppercase tracking-wide"
+                variants={badgeAppear}
+                initial="initial"
+                animate="animate"
+              >
+                New
+              </motion.span>
+            )}
+          </div>
+        </Link>
+
+        {/* CONTENT SECTION */}
+        <Link href={`/client/products/product-detail/${product.id}`}>
+          <div className="p-5 flex flex-col gap-3">
+            {/* PRODUCT NAME */}
+            <h3
+              className="min-h-[48px] text-base font-semibold line-clamp-2 transition-colors text-gray-800 dark:text-gray-100 group-hover:text-[var(--cyan-500)] dark:group-hover:text-[var(--cyan-400)] leading-snug"
+              title={product.name}
             >
-              NEW
-            </span>
-          )}
-        </div>
+              {product.name}
+            </h3>
 
-        {/* CONTENT */}
-        <div className="p-4 flex flex-col gap-2">
-          {/* NAME */}
-          <h3
-            className="
-              min-h-[44px]
-              text-sm font-medium
-              line-clamp-2
-              transition-colors
-              group-hover:text-primary
-            "
-            title={product.name}
-          >
-            {product.name}
-          </h3>
+            {/* RATING */}
+            <div className="flex items-center gap-2">
+              <div className="flex gap-1">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <FaStar
+                    key={star}
+                    className={cn(
+                      "w-4 h-4 transition-colors",
+                      star <= Math.floor(rating)
+                        ? "text-yellow-400 fill-yellow-400"
+                        : star - 0.5 <= rating
+                        ? "text-yellow-400 fill-yellow-400 opacity-50"
+                        : "text-gray-300 dark:text-gray-600"
+                    )}
+                  />
+                ))}
+              </div>
+              <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">
+                ({product.reviewCount || 0})
+              </span>
+            </div>
 
-          {/* RATING */}
-          <div className="flex items-center gap-1 text-sm text-gray-600">
-            <FaStar className="text-yellow-400" />
-            <span>{rating.toFixed(1)}</span>
-            <span className="text-gray-400">({product.reviewCount || 0})</span>
+            {/* PRICE */}
+            <div className="flex items-center justify-between mt-1">
+              <p className="text-2xl font-bold text-gradient-primary">
+                {finalMoney(Number(product.price))}
+              </p>
+            </div>
           </div>
+        </Link>
 
-          {/* PRICE */}
-          <div className="mt-auto flex justify-end">
-            <p className="text-lg font-semibold text-primary">
-              {finalMoney(Number(product.price))}
-            </p>
-          </div>
-        </div>
+        {/* Hover border glow effect */}
+        <div className="absolute inset-0 border-2 border-transparent group-hover:border-[var(--cyan-400)] dark:group-hover:border-[var(--cyan-500)] rounded-2xl transition-all duration-300 pointer-events-none opacity-0 group-hover:opacity-100" />
       </div>
-    </Link>
+    </motion.div>
   );
 };
 
