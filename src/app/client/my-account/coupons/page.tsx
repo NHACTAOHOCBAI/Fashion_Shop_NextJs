@@ -6,6 +6,7 @@ import { Progress } from "@/components/ui/progress";
 // Giả định MyTag component đã tồn tại
 import MyTag from "@/app/client/_components/MyTag";
 import { useCoupons, useMyCoupons } from "@/hooks/queries/useCoupon";
+import { Tag } from "lucide-react";
 
 // Giả định Coupon interface và useCoupons/useMyCoupons hook từ câu trả lời trước
 // (Cần định nghĩa lại Coupon interface ở đây để đảm bảo kiểu dữ liệu)
@@ -85,56 +86,58 @@ const CouponItem = ({ coupon }: CouponItemProps) => {
     <div
       className={`
                 relative
-                rounded-[20px] 
-                bg-[#F6F7F8] 
-                flex 
-                overflow-hidden 
+                rounded-lg
+                bg-white dark:bg-gray-800
+                border border-gray-200 dark:border-gray-700
+                flex
+                overflow-hidden
                 cursor-pointer
                 transition-all duration-200
-                border-[2px] border-transparent
+                hover:shadow-md
+                hover:border-[#40BFFF]/30
                 ${opacityClass}
             `}
     >
       {/* Tag trạng thái */}
       {tag}
 
-      <div className="bg-[#40BFFF] text-white text-[14px] font-bold flex items-center w-[50px] justify-center relative py-2">
-        <p className="-rotate-90 whitespace-nowrap absolute font-medium">
+      <div className="bg-gradient-to-b from-[#40BFFF] to-[#33A0DD] text-white text-xs font-bold flex items-center w-12 justify-center relative py-2">
+        <p className="-rotate-90 whitespace-nowrap absolute font-semibold">
           COUPON
         </p>
       </div>
-      <div className="py-[9px] px-[15px] flex-1">
-        <p className="font-semibold text-base">{coupon.code}</p>
-        <p className="text-[12px] text-[#FF4858] font-semibold">
+      <div className="py-3 px-4 flex-1">
+        <p className="font-semibold text-sm text-gray-800 dark:text-gray-100">{coupon.code}</p>
+        <p className="text-xs text-[#FF4858] font-semibold mt-0.5">
           {coupon.name || discountDisplay}
         </p>
 
         {/* Progress Bar (chỉ hiển thị nếu có giới hạn tổng thể) */}
         {coupon.usageLimit > 0 && (
           <>
-            <Progress className="mt-[10px] h-1.5" value={progressValue} />
-            <p className="text-[10px] text-gray-500 mt-[4px]">
+            <Progress className="mt-2.5 h-1.5" value={progressValue} />
+            <p className="text-[10px] text-gray-500 dark:text-gray-400 mt-1">
               Used {usedCount}/{totalLimit} times globally
             </p>
           </>
         )}
 
-        <div className="flex gap-[40px] mt-[7px]">
-          <p className="text-[10px] font-light ">
-            Start date: {formatDate(coupon.startDate)}
+        <div className="flex gap-6 mt-2">
+          <p className="text-[10px] text-gray-500 dark:text-gray-400">
+            Start: {formatDate(coupon.startDate)}
           </p>
-          <p className="text-[10px] font-light">
-            End date: {formatDate(coupon.endDate)}
+          <p className="text-[10px] text-gray-500 dark:text-gray-400">
+            End: {formatDate(coupon.endDate)}
           </p>
         </div>
         {/* Điều kiện Min Order */}
         {parseFloat(coupon.minOrderAmount) > 0 && (
-          <p className="text-[10px] font-medium text-gray-600 mt-[5px]">
+          <p className="text-[10px] font-medium text-[#40BFFF] mt-1.5">
             Min. Order: ${parseFloat(coupon.minOrderAmount).toFixed(2)}
           </p>
         )}
       </div>
-      <div className="absolute right-0 top-0 h-fit px-[10px] py-[4px] text-[14px] font-semibold border-[2px] border-[#BCDDFE] bg-white">
+      <div className="absolute right-2 top-2 h-fit px-2.5 py-1 text-xs font-semibold border border-[#40BFFF]/30 bg-[#40BFFF]/5 text-[#40BFFF] rounded">
         {/* Giới hạn sử dụng cá nhân */}
         {remainingUsage}
       </div>
@@ -200,19 +203,35 @@ const Coupons = () => {
   ];
 
   return (
-    <div className=" mx-auto ">
-      <div className="flex justify-between items-start">
-        <div>
-          <p className="text-[24px]">My Coupons</p>
-          <p className="text-[18px] font-light mt-[11px]">
-            Manage your coupons to get more discount and promotions
-          </p>
+    <div className="space-y-6">
+      {/* Enhanced Header */}
+      <div className="bg-gradient-to-r from-[#40BFFF]/5 to-transparent rounded-lg p-4 border border-[#40BFFF]/10">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-[#40BFFF] flex items-center justify-center shadow-sm">
+              <Tag className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2">
+                My Coupons
+                {filteredCoupons.length > 0 && (
+                  <span className="px-2 py-0.5 text-xs font-semibold bg-[#40BFFF] text-white rounded-full">
+                    {filteredCoupons.length}
+                  </span>
+                )}
+              </h1>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Manage your coupons to get more discounts
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="mt-[60px]">
+      {/* Tabs Content */}
+      <div>
         {isLoading ? (
-          <p className="text-[#9098B1] text-center py-20">Loading coupons...</p>
+          <p className="text-gray-500 dark:text-gray-400 text-center py-20">Loading coupons...</p>
         ) : (
           <TabbedContent
             tabs={productTabs}

@@ -18,9 +18,10 @@ import {
   useMyAddress,
   useSetDefaultAddress,
 } from "@/hooks/queries/useAddress";
-import { Building, House, PencilLine, Trash2 } from "lucide-react";
+import { Building, House, PencilLine, Trash2, MapPin, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 const MyAddress = () => {
   const [openNew, setOpenNew] = useState(false);
@@ -35,21 +36,40 @@ const MyAddress = () => {
   return (
     <>
       <AddNewAddress open={openNew} setOpen={setOpenNew} />
-      <div>
-        <div className="flex">
-          <div>
-            <p className="text-[24px]">My Address</p>
-            <p className="text-[18px] font-light mt-[11px]">
-              Manage your shipping address
-            </p>
-          </div>
-          <div className="ml-auto mr-[53px]">
-            <NormalButton onClick={() => setOpenNew(true)}>
-              <p className="text-[14px] text-[#40BFFF]">Add new address </p>
-            </NormalButton>
+      <div className="space-y-6">
+        {/* Enhanced Header */}
+        <div className="bg-gradient-to-r from-[#40BFFF]/5 to-transparent rounded-lg p-4 border border-[#40BFFF]/10">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-[#40BFFF] flex items-center justify-center shadow-sm">
+                <MapPin className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2">
+                  My Addresses
+                  {MyAddress && MyAddress.length > 0 && (
+                    <span className="px-2 py-0.5 text-xs font-semibold bg-[#40BFFF] text-white rounded-full">
+                      {MyAddress.length}
+                    </span>
+                  )}
+                </h1>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Manage your shipping addresses
+                </p>
+              </div>
+            </div>
+            <Button
+              onClick={() => setOpenNew(true)}
+              className="bg-[#40BFFF] hover:bg-[#33A0DD] text-white h-9"
+            >
+              <Plus className="w-4 h-4 mr-1.5" />
+              Add Address
+            </Button>
           </div>
         </div>
-        <div className="max-h-[520px] overflow-y-auto pr-2 mt-[10px]">
+
+        {/* Address List */}
+        <div className="space-y-3 max-h-[520px] overflow-y-auto pr-1">
           {MyAddress?.map((address) => (
             <MyAddressItem key={address.id} address={address} />
           ))}
@@ -84,15 +104,8 @@ const MyAddressItem = ({ address }: { address: Address }) => {
       }
     );
   };
-  const type = (
-    <div>
-      {address.type === "home" ? (
-        <House size={16} strokeWidth={1} />
-      ) : (
-        <Building size={16} strokeWidth={1} />
-      )}
-    </div>
-  );
+  const TypeIcon = address.type === "home" ? House : Building;
+
   return (
     <>
       <UpdateAddress
@@ -100,35 +113,59 @@ const MyAddressItem = ({ address }: { address: Address }) => {
         open={openUpdate}
         setOpen={setOpenUpdate}
       />
-      <div className=" flex w-full h-[120px] justify-between rounded-[10px] border-[#F6F7F8] border bg-white p-[10px]">
-        <div className="h-full  flex flex-col justify-between">
+      <div className="flex w-full justify-between rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 hover:shadow-md transition-shadow">
+        <div className="flex-1 flex flex-col justify-between gap-3">
           <div>
-            <span>{address.recipientName}</span>
-            <span className="mx-[20px]">|</span>
-            <span>{address.recipientPhone}</span>
-            <p>{address.detailAddress}</p>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-sm font-semibold text-gray-800 dark:text-gray-100">
+                {address.recipientName}
+              </span>
+              <span className="text-gray-300 dark:text-gray-600">|</span>
+              <span className="text-sm text-gray-600 dark:text-gray-400">
+                {address.recipientPhone}
+              </span>
+            </div>
+            <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+              {address.detailAddress}
+            </p>
           </div>
-          <div className="w-[100px] flex gap-[10px]">
-            {address.isDefault && <MyTag value={<p>Default</p>} />}
-            <MyTag
-              value={
-                <div className="flex gap-[4px] items-center">
-                  {type}
-                  <p>{address.type}</p>
-                </div>
-              }
-            />
+          <div className="flex gap-2 flex-wrap">
+            {address.isDefault && (
+              <span className="px-2 py-0.5 text-xs font-semibold bg-[#40BFFF]/10 text-[#40BFFF] border border-[#40BFFF]/20 rounded">
+                Default
+              </span>
+            )}
+            <span className="px-2 py-0.5 text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded flex items-center gap-1">
+              <TypeIcon size={12} />
+              {address.type}
+            </span>
           </div>
         </div>
-        <div className="flex flex-col justify-between items-end">
+        <div className="flex flex-col justify-between items-end ml-4">
           <div className="flex gap-2">
-            <PencilLine size={16} onClick={() => handleOpenUpdate(address)} />
-            <Trash2 size={16} onClick={() => setOpenDelete(true)} />
+            <button
+              onClick={() => handleOpenUpdate(address)}
+              className="p-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 hover:text-[#40BFFF] transition-colors"
+            >
+              <PencilLine size={16} />
+            </button>
+            <button
+              onClick={() => setOpenDelete(true)}
+              className="p-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 hover:text-red-500 transition-colors"
+            >
+              <Trash2 size={16} />
+            </button>
           </div>
           {!address.isDefault && (
-            <NormalButton onClick={handleSetDefault} isLoading={isPending}>
-              <p className="text-[14px] text-[#FF4858]">Set Default </p>
-            </NormalButton>
+            <Button
+              onClick={handleSetDefault}
+              disabled={isPending}
+              variant="outline"
+              size="sm"
+              className="border-[#40BFFF] text-[#40BFFF] hover:bg-[#40BFFF] hover:text-white transition-colors h-8"
+            >
+              {isPending ? "Setting..." : "Set as Default"}
+            </Button>
           )}
         </div>
       </div>

@@ -16,7 +16,7 @@ import { useGetCategoryById } from "@/hooks/queries/useCategory";
 import { useProducts } from "@/hooks/queries/useProduct";
 import { useDebounce } from "@/hooks/useDebounce";
 import { motion, AnimatePresence } from "framer-motion";
-import { staggerContainer, staggerItem, fadeInUp } from "@/lib/animations";
+import { staggerContainer, staggerItem, fadeIn } from "@/lib/animations";
 import { X, Package } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useSearchParams } from "next/navigation";

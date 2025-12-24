@@ -419,7 +419,7 @@ const HomePage = () => {
     </div>
   );
 };
-export const getInitials = (fullName?: string) => {
+const getInitials = (fullName?: string) => {
   if (!fullName) return "?";
 
   return fullName

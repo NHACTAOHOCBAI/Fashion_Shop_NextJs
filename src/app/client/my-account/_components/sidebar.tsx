@@ -166,24 +166,24 @@ const CollapsibleMenuSection: React.FC<CollapsibleMenuSectionProps> = ({
       <CollapsibleTrigger asChild>
         <Button
           variant="ghost"
-          className={`w-full h-auto p-3 justify-start text-gray-700  text-base hover:text-[#40BFFF] font-medium transition-colors ${
+          className={`w-full h-auto p-2.5 justify-start text-gray-700 dark:text-gray-300 text-sm hover:text-[#40BFFF] font-medium transition-colors rounded-md ${
             isParentActive
-              ? "bg-blue-100/70 text-[#40BFFF] hover:bg-blue-100/80"
-              : " hover:bg-gray-100/70 "
+              ? "bg-[#40BFFF]/10 text-[#40BFFF] hover:bg-[#40BFFF]/15"
+              : "hover:bg-gray-100/70 dark:hover:bg-gray-700/50"
           }`}
           onClick={handleParentClick}
         >
-          <div className=" flex items-center justify-between w-full">
-            <div className="flex items-center">
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center gap-2.5">
               <Icon
-                className={`mr-3 h-5 w-5 ${
+                className={`h-4 w-4 ${
                   isParentActive ? "text-[#40BFFF]" : ""
                 }`}
               />
               <span>{title}</span>
             </div>
             <ChevronDown
-              className={`h-4 w-4 ${
+              className={`h-3.5 w-3.5 ${
                 isParentActive ? "text-[#40BFFF]" : ""
               } transition-transform ${isOpen ? "rotate-180" : "rotate-0"}`}
             />
@@ -192,17 +192,17 @@ const CollapsibleMenuSection: React.FC<CollapsibleMenuSectionProps> = ({
       </CollapsibleTrigger>
 
       {/* Content (Nội dung sẽ được thu gọn/mở rộng) */}
-      <CollapsibleContent className="text-gray-700 space-y-1 ml-4 pl-4 border-l border-gray-200">
+      <CollapsibleContent className="text-gray-700 dark:text-gray-300 space-y-0.5 ml-3 pl-3 border-l-2 border-gray-200 dark:border-gray-700">
         {items.map((item) => {
           const isItemActive = item.href === pathname;
           return (
             <Button
               key={item.label}
               variant="ghost"
-              className={`w-full h-auto p-2 justify-start transition-colors hover:text-[#40BFFF] ${
+              className={`w-full h-auto p-2 justify-start text-sm transition-colors hover:text-[#40BFFF] rounded-md ${
                 isItemActive
-                  ? "bg-blue-100 text-[#40BFFF] font-medium hover:bg-blue-100/80"
-                  : "hover:bg-gray-50 "
+                  ? "bg-[#40BFFF]/10 text-[#40BFFF] font-medium hover:bg-[#40BFFF]/15"
+                  : "hover:bg-gray-50 dark:hover:bg-gray-700/50"
               }`}
               onClick={() => handleChildClick(item.href)}
             >
@@ -243,16 +243,16 @@ const SimpleMenuSection: React.FC<SimpleMenuSectionProps> = ({
     <Button
       variant="ghost"
       onClick={handleClick}
-      className={`text-gray-700 w-full h-auto p-3 justify-start text-base font-medium transition-colors ${
+      className={`text-gray-700 dark:text-gray-300 w-full h-auto p-2.5 justify-start text-sm font-medium transition-colors rounded-md ${
         isActive
-          ? "bg-blue-100/70 hover:bg-blue-100/70 hover:text-[#40BFFF]   text-[#40BFFF] "
-          : "  hover:text-[#40BFFF] hover:bg-gray-100/70 "
+          ? "bg-[#40BFFF]/10 hover:bg-[#40BFFF]/15 text-[#40BFFF]"
+          : "hover:text-[#40BFFF] hover:bg-gray-100/70 dark:hover:bg-gray-700/50"
       }`}
     >
       <div className="flex items-center justify-between w-full">
-        <div className="flex items-center">
+        <div className="flex items-center gap-2.5">
           <Icon
-            className={`mr-3 h-5 w-5 ${isActive ? "text-[#40BFFF]" : ""}`}
+            className={`h-4 w-4 ${isActive ? "text-[#40BFFF]" : ""}`}
           />
           <span>{title}</span>
         </div>
@@ -276,26 +276,31 @@ export function MyAccountSidebar() {
     }
   }, []);
   return (
-    <div className="w-[250px] rounded-[15px] overflow-hidden border bg-white shadow-lg">
-      {/* Phần Thông tin người dùng */}
-      <div className="bg-[#40BFFF]/60 p-5 flex items-center space-x-3 rounded-t-2xl text-white">
-        <Avatar className="h-12 w-12 border-2 border-white">
-          {/* Thay đổi src ảnh placeholder nếu cần */}
+    <div className="w-[250px] rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow">
+      {/* User Info Section - Enhanced */}
+      <div className="bg-gradient-to-br from-[#40BFFF] to-[#33A0DD] p-4 flex items-center gap-3 text-white relative overflow-hidden">
+        {/* Decorative circles */}
+        <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute bottom-0 left-0 w-16 h-16 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2" />
+
+        <Avatar className="h-11 w-11 border-2 border-white shadow-sm relative z-10">
           <AvatarImage
             src={user?.avatar}
             className="object-cover"
-            alt="Nobi Nobita"
+            alt={user?.fullName || "User"}
           />
-          <AvatarFallback className="bg-blue-500/50 text-white font-bold text-lg"></AvatarFallback>
+          <AvatarFallback className="bg-white/20 text-white font-semibold text-base">
+            {user?.fullName?.charAt(0) || "U"}
+          </AvatarFallback>
         </Avatar>
-        <div>
-          <h3 className="text-[18px] font-semibold">{user?.fullName}</h3>
-          <p className="font-light text-[12px]">{user?.email}</p>
+        <div className="flex-1 min-w-0 relative z-10">
+          <h3 className="text-base font-semibold truncate">{user?.fullName || "User"}</h3>
+          <p className="text-xs text-white/90 truncate">{user?.email}</p>
         </div>
       </div>
 
-      <div className="p-4 space-y-1">
-        {/* Render các mục Menu chính */}
+      <div className="p-3 space-y-0.5">
+        {/* Render menu items */}
         {menuData.map((section) => {
           if (section.isCollapsible) {
             return (
@@ -308,7 +313,6 @@ export function MyAccountSidebar() {
               />
             );
           } else {
-            // Lấy count và href từ mục đầu tiên cho SimpleMenuSection
             const count = section.items[0]?.count || 0;
             const href = section.items[0]?.href || "#";
             return (

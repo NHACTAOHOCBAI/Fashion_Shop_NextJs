@@ -20,7 +20,7 @@ import {
 import finalMoney from "@/lib/finalMoney";
 import { shorthandFormatDateTime } from "@/lib/formatDate";
 import { motion, AnimatePresence } from "framer-motion";
-import { staggerContainer, staggerItem, fadeInUp, scaleIn } from "@/lib/animations";
+import { staggerContainer, staggerItem, fadeIn } from "@/lib/animations";
 import { Heart, Package, ShoppingCart, Star, TruckIcon, Shield, RotateCcw, AlertTriangle } from "lucide-react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -294,7 +294,7 @@ const ProductDetail = () => {
           {/* Image Gallery */}
           <motion.div
             className="relative flex-1"
-            variants={fadeInUp}
+            variants={fadeIn}
             initial="initial"
             animate="animate"
           >
@@ -322,7 +322,7 @@ const ProductDetail = () => {
           {/* Product Info */}
           <motion.div
             className="flex-1 bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-100 dark:border-gray-700"
-            variants={fadeInUp}
+            variants={fadeIn}
             initial="initial"
             animate="animate"
             transition={{ delay: 0.2 }}
@@ -462,7 +462,7 @@ const ProductDetail = () => {
           transition={{ delay: 0.5 }}
           className="mt-20"
         >
-          <RelatedProducts idProduct={product.id} />
+          {/* <RelatedProducts idProduct={product.id} /> */}
         </motion.div>
       </div>
     </div>
@@ -576,35 +576,35 @@ const ReviewPage = ({ idProduct }: { idProduct: number }) => {
   );
 };
 
-const RelatedProducts = ({ idProduct }: { idProduct: number }) => {
-  const { data: relatedProducts } = useRelatedProducts(idProduct);
+// const RelatedProducts = ({ idProduct }: { idProduct: number }) => {
+//   const { data: relatedProducts } = useRelatedProducts(idProduct);
 
-  if (!relatedProducts || relatedProducts.length === 0) {
-    return null;
-  }
+//   if (!relatedProducts || relatedProducts.length === 0) {
+//     return null;
+//   }
 
-  return (
-    <div>
-      <motion.h2
-        className="text-4xl font-bold text-center text-gray-800 dark:text-gray-100 mb-12"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
-        Related Products
-      </motion.h2>
-      <motion.div
-        className="grid grid-cols-4 gap-6"
-        variants={staggerContainer}
-        initial="hidden"
-        animate="show"
-      >
-        {relatedProducts.slice(0, 4).map((item: any) => (
-          <motion.div key={item.id} variants={staggerItem}>
-            <ProductCard product={item} />
-          </motion.div>
-        ))}
-      </motion.div>
-    </div>
-  );
-};
+//   return (
+//     <div>
+//       <motion.h2
+//         className="text-4xl font-bold text-center text-gray-800 dark:text-gray-100 mb-12"
+//         initial={{ opacity: 0, y: -20 }}
+//         animate={{ opacity: 1, y: 0 }}
+//       >
+//         Related Products
+//       </motion.h2>
+//       <motion.div
+//         className="grid grid-cols-4 gap-6"
+//         variants={staggerContainer}
+//         initial="hidden"
+//         animate="show"
+//       >
+//         {relatedProducts.slice(0, 4).map((item: any) => (
+//           <motion.div key={item.id} variants={staggerItem}>
+//             <ProductCard product={item} />
+//           </motion.div>
+//         ))}
+//       </motion.div>
+//     </div>
+//   );
+// };
 export default ProductDetail;

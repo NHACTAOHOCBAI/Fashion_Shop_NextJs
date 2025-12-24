@@ -9,12 +9,13 @@ import { useMyAddress } from "@/hooks/queries/useAddress";
 import { useAvailable } from "@/hooks/queries/useCoupon";
 import { usePlaceOrder } from "@/hooks/queries/useOrder";
 import { createPaypal } from "@/services/payment.service";
-import { Box, CreditCard, MapPinHouse, Truck } from "lucide-react";
+import { Box, CreditCard, MapPinHouse, Truck, Check, ShoppingCart, Package2, CheckCircle2 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { RiCoupon3Line } from "react-icons/ri";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 interface ShippingOption {
   value: string;
@@ -385,37 +386,85 @@ const Checkout = () => {
     }
   };
 
+  const checkoutSteps = [
+    { label: "Cart", icon: ShoppingCart, completed: true },
+    { label: "Checkout", icon: Package2, completed: false },
+    { label: "Complete", icon: CheckCircle2, completed: false },
+  ];
+
   return (
-    <div className="w-[1240px] mx-auto py-[50px]">
-      {/* Shipping Address */}
-      <div>
-        <div className="flex gap-[10px]">
-          <MapPinHouse />
-          <p className="font-medium">Shipping Address</p>
+    <div className="min-h-screen bg-white dark:bg-gray-900">
+      <div className="w-[1240px] mx-auto py-8">
+        {/* Progress Stepper */}
+        <div className="mb-8">
+          <div className="flex items-center justify-center">
+            {checkoutSteps.map((step, index) => (
+              <div key={step.label} className="flex items-center">
+                <div className="flex flex-col items-center">
+                  <div
+                    className={cn(
+                      "w-12 h-12 rounded-full flex items-center justify-center mb-2 transition-colors",
+                      step.completed || index === 1
+                        ? "bg-[#40BFFF] text-white shadow"
+                        : "bg-gray-200 dark:bg-gray-700 text-gray-400"
+                    )}
+                  >
+                    <step.icon className="w-5 h-5" />
+                  </div>
+                  <span className={cn(
+                    "text-xs font-medium",
+                    step.completed || index === 1
+                      ? "text-[#40BFFF]"
+                      : "text-gray-400"
+                  )}>
+                    {step.label}
+                  </span>
+                </div>
+                {index < checkoutSteps.length - 1 && (
+                  <div className={cn(
+                    "w-24 h-0.5 mx-3 rounded-full transition-colors",
+                    step.completed
+                      ? "bg-[#40BFFF]"
+                      : "bg-gray-200 dark:bg-gray-700"
+                  )} />
+                )}
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="flex justify-between items-end mt-[13px]">
-          {renderAddressContent()}
-          <AlertDialog>
-            <AlertDialogTrigger disabled={!myAddresses}>
-              <NormalButton>
-                <p className="text-[14px] text-[#40BFFF]">
-                  {myAddresses && myAddresses.length === 0
-                    ? "Add New"
-                    : "Change"}
-                </p>
-              </NormalButton>
-            </AlertDialogTrigger>
-            {myAddresses && (
-              <AddressList
-                selectedAddressId={selectedAddressId}
-                onSelectAddress={handleSelectAddress}
-                myAddresses={myAddresses}
-              />
-            )}
-          </AlertDialog>
+
+        {/* Shipping Address */}
+        <div className="bg-white dark:bg-gray-800 rounded-lg p-5 shadow border border-gray-200 dark:border-gray-700 mb-5">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+              <MapPinHouse className="w-4 h-4 text-[#40BFFF]" />
+            </div>
+            <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+              Shipping Address
+            </h2>
+          </div>
+          <div className="flex justify-between items-end">
+            <div className="flex-1 text-sm">
+              {renderAddressContent()}
+            </div>
+            <AlertDialog>
+              <AlertDialogTrigger disabled={!myAddresses}>
+                <button
+                  className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700 text-[#40BFFF] rounded-lg text-sm font-medium border border-gray-200 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                >
+                  {myAddresses && myAddresses.length === 0 ? "Add New" : "Change"}
+                </button>
+              </AlertDialogTrigger>
+              {myAddresses && (
+                <AddressList
+                  selectedAddressId={selectedAddressId}
+                  onSelectAddress={handleSelectAddress}
+                  myAddresses={myAddresses}
+                />
+              )}
+            </AlertDialog>
+          </div>
         </div>
-        <div className="bg-[#FAFAFB] h-[2px] my-[18px]" />
-      </div>
 
       {/* Shipping Method */}
       <div className="mt-[30px]">
@@ -647,34 +696,35 @@ const Checkout = () => {
 
         {/* Summary */}
         <div className="w-[286px]">
-          <h3 className="font-medium text-lg mb-4">Order Summary</h3>
-          <div className="flex justify-between items-center">
-            <p>Subtotal</p>
-            <p>${orderSummary.subtotal.toFixed(2)}</p>
+          <h3 className="font-semibold text-base mb-3">Order Summary</h3>
+          <div className="flex justify-between items-center text-sm">
+            <p className="text-gray-600 dark:text-gray-400">Subtotal</p>
+            <p className="font-medium">${orderSummary.subtotal.toFixed(2)}</p>
           </div>
-          <div className="flex justify-between items-center mt-[17px]">
-            <p>Shipping fee</p>
-            <p>
+          <div className="flex justify-between items-center mt-3 text-sm">
+            <p className="text-gray-600 dark:text-gray-400">Shipping fee</p>
+            <p className="font-medium">
               {orderSummary.shippingFee > 0
                 ? `$${orderSummary.shippingFee.toFixed(2)}`
                 : "Free"}
             </p>
           </div>
-          <div className="flex justify-between items-center mt-[17px]">
-            <p>Discount</p>
-            <p className="text-[#FF4858]">
+          <div className="flex justify-between items-center mt-3 text-sm">
+            <p className="text-gray-600 dark:text-gray-400">Discount</p>
+            <p className="text-[#FF4858] font-medium">
               -${orderSummary.discountAmount.toFixed(2)}
             </p>
           </div>
-          <div className="bg-[#FAFAFB] h-[2px] my-[17px]" />
-          <div className="flex justify-between items-center mt-[17px] text-[30px] font-medium mb-[28px]">
-            <p>TOTAL</p>
-            <p>${orderSummary.total.toFixed(2)}</p>
+          <div className="bg-gray-200 dark:bg-gray-700 h-px my-4" />
+          <div className="flex justify-between items-center text-2xl font-semibold mb-5">
+            <p>Total</p>
+            <p className="text-[#40BFFF]">${orderSummary.total.toFixed(2)}</p>
           </div>
           <NoteInput value={note} onChange={setNote} />
           <PlaceOrderButton onClick={handleCheckout} />
         </div>
       </div>
+    </div>
     </div>
   );
 };
@@ -739,12 +789,12 @@ interface PlaceOrderButtonProps {
 }
 const PlaceOrderButton: React.FC<PlaceOrderButtonProps> = ({ onClick }) => {
   return (
-    <div
-      className="text-white cursor-pointer bg-[#40BFFF] rounded-[4px] py-[10px] w-full text-center duration-300 active:scale-90 mt-[16px]"
+    <button
+      className="text-white bg-[#40BFFF] hover:bg-[#33A0DD] rounded-lg py-2.5 w-full text-center font-medium transition-colors mt-4"
       onClick={onClick}
     >
-      <p>Place Order</p>
-    </div>
+      Place Order
+    </button>
   );
 };
 
@@ -760,18 +810,7 @@ const NoteInput = ({
       onChange={(e) => onChange(e.target.value)}
       value={value}
       rows={3}
-      className="
-                text-[16px]
-                w-full 
-                rounded-[4px] 
-                border 
-                border-gray-200 
-                px-[14px] 
-                py-[12px] 
-                placeholder:text-gray-300 
-                focus:outline-none 
-                focus:border-[#40BFFF] 
-            "
+      className="text-sm w-full rounded-lg border border-gray-200 dark:border-gray-700 px-3 py-2 placeholder:text-gray-400 focus:outline-none focus:border-[#40BFFF] dark:bg-gray-800"
       placeholder="Order Notes (Optional)"
     />
   );

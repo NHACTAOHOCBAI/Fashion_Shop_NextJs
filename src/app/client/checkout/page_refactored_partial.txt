@@ -1,0 +1,27 @@
+Để refactor file checkout nhanh hơn, tôi sẽ tạo summary của các thay đổi cần thiết:
+
+## Key Changes for Checkout Page:
+
+1. **Progress Stepper** - DONE ✓
+   - Added at top with 3 steps: Cart -> Checkout -> Complete
+   - Animated transitions, gradient styling
+
+2. **Shipping Address Section** - DONE ✓
+   - Card layout with rounded corners
+   - Icon with gradient background
+   - Better button styling
+
+3. **Shipping Method** - Need to refactor:
+   - Enhanced radio group with better hover states
+   - Card-based layout
+   - Icons for each shipping method
+
+4. **Products Section** - Need better styling for ProductItem
+
+5. **Coupons** - Already has good styling, minor improvements
+
+6. **Payment Method** - Similar to shipping, needs card layout
+
+7. **Order Summary** - Needs sticky, gradient styling
+
+Tôi sẽ tiếp tục refactor các phần còn lại...
