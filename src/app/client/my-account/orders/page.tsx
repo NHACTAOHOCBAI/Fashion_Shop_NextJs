@@ -3,7 +3,14 @@
 import { OrderList } from "@/app/client/my-account/orders/OrderList";
 import TabbedContent from "@/app/client/products/_components/TabContent";
 import { OrderStatus } from "@/constants/status.enum";
-import { Package, Clock, CheckCircle, Truck, Home, XCircle } from "lucide-react";
+import {
+  Package,
+  Clock,
+  CheckCircle,
+  Truck,
+  Home,
+  XCircle,
+} from "lucide-react";
 
 export default function OrdersPage() {
   return (
@@ -16,9 +23,9 @@ export default function OrdersPage() {
               <Package className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
+              <h6 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
                 My Orders
-              </h1>
+              </h6>
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 Track and manage your orders
               </p>
@@ -39,36 +46,36 @@ const orderTabs = [
   {
     title: "All",
     content: <OrderList />,
-    icon: Package
+    icon: Package,
   },
   {
     title: "Pending",
     content: <OrderList status={OrderStatus.PENDING} />,
-    icon: Clock
+    icon: Clock,
   },
   {
     title: "Confirmed",
     content: <OrderList status={OrderStatus.CONFIRMED} />,
-    icon: CheckCircle
+    icon: CheckCircle,
   },
   {
     title: "Processing",
     content: <OrderList status={OrderStatus.PROCESSING} />,
-    icon: Package
+    icon: Package,
   },
   {
     title: "Shipped",
     content: <OrderList status={OrderStatus.SHIPPED} />,
-    icon: Truck
+    icon: Truck,
   },
   {
     title: "Delivered",
     content: <OrderList status={OrderStatus.DELIVERED} />,
-    icon: Home
+    icon: Home,
   },
   {
     title: "Canceled",
     content: <OrderList status={OrderStatus.CANCELED} />,
-    icon: XCircle
+    icon: XCircle,
   },
 ];

@@ -1,17 +1,13 @@
-import {
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogFooter,
-} from "@/components/ui/alert-dialog";
-import { Progress } from "@/components/ui/progress";
-import { X } from "lucide-react";
-import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
-import NormalButton from "@/app/client/_components/NormalButton";
-import MyTag from "@/app/client/_components/MyTag"; // Giả định MyTag được import
+"use client";
 
-// ===============================================
-// INTERFACE VÀ ENUM MỚI
-// ===============================================
+import { BaseModal } from "@/components/modals/BaseModal";
+import { Progress } from "@/components/ui/progress";
+import { Tag, Percent, DollarSign, Truck } from "lucide-react";
+import NormalButton from "@/app/client/_components/NormalButton";
+import MyTag from "@/app/client/_components/MyTag";
+import { motion, AnimatePresence } from "framer-motion";
+import { staggerContainer, staggerItemFast } from "@/lib/animations";
+
 enum DiscountType {
   PERCENTAGE = "percentage",
   FIXED_AMOUNT = "fixed_amount",
@@ -19,12 +15,13 @@ enum DiscountType {
 }
 
 interface CouponListProps {
+  open: boolean;
+  setOpen: (open: boolean) => void;
   selectedCouponId: number | undefined;
   handleCouponClick: (id: number) => void;
-  availableCoupons: Coupon[] | undefined; // Dữ liệu coupons thực tế (Bao gồm cả inactive)
+  availableCoupons: Coupon[] | undefined;
 }
 
-// Hàm format ngày
 const formatDate = (isoString: string) => {
   try {
     const date = new Date(isoString);
@@ -39,17 +36,16 @@ const formatDate = (isoString: string) => {
 };
 
 const CouponList = ({
+  open,
+  setOpen,
   handleCouponClick,
   selectedCouponId,
   availableCoupons,
 }: CouponListProps) => {
-  // SỬ DỤNG TẤT CẢ COUPONS (không chỉ active) để hiển thị
   const allCoupons = availableCoupons || [];
-  const activeCouponsCount = allCoupons.filter(
-    (c) => c.status === "active"
-  ).length;
+  const activeCouponsCount = allCoupons.filter((c) => c.status === "active").length;
 
-  // Phân loại Coupons thành 3 nhóm rõ ràng (vẫn dựa trên TẤT CẢ coupons)
+  // Group coupons by type
   const freeShippingCoupons = allCoupons.filter(
     (c) => c.discountType === DiscountType.FREE_SHIPPING
   );
@@ -60,19 +56,16 @@ const CouponList = ({
     (c) => c.discountType === DiscountType.FIXED_AMOUNT
   );
 
-  // Hàm render từng coupon
   const renderCouponItem = (coupon: Coupon) => {
     const isSelected = selectedCouponId === coupon.id;
     const isActive = coupon.status === "active";
 
-    // Dữ liệu sử dụng
     const usedCount = coupon.usageCount || 0;
     const totalLimit = coupon.usageLimit || 1;
     const progressValue = (usedCount / totalLimit) * 100;
     const remainingUsage =
       coupon.usageLimitPerUser > 0 ? `x${coupon.usageLimitPerUser}` : "∞";
 
-    // Định dạng hiển thị giảm giá dựa trên DiscountType
     let discountDisplay: string;
     switch (coupon.discountType) {
       case DiscountType.PERCENTAGE:
@@ -88,7 +81,6 @@ const CouponList = ({
         discountDisplay = "DISCOUNT";
     }
 
-    // Xác định Tag và Class cho trạng thái Inactive
     let statusTag: React.ReactNode | null = null;
     let inactiveClasses = "";
 
@@ -120,142 +112,171 @@ const CouponList = ({
     }
 
     return (
-      <div
+      <motion.div
         key={coupon.id}
-        // Chỉ cho phép click nếu coupon đang active
+        variants={staggerItemFast}
+        whileHover={isActive ? { scale: 1.02, y: -2 } : {}}
+        transition={{ duration: 0.2 }}
         onClick={() => isActive && handleCouponClick(coupon.id)}
         className={`
-                    relative
-                    rounded-[20px] 
-                    bg-[#F6F7F8] 
-                    flex 
-                    overflow-hidden 
-                    transition-all duration-200
-                    ${isActive ? "cursor-pointer" : inactiveClasses}
-                    ${
-                      isSelected && isActive // Chỉ highlight khi chọn và active
-                        ? "border-[2px] border-[#40BFFF]"
-                        : "border-[2px] border-transparent"
-                    }
-                `}
+          relative rounded-lg bg-white dark:bg-gray-800
+          border-2 flex overflow-hidden transition-all duration-200
+          ${isActive ? "cursor-pointer" : inactiveClasses}
+          ${
+            isSelected && isActive
+              ? "border-[#40BFFF] shadow-md shadow-[#40BFFF]/20"
+              : "border-gray-200 dark:border-gray-700 hover:border-[#40BFFF]/40"
+          }
+        `}
       >
-        <div className="bg-[#40BFFF] text-white text-[14px] font-bold flex items-center w-[50px] justify-center relative py-2">
-          <p className="-rotate-90 whitespace-nowrap absolute font-medium">
-            DISCOUNT
+        {/* Selected indicator */}
+        {isSelected && isActive && (
+          <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-[#40BFFF] flex items-center justify-center">
+            <svg
+              className="w-3 h-3 text-white"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={3}
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          </div>
+        )}
+
+        <div className="bg-gradient-to-b from-[#40BFFF] to-[#33A0DD] text-white text-xs font-bold flex items-center w-12 justify-center relative py-2">
+          <p className="-rotate-90 whitespace-nowrap absolute font-semibold text-[10px]">
+            COUPON
           </p>
         </div>
-        <div className="py-[9px] px-[15px] flex-1">
-          <p className="font-semibold text-base">{coupon.code}</p>
-          {/* Hiển thị chi tiết giảm giá/tên coupon */}
-          <p className="text-[12px] text-[#FF4858] font-semibold">
+
+        <div className="py-3 px-4 flex-1">
+          <p className="font-semibold text-sm text-gray-800 dark:text-gray-100">
+            {coupon.code}
+          </p>
+          <p className="text-xs text-[#FF4858] font-semibold mt-0.5">
             {coupon.name || discountDisplay}
           </p>
-          {/* Hiển thị Tiến độ sử dụng */}
+
           {coupon.usageLimit > 0 && (
             <>
-              {/* Dùng màu xám nếu inactive */}
               <Progress
-                className={`mt-[10px] h-1.5 ${
-                  isActive ? "bg-[#40BFFF]" : "bg-gray-300"
+                className={`mt-2.5 h-1.5 ${
+                  isActive ? "" : "opacity-50"
                 }`}
                 value={progressValue}
               />
-              <p className="text-[10px] text-gray-500 mt-[4px]">
+              <p className="text-[10px] text-gray-500 dark:text-gray-400 mt-1">
                 Used {usedCount}/{totalLimit} times
               </p>
             </>
           )}
 
-          <div className="flex gap-[20px] mt-[7px]">
-            <p className="text-[10px] font-light ">
-              Start date: {formatDate(coupon.startDate)}
+          <div className="flex gap-4 mt-2">
+            <p className="text-[10px] text-gray-500 dark:text-gray-400">
+              Start: {formatDate(coupon.startDate)}
             </p>
-            <p className="text-[10px] font-light">
-              End date: {formatDate(coupon.endDate)}
+            <p className="text-[10px] text-gray-500 dark:text-gray-400">
+              End: {formatDate(coupon.endDate)}
             </p>
           </div>
         </div>
 
-        {/* Giới hạn sử dụng cá nhân */}
-        <div className="absolute right-0 top-0 h-fit px-[10px] py-[4px] text-[14px] font-semibold border-[2px] border-[#BCDDFE] bg-white">
+        <div className="absolute right-2 top-2 px-2.5 py-1 text-xs font-semibold border border-[#40BFFF]/30 bg-[#40BFFF]/10 text-[#40BFFF] rounded">
           {remainingUsage}
         </div>
 
-        {/* 🌟 Hiển thị Tag trạng thái Inactive/Expired/Upcoming */}
         {statusTag}
+      </motion.div>
+    );
+  };
+
+  const renderSection = (
+    title: string,
+    icon: React.ReactNode,
+    coupons: Coupon[],
+    color: string
+  ) => {
+    if (coupons.length === 0) return null;
+
+    return (
+      <div>
+        <div className="flex items-center gap-2 mb-4">
+          <div className={`p-2 rounded-lg ${color} bg-opacity-10`}>
+            {icon}
+          </div>
+          <h3 className={`font-semibold text-base ${color}`}>
+            {title} ({coupons.length})
+          </h3>
+        </div>
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          animate="show"
+          className="flex flex-col gap-3"
+        >
+          {coupons.map(renderCouponItem)}
+        </motion.div>
       </div>
     );
   };
 
   return (
-    <AlertDialogContent className="w-[600px] max-h-[600px] flex flex-col">
-      <div className="flex justify-between ">
-        <p className="font-medium">
-          Choose Coupon ({activeCouponsCount} Active)
-        </p>
-        <AlertDialogPrimitive.Cancel>
-          <X />
-        </AlertDialogPrimitive.Cancel>
-      </div>
-      <div className="bg-[#FAFAFB] h-[2px] w-full" />
-
-      {/* KIỂM TRA LOADING HOẶC KHÔNG CÓ COUPON */}
+    <BaseModal
+      open={open}
+      onOpenChange={setOpen}
+      title="Choose Coupon"
+      description={`${activeCouponsCount} active coupon${activeCouponsCount !== 1 ? 's' : ''} available`}
+      icon={<Tag size={20} />}
+      maxWidth="max-w-2xl"
+      footer={
+        <NormalButton onClick={() => setOpen(false)}>
+          <p className="text-sm text-gray-600 dark:text-gray-300">Close</p>
+        </NormalButton>
+      }
+      className="space-y-6"
+    >
       {!availableCoupons ? (
-        <div className="flex-1 py-10 text-center text-gray-500">
-          Loading coupons list...
+        <div className="py-12 text-center text-gray-500 dark:text-gray-400">
+          Loading coupons...
         </div>
       ) : allCoupons.length === 0 ? (
-        <div className="flex-1 py-10 text-center text-gray-500">
-          You have no coupons available.
+        <div className="py-12 text-center">
+          <Tag className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+          <p className="text-gray-600 dark:text-gray-400">
+            No coupons available
+          </p>
         </div>
       ) : (
-        <div className="overflow-y-auto flex-1 space-y-8 py-4">
-          {/* Mục 1: Free Shipping */}
-          {freeShippingCoupons.length > 0 && (
-            <div>
-              <p className="mb-[16px] font-medium text-lg text-[#40BFFF]">
-                Free Shipping ({freeShippingCoupons.length})
-              </p>
-              <div className="flex flex-col gap-[20px]">
-                {freeShippingCoupons.map(renderCouponItem)}
-              </div>
-            </div>
+        <div className="space-y-6">
+          {renderSection(
+            "Free Shipping",
+            <Truck className="w-5 h-5 text-[#40BFFF]" />,
+            freeShippingCoupons,
+            "text-[#40BFFF]"
           )}
 
-          {/* Mục 2: Percentage Discount */}
-          {percentageCoupons.length > 0 && (
-            <div>
-              <p className="mb-[16px] font-medium text-lg text-[#FF4858]">
-                Percentage Discount ({percentageCoupons.length})
-              </p>
-              <div className="flex flex-col gap-[20px]">
-                {percentageCoupons.map(renderCouponItem)}
-              </div>
-            </div>
+          {renderSection(
+            "Percentage Discount",
+            <Percent className="w-5 h-5 text-[#FF4858]" />,
+            percentageCoupons,
+            "text-[#FF4858]"
           )}
 
-          {/* Mục 3: Fixed Amount Discount */}
-          {fixedAmountCoupons.length > 0 && (
-            <div>
-              <p className="mb-[16px] font-medium text-lg text-[#38A169]">
-                Fixed Amount Discount ({fixedAmountCoupons.length})
-              </p>
-              <div className="flex flex-col gap-[20px]">
-                {fixedAmountCoupons.map(renderCouponItem)}
-              </div>
-            </div>
+          {renderSection(
+            "Fixed Amount",
+            <DollarSign className="w-5 h-5 text-[#38A169]" />,
+            fixedAmountCoupons,
+            "text-[#38A169]"
           )}
         </div>
       )}
-
-      <AlertDialogFooter className="pt-4">
-        <AlertDialogCancel asChild>
-          <NormalButton>
-            <p className="text-[14px] text-gray-500">Close</p>
-          </NormalButton>
-        </AlertDialogCancel>
-      </AlertDialogFooter>
-    </AlertDialogContent>
+    </BaseModal>
   );
 };
+
 export default CouponList;

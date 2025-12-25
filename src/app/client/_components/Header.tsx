@@ -23,6 +23,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { staggerContainer, staggerItemFast } from "@/lib/animations";
 const accountMenus = [
   {
     href: "/client/my-account/order-news",
@@ -179,37 +181,64 @@ const Header = () => {
                 <User size={20} />
               </button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-2">
-              <div className="px-3 py-2 flex gap-3 items-center border-b border-gray-100 dark:border-gray-800">
-                {user?.avatar ? (
-                  <Image
-                    src={user.avatar}
-                    alt="User avatar"
-                    width={32}
-                    height={32}
-                    className="rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                    <UserIcon size={16} className="text-gray-500" />
+            <PopoverContent className="w-64 p-0">
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                {/* Enhanced User Info Section */}
+                <div className="px-4 py-3 bg-gradient-to-r from-[#40BFFF]/5 to-transparent border-b border-gray-100 dark:border-gray-800">
+                  <div className="flex gap-3 items-center">
+                    {user?.avatar ? (
+                      <div className="relative">
+                        <Image
+                          src={user.avatar}
+                          alt="User avatar"
+                          width={40}
+                          height={40}
+                          className="rounded-full object-cover ring-2 ring-[#40BFFF]/20"
+                        />
+                        <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-gray-800" />
+                      </div>
+                    ) : (
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#40BFFF] to-[#33A0DD] flex items-center justify-center ring-2 ring-[#40BFFF]/20">
+                        <UserIcon size={20} className="text-white" />
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-gray-800 dark:text-gray-100 truncate">
+                        {user?.fullName}
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {user?.email}
+                      </p>
+                    </div>
                   </div>
-                )}
-                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
-                  {user?.fullName}
-                </p>
-              </div>
-              <div className="flex flex-col py-1">
-                {accountMenus.map(({ href, label, icon: Icon }) => (
-                  <Link
-                    key={href}
-                    href={href}
-                    className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-[#40BFFF] rounded-md transition-colors"
-                  >
-                    <Icon size={16} />
-                    <span>{label}</span>
-                  </Link>
-                ))}
-              </div>
+                </div>
+
+                {/* Menu Items with Stagger Animation */}
+                <motion.div
+                  variants={staggerContainer}
+                  initial="hidden"
+                  animate="show"
+                  className="py-2"
+                >
+                  {accountMenus.map(({ href, label, icon: Icon }) => (
+                    <motion.div key={href} variants={staggerItemFast}>
+                      <Link
+                        href={href}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-[#40BFFF]/10 hover:text-[#40BFFF] dark:hover:text-[#40BFFF] transition-all duration-200 group"
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center group-hover:bg-[#40BFFF]/20 transition-colors">
+                          <Icon size={16} className="group-hover:scale-110 transition-transform" />
+                        </div>
+                        <span className="font-medium">{label}</span>
+                      </Link>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              </motion.div>
             </PopoverContent>
           </Popover>
         </div>
@@ -304,12 +333,9 @@ const Notification = ({ notifications }: { notifications: Notification[] }) => {
               </span>
             )}
           </div>
-          {notifications.length > 0 && unreadCount > 0 && (
-            <button
-              className="text-[10px] font-medium text-[#40BFFF] hover:text-[#33A0DD] transition-colors whitespace-nowrap flex-shrink-0 px-2 py-1 hover:bg-[#40BFFF]/10 rounded"
-              title="Mark all as read"
-            >
-              Mark read
+          {notifications.length > 0 && (
+            <button className="text-xs font-medium text-[#40BFFF] hover:text-[#33A0DD] transition-colors">
+              Mark all read
             </button>
           )}
         </div>

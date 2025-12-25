@@ -18,7 +18,14 @@ import {
   useMyAddress,
   useSetDefaultAddress,
 } from "@/hooks/queries/useAddress";
-import { Building, House, PencilLine, Trash2, MapPin, Plus } from "lucide-react";
+import {
+  Building,
+  House,
+  PencilLine,
+  Trash2,
+  MapPin,
+  Plus,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -45,14 +52,14 @@ const MyAddress = () => {
                 <MapPin className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2">
+                <h6 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2">
                   My Addresses
                   {MyAddress && MyAddress.length > 0 && (
                     <span className="px-2 py-0.5 text-xs font-semibold bg-[#40BFFF] text-white rounded-full">
                       {MyAddress.length}
                     </span>
                   )}
-                </h1>
+                </h6>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   Manage your shipping addresses
                 </p>

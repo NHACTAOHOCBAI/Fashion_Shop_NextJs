@@ -196,6 +196,7 @@ const Checkout = () => {
   const [selectedPayment, setSelectedPayment] = useState<string>(
     paymentMethodOptions[0].value
   );
+  const [couponModalOpen, setCouponModalOpen] = useState<boolean>(false);
 
   // Auto-select logic
   useEffect(() => {
@@ -558,18 +559,16 @@ const Checkout = () => {
                     : "No coupon applied"}
                 </p>
                 <div className="ml-auto">
-                  <AlertDialog>
-                    <AlertDialogTrigger>
-                      <NormalButton>
-                        <p className="text-[14px] text-[#40BFFF]">Load More</p>
-                      </NormalButton>
-                    </AlertDialogTrigger>
-                    <CouponList
-                      handleCouponClick={handleCouponClick}
-                      selectedCouponId={selectedCouponId}
-                      availableCoupons={myCoupons?.data}
-                    />
-                  </AlertDialog>
+                  <NormalButton onClick={() => setCouponModalOpen(true)}>
+                    <p className="text-[14px] text-[#40BFFF]">Load More</p>
+                  </NormalButton>
+                  <CouponList
+                    open={couponModalOpen}
+                    setOpen={setCouponModalOpen}
+                    handleCouponClick={handleCouponClick}
+                    selectedCouponId={selectedCouponId}
+                    availableCoupons={myCoupons?.data}
+                  />
                 </div>
               </div>
               <div className="mt-[22px] flex gap-[20px] flex-wrap">

@@ -25,6 +25,7 @@ import {
   Cell,
   BarChart,
   Bar,
+  Legend,
 } from "recharts";
 
 import dayjs from "dayjs";
@@ -36,6 +37,9 @@ import {
   Package,
   AlertTriangle,
 } from "lucide-react";
+import { EnhancedKpiCard } from "@/app/admin/overviews/dashboard/_components/EnhancedKpiCard";
+import { motion } from "framer-motion";
+import { staggerContainer } from "@/lib/animations";
 
 dayjs.extend(relativeTime);
 
@@ -47,7 +51,7 @@ const RANGES = [
   { label: "This Year", value: "year" },
 ];
 
-const PIE_COLORS = ["#3b82f6", "#22c55e", "#f59e0b", "#ef4444", "#8b5cf6"];
+const PIE_COLORS = ["#6366f1", "#8b5cf6", "#3b82f6", "#06b6d4", "#64748b"];
 
 export default function DashboardPage() {
   const [range, setRange] = useState("7d");
@@ -59,83 +63,126 @@ export default function DashboardPage() {
   const { data: recentOrders } = useRecentOrders();
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* ================= HEADER ================= */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">Dashboard</h1>
-          <p className="text-sm text-muted-foreground">
-            Overview of sales, orders and customers
-          </p>
-        </div>
+      <div className="bg-gradient-to-r from-slate-800 to-slate-900 dark:from-slate-900 dark:to-black rounded-xl p-6 shadow-lg">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-white">Dashboard</h1>
+            <p className="text-sm text-slate-300 mt-1">
+              Overview of sales, orders and customers
+            </p>
+          </div>
 
-        <div className="flex gap-2">
-          {RANGES.map((r) => (
-            <Button
-              key={r.value}
-              size="sm"
-              variant={range === r.value ? "default" : "outline"}
-              onClick={() => setRange(r.value)}
-            >
-              {r.label}
-            </Button>
-          ))}
+          <div className="flex gap-2">
+            {RANGES.map((r) => (
+              <Button
+                key={r.value}
+                size="sm"
+                variant={range === r.value ? "secondary" : "outline"}
+                onClick={() => setRange(r.value)}
+                className={
+                  range === r.value
+                    ? "bg-white text-slate-900 hover:bg-slate-100"
+                    : "border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white"
+                }
+              >
+                {r.label}
+              </Button>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* ================= KPI ================= */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <KpiCard
+      <motion.div
+        variants={staggerContainer}
+        initial="hidden"
+        animate="show"
+        className="grid grid-cols-1 md:grid-cols-5 gap-4"
+      >
+        <EnhancedKpiCard
           title="Revenue"
           value={overview?.revenue}
-          icon={<DollarSign />}
-          color="from-blue-500 to-indigo-500"
+          icon={<DollarSign size={24} />}
+          color="from-slate-600 to-slate-700"
+          prefix="$"
+          index={0}
         />
-        <KpiCard
+        <EnhancedKpiCard
           title="Orders"
           value={overview?.totalOrders}
-          icon={<ShoppingCart />}
-          color="from-emerald-500 to-green-500"
+          icon={<ShoppingCart size={24} />}
+          color="from-indigo-600 to-indigo-700"
+          index={1}
         />
-        <KpiCard
+        <EnhancedKpiCard
           title="Products Sold"
           value={overview?.productsSold}
-          icon={<Package />}
-          color="from-orange-500 to-amber-500"
+          icon={<Package size={24} />}
+          color="from-blue-600 to-blue-700"
+          index={2}
         />
-        <KpiCard
+        <EnhancedKpiCard
           title="New Customers"
           value={overview?.newCustomers}
-          icon={<Users />}
-          color="from-purple-500 to-fuchsia-500"
+          icon={<Users size={24} />}
+          color="from-violet-600 to-violet-700"
+          index={3}
         />
-        <KpiCard
+        <EnhancedKpiCard
           title="Low Stock"
           value={overview?.lowStockVariants}
-          icon={<AlertTriangle />}
-          color="from-red-500 to-rose-500"
+          icon={<AlertTriangle size={24} />}
+          color="from-red-600 to-red-700"
+          index={4}
           danger
         />
-      </div>
+      </motion.div>
 
       {/* ================= CHARTS ================= */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Revenue */}
-        <Card className="lg:col-span-2">
+        <Card className="lg:col-span-2 border-slate-200 dark:border-slate-700">
           <CardHeader>
-            <CardTitle>Revenue Trend</CardTitle>
+            <CardTitle className="text-slate-800 dark:text-slate-100">
+              Revenue Trend
+            </CardTitle>
+            <p className="text-sm text-slate-600 dark:text-slate-400">
+              Daily revenue performance over selected period
+            </p>
           </CardHeader>
           <CardContent className="h-[320px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={revenue}>
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip />
+                <defs>
+                  <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <XAxis
+                  dataKey="date"
+                  stroke="#94a3b8"
+                  style={{ fontSize: "12px" }}
+                />
+                <YAxis stroke="#94a3b8" style={{ fontSize: "12px" }} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "rgba(15, 23, 42, 0.95)",
+                    border: "1px solid #334155",
+                    borderRadius: "8px",
+                    color: "#f1f5f9",
+                  }}
+                />
                 <Line
                   dataKey="total"
-                  stroke="#3b82f6"
+                  stroke="#6366f1"
                   strokeWidth={3}
                   dot={false}
+                  fill="url(#colorRevenue)"
+                  animationDuration={1500}
+                  animationEasing="ease-in-out"
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -143,27 +190,55 @@ export default function DashboardPage() {
         </Card>
 
         {/* Order Status */}
-        <Card>
+        <Card className="border-slate-200 dark:border-slate-700">
           <CardHeader>
-            <CardTitle>Order Status</CardTitle>
+            <CardTitle className="text-slate-800 dark:text-slate-100">
+              Order Status
+            </CardTitle>
+            <p className="text-sm text-slate-600 dark:text-slate-400">
+              Distribution of order statuses
+            </p>
           </CardHeader>
-          <CardContent className="h-[320px]">
-            <ResponsiveContainer width="100%" height="100%">
+          <CardContent className="h-[320px] flex flex-col">
+            <ResponsiveContainer width="100%" height="75%">
               <PieChart>
                 <Pie
                   data={orderStatus}
                   dataKey="count"
                   nameKey="status"
-                  outerRadius={100}
-                  innerRadius={60}
+                  outerRadius={85}
+                  innerRadius={55}
+                  animationBegin={200}
+                  animationDuration={800}
                 >
                   {orderStatus?.map((_: any, i: number) => (
                     <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "rgba(15, 23, 42, 0.95)",
+                    border: "1px solid #334155",
+                    borderRadius: "8px",
+                    color: "#f1f5f9",
+                  }}
+                />
               </PieChart>
             </ResponsiveContainer>
+            {/* Custom Legend */}
+            <div className="grid grid-cols-2 gap-2 mt-2 px-2">
+              {orderStatus?.slice(0, 4).map((item: any, i: number) => (
+                <div key={i} className="flex items-center gap-2">
+                  <div
+                    className="w-3 h-3 rounded-sm flex-shrink-0"
+                    style={{ backgroundColor: PIE_COLORS[i % PIE_COLORS.length] }}
+                  />
+                  <span className="text-xs text-slate-600 dark:text-slate-400 truncate">
+                    {item.status}
+                  </span>
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -254,34 +329,3 @@ export default function DashboardPage() {
   );
 }
 
-/* ================= SUB COMPONENT ================= */
-function KpiCard({
-  title,
-  value,
-  icon,
-  color,
-  danger,
-}: {
-  title: string;
-  value?: number;
-  icon: React.ReactNode;
-  color: string;
-  danger?: boolean;
-}) {
-  return (
-    <Card className="relative overflow-hidden">
-      <div
-        className={`absolute inset-0 bg-gradient-to-br ${color} opacity-10`}
-      />
-      <CardContent className="relative flex items-center justify-between p-4">
-        <div>
-          <p className="text-sm text-muted-foreground">{title}</p>
-          <p className={`text-2xl font-bold ${danger ? "text-red-500" : ""}`}>
-            {value ?? "--"}
-          </p>
-        </div>
-        <div className="rounded-xl bg-background p-3 shadow">{icon}</div>
-      </CardContent>
-    </Card>
-  );
-}
