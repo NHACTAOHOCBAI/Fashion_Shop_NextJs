@@ -21,7 +21,16 @@ import finalMoney from "@/lib/finalMoney";
 import { shorthandFormatDateTime } from "@/lib/formatDate";
 import { motion, AnimatePresence } from "framer-motion";
 import { staggerContainer, staggerItem, fadeIn } from "@/lib/animations";
-import { Heart, Package, ShoppingCart, Star, TruckIcon, Shield, RotateCcw, AlertTriangle } from "lucide-react";
+import {
+  Heart,
+  Package,
+  ShoppingCart,
+  Star,
+  TruckIcon,
+  Shield,
+  RotateCcw,
+  AlertTriangle,
+} from "lucide-react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useMemo, useState, useCallback } from "react";
@@ -264,10 +273,33 @@ const ProductDetail = () => {
   // Stock urgency helper
   const getStockStatus = () => {
     const stock = selectedVariant?.remaining ?? availbility;
-    if (stock === 0) return { text: "Out of Stock", color: "text-red-600", bgColor: "bg-red-50 dark:bg-red-900/20", icon: AlertTriangle };
-    if (stock <= 5) return { text: `Only ${stock} left!`, color: "text-orange-600", bgColor: "bg-orange-50 dark:bg-orange-900/20", icon: AlertTriangle };
-    if (stock <= 10) return { text: `${stock} in stock`, color: "text-yellow-600", bgColor: "bg-yellow-50 dark:bg-yellow-900/20", icon: Package };
-    return { text: `${stock} in stock`, color: "text-green-600", bgColor: "bg-green-50 dark:bg-green-900/20", icon: Package };
+    if (stock === 0)
+      return {
+        text: "Out of Stock",
+        color: "text-red-600",
+        bgColor: "bg-red-50 dark:bg-red-900/20",
+        icon: AlertTriangle,
+      };
+    if (stock <= 5)
+      return {
+        text: `Only ${stock} left!`,
+        color: "text-orange-600",
+        bgColor: "bg-orange-50 dark:bg-orange-900/20",
+        icon: AlertTriangle,
+      };
+    if (stock <= 10)
+      return {
+        text: `${stock} in stock`,
+        color: "text-yellow-600",
+        bgColor: "bg-yellow-50 dark:bg-yellow-900/20",
+        icon: Package,
+      };
+    return {
+      text: `${stock} in stock`,
+      color: "text-green-600",
+      bgColor: "bg-green-50 dark:bg-green-900/20",
+      icon: Package,
+    };
   };
 
   const stockStatus = getStockStatus();
@@ -278,7 +310,11 @@ const ProductDetail = () => {
       <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700">
         <div className="w-[1240px] mx-auto py-4">
           <MyBreadcrumb
-            data={["Products", product?.category.name || "", product?.name || ""]}
+            data={[
+              "Products",
+              product?.category.name || "",
+              product?.name || "",
+            ]}
           />
         </div>
       </div>
@@ -328,9 +364,9 @@ const ProductDetail = () => {
             transition={{ delay: 0.2 }}
           >
             {/* Product Name */}
-            <h1 className="text-4xl font-bold text-gray-800 dark:text-gray-100 mb-4">
+            <h4 className="text-4xl font-bold text-gray-800 dark:text-gray-100 mb-4">
               {product?.name}
-            </h1>
+            </h4>
 
             {/* Rating & Reviews */}
             <div className="flex items-center gap-6 mb-6">
@@ -348,7 +384,7 @@ const ProductDetail = () => {
                 <span className="text-sm font-medium text-gray-500 dark:text-gray-400 w-24">
                   Brand:
                 </span>
-                <span className="text-base font-semibold text-[var(--cyan-600)] dark:text-[var(--cyan-400)]">
+                <span className="text-base font-semibold text-[#40BFFF] dark:text-[var(--cyan-400)]">
                   {product?.brand.name}
                 </span>
               </div>
@@ -366,11 +402,13 @@ const ProductDetail = () => {
                 <span className="text-sm font-medium text-gray-500 dark:text-gray-400 w-24">
                   Stock:
                 </span>
-                <div className={cn(
-                  "inline-flex items-center gap-2 px-3 py-1.5 rounded-full font-medium text-sm",
-                  stockStatus.bgColor,
-                  stockStatus.color
-                )}>
+                <div
+                  className={cn(
+                    "inline-flex items-center gap-2 px-3 py-1.5 rounded-full font-medium text-sm",
+                    stockStatus.bgColor,
+                    stockStatus.color
+                  )}
+                >
                   <stockStatus.icon className="w-4 h-4" />
                   {stockStatus.text}
                 </div>
@@ -401,7 +439,7 @@ const ProductDetail = () => {
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.3 }}
             >
-              <p className="text-5xl font-bold text-gradient-primary">
+              <p className="text-[32px] font-bold text-gradient-primary">
                 {finalMoney(+product.price)}
               </p>
             </motion.div>
@@ -434,12 +472,6 @@ const ProductDetail = () => {
                 <Shield className="w-6 h-6 text-[var(--cyan-500)] mb-2" />
                 <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
                   Secure Payment
-                </span>
-              </div>
-              <div className="flex flex-col items-center text-center p-3 rounded-xl bg-gray-50 dark:bg-gray-700/50">
-                <RotateCcw className="w-6 h-6 text-[var(--cyan-500)] mb-2" />
-                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
-                  Easy Returns
                 </span>
               </div>
             </div>
@@ -515,9 +547,9 @@ const OptionGroup = ({
 
   return (
     <div>
-      <h4 className="font-semibold text-gray-700 dark:text-gray-300 mb-3 text-sm uppercase tracking-wide">
+      <h6 className="font-semibold text-gray-700 dark:text-gray-300 mb-3 text-sm uppercase tracking-wide">
         Select {field.attributeName}
-      </h4>
+      </h6>
       <div className="flex gap-3 flex-wrap">
         {field.values.map((value) => {
           const isDisabled = !enabledValues.has(value.value);
@@ -531,11 +563,12 @@ const OptionGroup = ({
               }
               disabled={isDisabled}
               className={cn(
-                "px-6 py-2.5 rounded-xl border-2 font-medium transition-all text-sm",
+                "px-6 py-2.5 rounded-[10px] border-2 font-medium transition-all text-sm",
                 isActive
-                  ? "border-[var(--cyan-500)] bg-gradient-to-r from-[var(--cyan-50)] to-[var(--cyan-100)] dark:from-[var(--cyan-900)] dark:to-[var(--cyan-800)] text-[var(--cyan-700)] dark:text-[var(--cyan-300)] shadow-md"
+                  ? "bg-[#40BFFF] text-white"
                   : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:border-[var(--cyan-300)] hover:shadow-sm",
-                isDisabled && "opacity-40 cursor-not-allowed hover:border-gray-200"
+                isDisabled &&
+                  "opacity-40 cursor-not-allowed hover:border-gray-200"
               )}
               whileHover={!isDisabled ? { scale: 1.05 } : {}}
               whileTap={!isDisabled ? { scale: 0.95 } : {}}
