@@ -9,6 +9,9 @@ import {
   addComment,
   getComments,
   getPostsByProduct,
+  updateComment,
+  deleteComment,
+  sharePost,
 } from "@/services/post.service";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -107,3 +110,49 @@ export const usePostsByProduct = (
     queryFn: () => getPostsByProduct(productId, page, limit),
     enabled: !!productId,
   });
+
+// Update comment
+export const useUpdateComment = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      postId,
+      commentId,
+      data,
+    }: {
+      postId: number;
+      commentId: number;
+      data: UpdateCommentDto;
+    }) => updateComment(postId, commentId, data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["comments", variables.postId] });
+      queryClient.invalidateQueries({ queryKey: ["post", variables.postId] });
+    },
+  });
+};
+
+// Delete comment
+export const useDeleteComment = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ postId, commentId }: { postId: number; commentId: number }) =>
+      deleteComment(postId, commentId),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["comments", variables.postId] });
+      queryClient.invalidateQueries({ queryKey: ["post", variables.postId] });
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+    },
+  });
+};
+
+// Share post
+export const useSharePost = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: sharePost,
+    onSuccess: (_, postId) => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: ["post", postId] });
+    },
+  });
+};

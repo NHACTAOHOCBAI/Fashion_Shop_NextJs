@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-// 1. Import useSelector từ react-redux
-import { useSelector } from "react-redux"; 
-import { Plus, TrendingUp, Clock, Loader2, Search } from "lucide-react";
+import { useSelector } from "react-redux";
+import { Plus, TrendingUp, Clock, Loader2, Search, Filter } from "lucide-react";
 import PostCard from "./_components/PostCard";
 import CreatePostModal from "./_components/CreatePostModal";
 import { usePosts } from "@/hooks/queries/usePost";
@@ -60,7 +59,10 @@ const CommunityPage = () => {
             {/* Left Sidebar - Filters */}
             <div className="col-span-3">
               <div className="bg-white rounded-[16px] p-[24px] sticky top-[20px]">
-                <h3 className="text-[20px] font-bold mb-[20px]">Sort By</h3>
+                <div className="flex items-center gap-[10px] mb-[20px]">
+                  <Filter className="w-[24px] h-[24px] text-[#40BFFF]" />
+                  <h3 className="text-[20px] font-bold">Filters</h3>
+                </div>
 
                 <div className="space-y-[12px]">
                   <button
@@ -89,8 +91,8 @@ const CommunityPage = () => {
                 </div>
 
                 {/* Search */}
-                <div className="mt-[30px]">
-                  <h3 className="text-[18px] font-bold mb-[12px]">Search</h3>
+                <div className="mt-[24px]">
+                  <h3 className="text-[16px] font-bold mb-[12px]">Search Posts</h3>
                   <div className="relative">
                     <Search className="absolute left-[14px] top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-gray-400" />
                     <input
@@ -98,25 +100,8 @@ const CommunityPage = () => {
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       placeholder="Search posts..."
-                      className="w-full pl-[42px] pr-[16px] py-[12px] border border-gray-200 rounded-[12px] focus:outline-none focus:border-[#40BFFF] transition-all duration-200"
+                      className="w-full pl-[42px] pr-[16px] py-[12px] border border-gray-200 rounded-[12px] focus:outline-none focus:border-[#40BFFF] transition-all duration-200 text-[14px]"
                     />
-                  </div>
-                </div>
-
-                {/* Stats */}
-                <div className="mt-[30px] pt-[24px] border-t border-gray-200">
-                  <h3 className="text-[18px] font-bold mb-[16px]">
-                    Community Stats
-                  </h3>
-                  <div className="space-y-[12px]">
-                    <div className="flex justify-between items-center">
-                      <span className="text-[14px] text-gray-600">
-                        Total Posts
-                      </span>
-                      <span className="text-[16px] font-bold text-[#40BFFF]">
-                        {postsData?.pagination?.total || 0}
-                      </span>
-                    </div>
                   </div>
                 </div>
               </div>
