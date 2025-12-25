@@ -217,7 +217,10 @@ const Header = () => {
 
       {/* Main Header - Logo & Navigation */}
       <div className="w-[1240px] mx-auto py-4 flex items-center">
-        <Link href="/client" className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+        <Link
+          href="/client"
+          className="text-2xl font-bold text-gray-800 dark:text-gray-100"
+        >
           LOGO HERE
         </Link>
 
@@ -258,16 +261,17 @@ interface SubCatgoriesProps {
 }
 const SubCatgories = ({ children, content }: SubCatgoriesProps) => {
   return (
-    <div className="group inline-block">
+    <div className="group inline-block ">
       {children}
       <div
         className="
+        top-[105px]
           select-none
           absolute z-10
           bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-6
           shadow-lg w-[1240px]
           left-0 right-0 mx-auto
-          top-full mt-0
+           mt-0
           opacity-0 invisible translate-y-2
           group-hover:opacity-100 group-hover:visible group-hover:translate-y-0
           transition-all duration-200 ease-out
@@ -324,7 +328,11 @@ const Notification = ({ notifications }: { notifications: Notification[] }) => {
         ) : (
           <>
             {myNotification.map((notification, index) => (
-              <NotificationItem key={notification.id} item={notification} index={index} />
+              <NotificationItem
+                key={notification.id}
+                item={notification}
+                index={index}
+              />
             ))}
           </>
         )}
@@ -345,7 +353,13 @@ const Notification = ({ notifications }: { notifications: Notification[] }) => {
   );
 };
 
-const NotificationItem = ({ item, index }: { item: Notification; index?: number }) => {
+const NotificationItem = ({
+  item,
+  index,
+}: {
+  item: Notification;
+  index?: number;
+}) => {
   const router = useRouter();
 
   const Icon = item.type === "ORDER" ? ShoppingBag : TicketPercent;
@@ -353,13 +367,15 @@ const NotificationItem = ({ item, index }: { item: Notification; index?: number 
   const getNotificationStyle = () => {
     if (item.type === "ORDER") {
       return {
-        iconBg: "bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-900/30",
+        iconBg:
+          "bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-900/30",
         iconColor: "text-blue-600 dark:text-blue-400",
         borderColor: "border-blue-200 dark:border-blue-800",
       };
     }
     return {
-      iconBg: "bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-900/30",
+      iconBg:
+        "bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-900/30",
       iconColor: "text-orange-600 dark:text-orange-400",
       borderColor: "border-orange-200 dark:border-orange-800",
     };
@@ -373,7 +389,8 @@ const NotificationItem = ({ item, index }: { item: Notification; index?: number 
       className={cn(
         "group relative px-4 py-3.5 cursor-pointer transition-all duration-200",
         "hover:bg-gradient-to-r hover:from-gray-50 hover:to-transparent dark:hover:from-gray-800 dark:hover:to-transparent",
-        !item.isRead && "bg-gradient-to-r from-blue-50/30 to-transparent dark:from-blue-900/5 dark:to-transparent",
+        !item.isRead &&
+          "bg-gradient-to-r from-blue-50/30 to-transparent dark:from-blue-900/5 dark:to-transparent",
         "border-b border-gray-100 dark:border-gray-800 last:border-0"
       )}
       style={{
@@ -421,7 +438,9 @@ const NotificationItem = ({ item, index }: { item: Notification; index?: number 
             {!item.isRead && (
               <>
                 <span className="w-0.5 h-0.5 rounded-full bg-gray-400" />
-                <span className="text-[10px] font-medium text-[#40BFFF]">New</span>
+                <span className="text-[10px] font-medium text-[#40BFFF]">
+                  New
+                </span>
               </>
             )}
           </div>
