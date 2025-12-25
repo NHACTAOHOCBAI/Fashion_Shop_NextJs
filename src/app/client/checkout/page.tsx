@@ -9,7 +9,16 @@ import { useMyAddress } from "@/hooks/queries/useAddress";
 import { useAvailable } from "@/hooks/queries/useCoupon";
 import { usePlaceOrder } from "@/hooks/queries/useOrder";
 import { createPaypal } from "@/services/payment.service";
-import { Box, CreditCard, MapPinHouse, Truck, Check, ShoppingCart, Package2, CheckCircle2 } from "lucide-react";
+import {
+  Box,
+  CreditCard,
+  MapPinHouse,
+  Truck,
+  Check,
+  ShoppingCart,
+  Package2,
+  CheckCircle2,
+} from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState, useMemo, useEffect, useCallback } from "react";
@@ -167,6 +176,8 @@ const Checkout = () => {
       quantity: product.quantity,
     };
   });
+  console.log(products);
+  console.log(test2);
   const { data: myCoupons } = useAvailable({
     items: test2 || [],
   });
@@ -411,22 +422,26 @@ const Checkout = () => {
                   >
                     <step.icon className="w-5 h-5" />
                   </div>
-                  <span className={cn(
-                    "text-xs font-medium",
-                    step.completed || index === 1
-                      ? "text-[#40BFFF]"
-                      : "text-gray-400"
-                  )}>
+                  <span
+                    className={cn(
+                      "text-xs font-medium",
+                      step.completed || index === 1
+                        ? "text-[#40BFFF]"
+                        : "text-gray-400"
+                    )}
+                  >
                     {step.label}
                   </span>
                 </div>
                 {index < checkoutSteps.length - 1 && (
-                  <div className={cn(
-                    "w-24 h-0.5 mx-3 rounded-full transition-colors",
-                    step.completed
-                      ? "bg-[#40BFFF]"
-                      : "bg-gray-200 dark:bg-gray-700"
-                  )} />
+                  <div
+                    className={cn(
+                      "w-24 h-0.5 mx-3 rounded-full transition-colors",
+                      step.completed
+                        ? "bg-[#40BFFF]"
+                        : "bg-gray-200 dark:bg-gray-700"
+                    )}
+                  />
                 )}
               </div>
             ))}
@@ -439,20 +454,18 @@ const Checkout = () => {
             <div className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
               <MapPinHouse className="w-4 h-4 text-[#40BFFF]" />
             </div>
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+            <h5 className=" font-semibold text-gray-800 dark:text-gray-100">
               Shipping Address
-            </h2>
+            </h5>
           </div>
           <div className="flex justify-between items-end">
-            <div className="flex-1 text-sm">
-              {renderAddressContent()}
-            </div>
+            <div className="flex-1 text-sm">{renderAddressContent()}</div>
             <AlertDialog>
               <AlertDialogTrigger disabled={!myAddresses}>
-                <button
-                  className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700 text-[#40BFFF] rounded-lg text-sm font-medium border border-gray-200 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-                >
-                  {myAddresses && myAddresses.length === 0 ? "Add New" : "Change"}
+                <button className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700 text-[#40BFFF] rounded-lg text-sm font-medium border border-gray-200 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                  {myAddresses && myAddresses.length === 0
+                    ? "Add New"
+                    : "Change"}
                 </button>
               </AlertDialogTrigger>
               {myAddresses && (
@@ -466,121 +479,120 @@ const Checkout = () => {
           </div>
         </div>
 
-      {/* Shipping Method */}
-      <div className="mt-[30px]">
-        <div className="flex gap-[10px]">
-          <Truck />
-          <p className="font-medium">Shipping Method</p>
-        </div>
-        <div className="mt-[22px]">
-          <RadioGroup
-            value={selectedShipping}
-            onValueChange={setSelectedShipping}
-          >
-            {shippingOptions.map((option) => {
-              const isSelected = selectedShipping === option.value;
-              return (
-                <label
-                  htmlFor={option.value}
-                  key={option.value}
-                  className={`flex py-[15px] px-[19px] rounded-[4px] border-[1px] cursor-pointer ${
-                    isSelected
-                      ? "bg-[#E8EFFA] border-[#40BFFF]"
-                      : "border-gray-100"
-                  }`}
-                >
-                  <RadioGroupItem
-                    value={option.value}
-                    id={option.value}
-                    className="
+        {/* Shipping Method */}
+        <div className="mt-[30px]">
+          <div className="flex gap-[10px]">
+            <Truck />
+            <p className="font-medium">Shipping Method</p>
+          </div>
+          <div className="mt-[22px]">
+            <RadioGroup
+              value={selectedShipping}
+              onValueChange={setSelectedShipping}
+            >
+              {shippingOptions.map((option) => {
+                const isSelected = selectedShipping === option.value;
+                return (
+                  <label
+                    htmlFor={option.value}
+                    key={option.value}
+                    className={`flex py-[15px] px-[19px] rounded-[4px] border-[1px] cursor-pointer ${
+                      isSelected
+                        ? "bg-[#E8EFFA] border-[#40BFFF]"
+                        : "border-gray-100"
+                    }`}
+                  >
+                    <RadioGroupItem
+                      value={option.value}
+                      id={option.value}
+                      className="
                                             mt-[4px] 
                                             data-[state=checked]:border-[#40BFFF] 
                                             data-[state=checked]:text-[#40BFFF]
                                             text-gray-400
                                         "
-                  />
-                  <p className="text-[16px] font-semibold ml-[8px]">
-                    ${option.price.toFixed(2)}
-                  </p>
-                  <div className="font-thin text-[14px] ml-[22px]">
-                    <p>{option.name}</p>
-                    <p>{option.delivery}</p>
-                  </div>
-                  <p className="ml-auto">Logo here</p>
-                </label>
-              );
-            })}
-          </RadioGroup>
+                    />
+                    <p className="text-[16px] font-semibold ml-[8px]">
+                      ${option.price.toFixed(2)}
+                    </p>
+                    <div className="font-thin text-[14px] ml-[22px]">
+                      <p>{option.name}</p>
+                      <p>{option.delivery}</p>
+                    </div>
+                  </label>
+                );
+              })}
+            </RadioGroup>
+          </div>
+          <div className="bg-[#FAFAFB] h-[2px] my-[18px]" />
         </div>
-        <div className="bg-[#FAFAFB] h-[2px] my-[18px]" />
-      </div>
 
-      {/* Products */}
-      <div className="mt-[30px]">
-        <div className="flex gap-[10px]">
-          <Box />
-          <p className="font-medium">Products</p>
+        {/* Products */}
+        <div className="mt-[30px]">
+          <div className="flex gap-[10px]">
+            <Box />
+            <p className="font-medium">Products</p>
+          </div>
+          <div className="mt-[22px]">
+            {products && products.length > 0 ? (
+              products.map((item) => {
+                return <ProductItem item={item} key={item.id} />;
+              })
+            ) : (
+              <p className="text-gray-500 py-4">Your cart is empty.</p>
+            )}
+          </div>
+          <div className="bg-[#FAFAFB] h-[2px] my-[18px]" />
         </div>
-        <div className="mt-[22px]">
-          {products && products.length > 0 ? (
-            products.map((item) => {
-              return <ProductItem item={item} key={item.id} />;
-            })
-          ) : (
-            <p className="text-gray-500 py-4">Your cart is empty.</p>
-          )}
-        </div>
-        <div className="bg-[#FAFAFB] h-[2px] my-[18px]" />
-      </div>
 
-      <div className="flex mt-[30px] gap-[62px] ">
-        <div className="flex-1">
-          {/* Coupons */}
-          <div>
-            <div className="flex gap-[10px] items-center">
-              <RiCoupon3Line />
-              <p className="font-medium">Coupons</p>
-              <p className="text-sm text-gray-500 ml-2">
-                {currentCoupon
-                  ? `Applied: ${currentCoupon.code}`
-                  : "No coupon applied"}
-              </p>
-              <div className="ml-auto">
-                <AlertDialog>
-                  <AlertDialogTrigger>
-                    <NormalButton>
-                      <p className="text-[14px] text-[#40BFFF]">Load More</p>
-                    </NormalButton>
-                  </AlertDialogTrigger>
-                  <CouponList
-                    handleCouponClick={handleCouponClick}
-                    selectedCouponId={selectedCouponId}
-                    availableCoupons={myCoupons?.data}
-                  />
-                </AlertDialog>
+        <div className="flex mt-[30px] gap-[62px] ">
+          <div className="flex-1">
+            {/* Coupons */}
+            <div>
+              <div className="flex gap-[10px] items-center">
+                <RiCoupon3Line />
+                <p className="font-medium">Coupons</p>
+                <p className="text-sm text-gray-500 ml-2">
+                  {currentCoupon
+                    ? `Applied: ${currentCoupon.code}`
+                    : "No coupon applied"}
+                </p>
+                <div className="ml-auto">
+                  <AlertDialog>
+                    <AlertDialogTrigger>
+                      <NormalButton>
+                        <p className="text-[14px] text-[#40BFFF]">Load More</p>
+                      </NormalButton>
+                    </AlertDialogTrigger>
+                    <CouponList
+                      handleCouponClick={handleCouponClick}
+                      selectedCouponId={selectedCouponId}
+                      availableCoupons={myCoupons?.data}
+                    />
+                  </AlertDialog>
+                </div>
               </div>
-            </div>
-            <div className="mt-[22px] flex gap-[20px] flex-wrap">
-              {myCoupons &&
-                myCoupons.data.slice(0, 3).map((coupon) => {
-                  const isSelected = selectedCouponId === coupon.id;
-                  const isActive = coupon.status === "active";
-                  const discountText =
-                    coupon.discountType === "percentage"
-                      ? `${coupon.discountValue}% off`
-                      : coupon.discountType === "fixed_amount"
-                      ? `Save $${Number(coupon.discountValue).toFixed(2)}`
-                      : "Free Shipping";
+              <div className="mt-[22px] flex gap-[20px] flex-wrap">
+                {myCoupons &&
+                  myCoupons.data.slice(0, 3).map((coupon) => {
+                    const isSelected = selectedCouponId === coupon.id;
+                    const isActive = coupon.status === "active";
+                    const discountText =
+                      coupon.discountType === "percentage"
+                        ? `${coupon.discountValue}% off`
+                        : coupon.discountType === "fixed_amount"
+                        ? `Save $${Number(coupon.discountValue).toFixed(2)}`
+                        : "Free Shipping";
 
-                  const inactiveClasses = !isActive
-                    ? "opacity-50 cursor-not-allowed pointer-events-none"
-                    : "";
+                    const inactiveClasses = !isActive
+                      ? "opacity-50 cursor-not-allowed pointer-events-none"
+                      : "";
 
-                  return (
-                    <div
-                      key={coupon.id}
-                      onClick={() => isActive && handleCouponClick(coupon.id)} // Chỉ cho phép click nếu active
-                      className={`
+                    return (
+                      <div
+                        key={coupon.id}
+                        onClick={() => isActive && handleCouponClick(coupon.id)} // Chỉ cho phép click nếu active
+                        className={`
                                                 relative
                                                 rounded-[20px] 
                                                 bg-[#F6F7F8] 
@@ -598,133 +610,137 @@ const Checkout = () => {
                                                     : "border-[2px] border-transparent"
                                                 }
                                             `}
-                    >
-                      <div className="bg-[#40BFFF] text-white text-[14px] font-bold flex items-center w-[50px] justify-center relative py-2">
-                        <p className="-rotate-90 whitespace-nowrap absolute font-medium">
-                          DISCOUNT
-                        </p>
-                      </div>
-                      <div className="py-[9px] pl-[15px] w-[190px]">
-                        <p className="text-[12px] text-[#FF4858] font-semibold">
-                          {coupon.name || discountText}
-                        </p>
-                        <p className="font-semibold text-base">{coupon.code}</p>
-                        <p className="text-[10px] font-light mt-[7px]">
-                          Start date: {formatDate(coupon.startDate)}
-                        </p>
-                        <p className="text-[10px] font-light">
-                          End date: {formatDate(coupon.endDate)}
-                        </p>
-                      </div>
-                      {/* Tag Inactive/Expired cho hiển thị nhanh */}
-                      {!isActive && (
-                        <div className="absolute top-1 right-1">
-                          <MyTag
-                            value={
-                              <p className="text-xs text-red-500">
-                                {coupon.status === "expired"
-                                  ? "Expired"
-                                  : "Inactive"}
-                              </p>
-                            }
-                          />
+                      >
+                        <div className="bg-[#40BFFF] text-white text-[14px] font-bold flex items-center w-[50px] justify-center relative py-2">
+                          <p className="-rotate-90 whitespace-nowrap absolute font-medium">
+                            DISCOUNT
+                          </p>
                         </div>
-                      )}
-                    </div>
-                  );
-                })}
-              {!myCoupons && (
-                <p className="text-gray-500">Loading coupons...</p>
-              )}
-              {myCoupons && myCoupons.data.length === 0 && (
-                <p className="text-gray-500">You have no coupons available.</p>
-              )}
+                        <div className="py-[9px] pl-[15px] w-[190px]">
+                          <p className="text-[12px] text-[#FF4858] font-semibold">
+                            {coupon.name || discountText}
+                          </p>
+                          <p className="font-semibold text-base">
+                            {coupon.code}
+                          </p>
+                          <p className="text-[10px] font-light mt-[7px]">
+                            Start date: {formatDate(coupon.startDate)}
+                          </p>
+                          <p className="text-[10px] font-light">
+                            End date: {formatDate(coupon.endDate)}
+                          </p>
+                        </div>
+                        {/* Tag Inactive/Expired cho hiển thị nhanh */}
+                        {!isActive && (
+                          <div className="absolute top-1 right-1">
+                            <MyTag
+                              value={
+                                <p className="text-xs text-red-500">
+                                  {coupon.status === "expired"
+                                    ? "Expired"
+                                    : "Inactive"}
+                                </p>
+                              }
+                            />
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                {!myCoupons && (
+                  <p className="text-gray-500">Loading coupons...</p>
+                )}
+                {myCoupons && myCoupons.data.length === 0 && (
+                  <p className="text-gray-500">
+                    You have no coupons available.
+                  </p>
+                )}
+              </div>
             </div>
-          </div>
-          {/* End Coupons */}
+            {/* End Coupons */}
 
-          {/* Payment Method */}
-          <div className=" mt-[30px]">
-            <div className="flex gap-[10px]">
-              <CreditCard />
-              <p className="font-medium">Payment Method</p>
-            </div>
-            <div className="mt-[22px] w-full">
-              <RadioGroup
-                value={selectedPayment}
-                onValueChange={setSelectedPayment}
-              >
-                {paymentMethodOptions.map((option) => {
-                  const isSelected = selectedPayment === option.value;
-                  return (
-                    <label
-                      htmlFor={option.value}
-                      key={option.value}
-                      className={` py-[15px] px-[19px] rounded-[4px] border-[1px] mb-[15px] flex items-start cursor-pointer ${
-                        isSelected
-                          ? "bg-[#E8EFFA] border-[#40BFFF]"
-                          : "border-gray-100"
-                      }`}
-                    >
-                      <RadioGroupItem
-                        value={option.value}
-                        id={option.value}
-                        className="
+            {/* Payment Method */}
+            <div className=" mt-[30px]">
+              <div className="flex gap-[10px]">
+                <CreditCard />
+                <p className="font-medium">Payment Method</p>
+              </div>
+              <div className="mt-[22px] w-full">
+                <RadioGroup
+                  value={selectedPayment}
+                  onValueChange={setSelectedPayment}
+                >
+                  {paymentMethodOptions.map((option) => {
+                    const isSelected = selectedPayment === option.value;
+                    return (
+                      <label
+                        htmlFor={option.value}
+                        key={option.value}
+                        className={` py-[15px] px-[19px] rounded-[4px] border-[1px] mb-[15px] flex items-start cursor-pointer ${
+                          isSelected
+                            ? "bg-[#E8EFFA] border-[#40BFFF]"
+                            : "border-gray-100"
+                        }`}
+                      >
+                        <RadioGroupItem
+                          value={option.value}
+                          id={option.value}
+                          className="
                                                     mt-[4px] 
                                                     data-[state=checked]:border-[#40BFFF] 
                                                     data-[state=checked]:text-[#40BFFF]
                                                     text-gray-400
                                                 "
-                      />
-                      <div className="ml-[8px] flex-1">
-                        <div className="text-[16px] font-semibold">
-                          {option.name}
-                          <p className="font-thin text-[14px] mt-[4px]">
-                            {option.description}
-                          </p>
+                        />
+                        <div className="ml-[8px] flex-1">
+                          <div className="text-[16px] font-semibold">
+                            {option.name}
+                            <p className="font-thin text-[14px] mt-[4px]">
+                              {option.description}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                      <p className="ml-auto">Logo here</p>
-                    </label>
-                  );
-                })}
-              </RadioGroup>
+                        <p className="ml-auto">Logo here</p>
+                      </label>
+                    );
+                  })}
+                </RadioGroup>
+              </div>
             </div>
+            {/* End Payment Method */}
           </div>
-          {/* End Payment Method */}
-        </div>
 
-        {/* Summary */}
-        <div className="w-[286px]">
-          <h3 className="font-semibold text-base mb-3">Order Summary</h3>
-          <div className="flex justify-between items-center text-sm">
-            <p className="text-gray-600 dark:text-gray-400">Subtotal</p>
-            <p className="font-medium">${orderSummary.subtotal.toFixed(2)}</p>
+          {/* Summary */}
+          <div className="w-[286px]">
+            <h4 className="font-semibold text-base mb-3">Order Summary</h4>
+            <div className="flex justify-between items-center text-sm">
+              <p className="text-gray-600 dark:text-gray-400">Subtotal</p>
+              <p className="font-medium">${orderSummary.subtotal.toFixed(2)}</p>
+            </div>
+            <div className="flex justify-between items-center mt-3 text-sm">
+              <p className="text-gray-600 dark:text-gray-400">Shipping fee</p>
+              <p className="font-medium">
+                {orderSummary.shippingFee > 0
+                  ? `$${orderSummary.shippingFee.toFixed(2)}`
+                  : "Free"}
+              </p>
+            </div>
+            <div className="flex justify-between items-center mt-3 text-sm">
+              <p className="text-gray-600 dark:text-gray-400">Discount</p>
+              <p className="text-[#FF4858] font-medium">
+                -${orderSummary.discountAmount.toFixed(2)}
+              </p>
+            </div>
+            <div className="bg-gray-200 dark:bg-gray-700 h-px my-4" />
+            <div className="flex justify-between items-center text-2xl font-semibold mb-5">
+              <p>Total</p>
+              <p className="text-[#40BFFF]">${orderSummary.total.toFixed(2)}</p>
+            </div>
+            <NoteInput value={note} onChange={setNote} />
+            <PlaceOrderButton onClick={handleCheckout} />
           </div>
-          <div className="flex justify-between items-center mt-3 text-sm">
-            <p className="text-gray-600 dark:text-gray-400">Shipping fee</p>
-            <p className="font-medium">
-              {orderSummary.shippingFee > 0
-                ? `$${orderSummary.shippingFee.toFixed(2)}`
-                : "Free"}
-            </p>
-          </div>
-          <div className="flex justify-between items-center mt-3 text-sm">
-            <p className="text-gray-600 dark:text-gray-400">Discount</p>
-            <p className="text-[#FF4858] font-medium">
-              -${orderSummary.discountAmount.toFixed(2)}
-            </p>
-          </div>
-          <div className="bg-gray-200 dark:bg-gray-700 h-px my-4" />
-          <div className="flex justify-between items-center text-2xl font-semibold mb-5">
-            <p>Total</p>
-            <p className="text-[#40BFFF]">${orderSummary.total.toFixed(2)}</p>
-          </div>
-          <NoteInput value={note} onChange={setNote} />
-          <PlaceOrderButton onClick={handleCheckout} />
         </div>
       </div>
-    </div>
     </div>
   );
 };
