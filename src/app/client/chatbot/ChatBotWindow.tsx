@@ -8,17 +8,10 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Send } from "lucide-react";
 import { askChat, getChatHistory } from "@/services/chatbot.service";
 
-/* ================= TYPES ================= */
-interface BotMessage {
-  id?: number;
-  content: string;
-  createdAt: string;
-  role: "user" | "assistant";
-}
-
 /* ================= UTILS ================= */
 const shouldShowTime = (curr: BotMessage, prev?: BotMessage) => {
-  if (!prev) return true;
+  if (!curr.createdAt) return false;
+  if (!prev?.createdAt) return true;
   const diff =
     new Date(curr.createdAt).getTime() - new Date(prev.createdAt).getTime();
   return diff > 5 * 60 * 1000;
@@ -59,20 +52,21 @@ export default function ChatbotWindow() {
 
     const res = await askChat(userMsg.content);
 
+    setTyping(false);
+
     const botMsg: BotMessage = {
       role: "assistant",
       content: res.answer,
       createdAt: new Date().toISOString(),
     };
 
-    setTyping(false);
     setMessages((prev) => [...prev, botMsg]);
     inputRef.current?.focus();
   };
 
   /* ================= UI ================= */
   return (
-    <div className="h-full max-h-[80vh] flex flex-col rounded-xl border bg-background">
+    <div className="flex flex-col h-full max-h-[80vh]">
       {/* ===== HEADER ===== */}
       <div className="h-14 border-b px-4 flex items-center gap-3 shrink-0">
         <Avatar>
@@ -98,11 +92,11 @@ export default function ChatbotWindow() {
               <div key={i} className="space-y-1">
                 {showTime && (
                   <div className="text-center text-xs text-muted-foreground">
-                    {new Date(m.createdAt).toLocaleString("en-US", {
+                    {new Date(m.createdAt!).toLocaleString("vi-VN", {
                       hour: "2-digit",
                       minute: "2-digit",
-                      month: "short",
                       day: "2-digit",
+                      month: "2-digit",
                     })}
                   </div>
                 )}
