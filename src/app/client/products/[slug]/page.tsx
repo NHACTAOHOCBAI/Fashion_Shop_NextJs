@@ -22,6 +22,7 @@ import Image from "next/image";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useMemo, useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import VoiceSearchModal from "@/app/client/products/_components/VoiceSearchModal";
 
 const formatToFilterData = (
   data: AttributeCategory[] /* AttributeCategory[] */
@@ -238,6 +239,7 @@ const Products = () => {
                   onChange={(value) => setSearchInput(value)}
                 />
                 <ImageSearchModal />
+                <VoiceSearchModal />
               </div>
 
               <SortByButton

@@ -162,6 +162,25 @@ const searchImage = async (image: File | null) => {
   );
   return response.data as Product[];
 };
+export interface VoiceSearchResponse<T = any> {
+  text: string;
+  data: T[];
+}
+
+export const searchByVoice = async (file: File) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = (await axiosInstance.post(
+    "/products/search/voice",
+    formData,
+    {
+      headers: { "Content-Type": "multipart/form-data" },
+    }
+  )) as { data: VoiceSearchResponse };
+
+  return response.data;
+};
 export {
   getProducts,
   createProduct,
