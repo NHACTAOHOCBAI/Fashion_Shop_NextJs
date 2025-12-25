@@ -1,6 +1,6 @@
 import Footer from "@/app/client/_components/Footer";
 import Header from "@/app/client/_components/Header";
-import Chatbot from "@/app/client/chatbot/Chatbot";
+import ChatLauncher from "@/app/client/chatbot/ChatLauncher";
 import { Poppins } from "next/font/google";
 
 const poppins = Poppins({
@@ -16,10 +16,8 @@ const ClientLayout = ({ children }: { children: React.ReactNode }) => {
     >
       <Header />
       <main>{children}</main>
+      <ChatLauncher />
       <Footer />
-
-      {/* Chatbot sẽ luôn nổi trên các thành phần khác */}
-      <Chatbot />
     </div>
   );
 };
