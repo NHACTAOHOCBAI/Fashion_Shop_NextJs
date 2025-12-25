@@ -291,38 +291,42 @@ const Notification = ({ notifications }: { notifications: Notification[] }) => {
   return (
     <div className="w-[380px]">
       {/* Header */}
-      <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-800">
-        <div className="flex items-center justify-between">
+      <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
+        <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <h3 className="text-base font-semibold text-gray-800 dark:text-gray-200">
+            <Bell className="w-4 h-4 text-[#40BFFF] flex-shrink-0" />
+            <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 whitespace-nowrap">
               Notifications
             </h3>
             {unreadCount > 0 && (
-              <span className="px-2 py-0.5 text-xs font-semibold bg-[#40BFFF] text-white rounded-full">
+              <span className="px-1.5 py-0.5 text-[10px] font-bold bg-[#40BFFF] text-white rounded-full flex-shrink-0">
                 {unreadCount}
               </span>
             )}
           </div>
-          {notifications.length > 0 && (
-            <button className="text-xs font-medium text-[#40BFFF] hover:text-[#33A0DD] transition-colors">
-              Mark all read
+          {notifications.length > 0 && unreadCount > 0 && (
+            <button
+              className="text-[10px] font-medium text-[#40BFFF] hover:text-[#33A0DD] transition-colors whitespace-nowrap flex-shrink-0 px-2 py-1 hover:bg-[#40BFFF]/10 rounded"
+              title="Mark all as read"
+            >
+              Mark read
             </button>
           )}
         </div>
       </div>
 
       {/* Notification List */}
-      <div className="max-h-[420px] overflow-y-auto">
+      <div className="max-h-[400px] overflow-y-auto">
         {myNotification.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
-            <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-3">
-              <Bell className="w-8 h-8 text-gray-400 dark:text-gray-600" />
+          <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+            <div className="w-14 h-14 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-3">
+              <Bell className="w-7 h-7 text-gray-400 dark:text-gray-600" />
             </div>
             <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              No notifications yet
+              No notifications
             </p>
             <p className="text-xs text-gray-500 dark:text-gray-400">
-              We'll notify you when something arrives
+              We'll notify you when something new arrives
             </p>
           </div>
         ) : (
@@ -340,12 +344,12 @@ const Notification = ({ notifications }: { notifications: Notification[] }) => {
 
       {/* Footer */}
       {notifications.length > 0 && (
-        <div className="px-4 py-3 border-t border-gray-100 dark:border-gray-800">
+        <div className="px-4 py-2.5 border-t border-gray-100 dark:border-gray-800 bg-gray-50/30 dark:bg-gray-800/30">
           <button
             onClick={() => router.push("/client/my-account/order-news")}
-            className="w-full text-center text-sm font-medium text-[#40BFFF] hover:text-[#33A0DD] transition-colors py-1"
+            className="w-full text-center text-xs font-semibold text-[#40BFFF] hover:text-[#33A0DD] transition-colors py-1.5 hover:bg-[#40BFFF]/5 rounded"
           >
-            View all notifications
+            View All Notifications
           </button>
         </div>
       )}
@@ -367,17 +371,13 @@ const NotificationItem = ({
   const getNotificationStyle = () => {
     if (item.type === "ORDER") {
       return {
-        iconBg:
-          "bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-900/30",
-        iconColor: "text-blue-600 dark:text-blue-400",
-        borderColor: "border-blue-200 dark:border-blue-800",
+        iconBg: "bg-[#40BFFF]/10",
+        iconColor: "text-[#40BFFF]",
       };
     }
     return {
-      iconBg:
-        "bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-900/30",
+      iconBg: "bg-orange-100 dark:bg-orange-900/20",
       iconColor: "text-orange-600 dark:text-orange-400",
-      borderColor: "border-orange-200 dark:border-orange-800",
     };
   };
 
@@ -387,59 +387,52 @@ const NotificationItem = ({
     <div
       onClick={() => router.replace("/client/my-account/order-news")}
       className={cn(
-        "group relative px-4 py-3.5 cursor-pointer transition-all duration-200",
-        "hover:bg-gradient-to-r hover:from-gray-50 hover:to-transparent dark:hover:from-gray-800 dark:hover:to-transparent",
-        !item.isRead &&
-          "bg-gradient-to-r from-blue-50/30 to-transparent dark:from-blue-900/5 dark:to-transparent",
+        "group relative px-3.5 py-3 cursor-pointer transition-all duration-150",
+        "hover:bg-gray-50 dark:hover:bg-gray-800/50",
+        !item.isRead && "bg-[#40BFFF]/5 dark:bg-[#40BFFF]/5",
         "border-b border-gray-100 dark:border-gray-800 last:border-0"
       )}
-      style={{
-        animationDelay: `${(index || 0) * 50}ms`,
-      }}
     >
-      <div className="flex gap-3">
+      <div className="flex gap-2.5">
         {/* Icon */}
         <div
           className={cn(
-            "w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm",
-            "group-hover:scale-105 transition-transform duration-200",
+            "w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0",
             style.iconBg
           )}
         >
-          <Icon size={18} className={style.iconColor} />
+          <Icon size={16} className={style.iconColor} />
         </div>
 
         {/* Content */}
-        <div className="flex flex-col gap-1 flex-1 min-w-0">
+        <div className="flex flex-col gap-0.5 flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
             <p
               className={cn(
-                "text-sm leading-snug text-gray-800 dark:text-gray-200",
+                "text-xs leading-tight text-gray-800 dark:text-gray-200",
                 !item.isRead ? "font-semibold" : "font-medium"
               )}
             >
               {item.title}
             </p>
             {!item.isRead && (
-              <div className="flex items-center gap-1 flex-shrink-0">
-                <span className="w-2 h-2 bg-[#40BFFF] rounded-full animate-pulse" />
-              </div>
+              <span className="w-1.5 h-1.5 bg-[#40BFFF] rounded-full flex-shrink-0 mt-1" />
             )}
           </div>
 
-          <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 leading-relaxed">
+          <p className="text-[11px] text-gray-600 dark:text-gray-400 line-clamp-2 leading-relaxed">
             {item.message}
           </p>
 
-          <div className="flex items-center gap-2 mt-0.5">
+          <div className="flex items-center gap-1.5 mt-1">
             <p className="text-[10px] text-gray-500 dark:text-gray-500">
               {formatTimeAgo(item.createdAt)}
             </p>
             {!item.isRead && (
               <>
-                <span className="w-0.5 h-0.5 rounded-full bg-gray-400" />
-                <span className="text-[10px] font-medium text-[#40BFFF]">
-                  New
+                <span className="w-1 h-1 rounded-full bg-gray-300" />
+                <span className="text-[10px] font-semibold text-[#40BFFF]">
+                  NEW
                 </span>
               </>
             )}
