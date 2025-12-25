@@ -4,7 +4,14 @@ import QuantitySelector from "@/app/client/products/_components/MyCount";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useGetMyCart, useRemoveFromCart } from "@/hooks/queries/useCart";
 import { EmptyCart } from "@/components/ui/empty-states";
-import { Trash2, ShoppingBag, Tag, TruckIcon, Shield, CheckCircle } from "lucide-react";
+import {
+  Trash2,
+  ShoppingBag,
+  Tag,
+  TruckIcon,
+  Shield,
+  CheckCircle,
+} from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
@@ -107,12 +114,13 @@ const Cart = () => {
       <div className="w-[1240px] mx-auto py-10">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-1 flex items-center gap-2">
-            <ShoppingBag className="w-6 h-6 text-[#40BFFF]" />
+          <h4 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-1 flex items-center gap-2">
+            {/* <ShoppingBag className="w-6 h-6 text-[#40BFFF]" /> */}
             Shopping Cart
-          </h1>
+          </h4>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            {cartItems.length} {cartItems.length === 1 ? "item" : "items"} in your cart
+            {cartItems.length} {cartItems.length === 1 ? "item" : "items"} in
+            your cart
           </p>
         </div>
 
@@ -125,7 +133,8 @@ const Cart = () => {
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-[#40BFFF]" />
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    {selectedCount} item{selectedCount !== 1 ? "s" : ""} selected
+                    {selectedCount} item{selectedCount !== 1 ? "s" : ""}{" "}
+                    selected
                   </span>
                 </div>
                 <DeleteButton onClick={handleDeleteSelected} />
@@ -150,18 +159,14 @@ const Cart = () => {
           <div className="w-80">
             <div className="sticky top-24">
               <div className="bg-white dark:bg-gray-800 rounded-lg p-5 shadow border border-gray-200 dark:border-gray-700">
-                <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
+                <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
                   Order Summary
-                </h2>
+                </h4>
 
                 <div className="space-y-3 mb-4">
                   <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400">
                     <span>Subtotal ({selectedCount} items)</span>
                     <span className="font-medium">${subtotal.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400">
-                    <span>Shipping</span>
-                    <span className="font-medium text-green-600">FREE</span>
                   </div>
                 </div>
 
@@ -176,14 +181,13 @@ const Cart = () => {
                   </span>
                 </div>
 
-                <CheckoutButton subtotal={subtotal} selectedItems={selectedItems} />
+                <CheckoutButton
+                  subtotal={subtotal}
+                  selectedItems={selectedItems}
+                />
 
                 {/* Trust Badges */}
                 <div className="mt-5 pt-5 border-t border-gray-200 dark:border-gray-700 space-y-2">
-                  <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-                    <TruckIcon className="w-4 h-4 text-[#40BFFF]" />
-                    <span>Free shipping on all orders</span>
-                  </div>
                   <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                     <Shield className="w-4 h-4 text-[#40BFFF]" />
                     <span>Secure checkout</span>
@@ -221,9 +225,7 @@ const CartItem: React.FC<CartItemProps> = ({
     <div
       className={cn(
         "bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border transition-colors",
-        isSelected
-          ? "border-[#40BFFF]"
-          : "border-gray-200 dark:border-gray-700"
+        isSelected ? "border-[#40BFFF]" : "border-gray-200 dark:border-gray-700"
       )}
     >
       <div className="flex gap-4">
@@ -254,14 +256,18 @@ const CartItem: React.FC<CartItemProps> = ({
 
         {/* Product Info */}
         <div className="flex-1">
-          <h3 className="text-base font-medium text-gray-800 dark:text-gray-100 mb-2">
+          <h5 className="text-base font-medium text-gray-800 dark:text-gray-100 mb-2">
             {item.variant.product.name}
-          </h3>
+          </h5>
 
           {/* Variant Tags */}
           <div className="flex flex-wrap gap-1.5 mb-2">
             {item.variant.variantAttributeValues.map((attr) => (
-              <MyTag key={attr.id} value={attr.attributeCategory.value} variant="primary" />
+              <MyTag
+                key={attr.id}
+                value={attr.attributeCategory.value}
+                variant="primary"
+              />
             ))}
           </div>
 
@@ -283,7 +289,9 @@ const CartItem: React.FC<CartItemProps> = ({
         {/* Quantity & Price */}
         <div className="flex flex-col items-end justify-between min-w-[160px]">
           <div className="text-right mb-3">
-            <p className="text-xs text-gray-500 dark:text-gray-400 mb-0.5">Price</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mb-0.5">
+              Price
+            </p>
             <p className="text-xl font-semibold text-[#40BFFF]">
               ${itemTotal.toFixed(2)}
             </p>
