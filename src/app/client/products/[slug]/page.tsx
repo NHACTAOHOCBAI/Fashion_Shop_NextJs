@@ -249,9 +249,9 @@ const Products = () => {
 
             {/* Results count with icon */}
             <div className="flex items-center gap-2 mt-4">
-              <Package className="w-5 h-5 text-[var(--cyan-500)]" />
-              <p className="text-lg text-gray-700 dark:text-gray-300">
-                <span className="font-bold text-[var(--cyan-500)]">
+              <Package className="w-5 h-5 text-[#40BFFF]" />
+              <p className="text-lg text-[#40BFFF] dark:text-gray-300">
+                <span className="font-bold text-[#40BFFF]">
                   {products?.pagination.total || 0}
                 </span>{" "}
                 {products?.pagination.total === 1 ? "item" : "items"} found
@@ -278,7 +278,9 @@ const Products = () => {
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.8 }}
                       transition={{ delay: index * 0.05 }}
-                      onClick={() => handleFilterChange(filter.field, filter.value, false)}
+                      onClick={() =>
+                        handleFilterChange(filter.field, filter.value, false)
+                      }
                     >
                       <span className="capitalize">{filter.value}</span>
                       <X className="w-3.5 h-3.5" />

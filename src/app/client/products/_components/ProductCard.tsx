@@ -9,6 +9,8 @@ import { Heart, ShoppingCart, Eye } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { cardHover, badgeAppear } from "@/lib/animations";
+import { useToggleWishlistItem } from "@/hooks/queries/useWishlist";
+import { toast } from "sonner";
 
 const NEW_TIME = 24 * 60 * 60 * 1000;
 
@@ -20,6 +22,22 @@ const isNewProduct = (createdAt: string): boolean => {
 const FALLBACK_IMAGE = "/images/product-placeholder.png";
 
 const ProductCard = ({ product }: { product: Product }) => {
+  const { mutate: toggleWishlist } = useToggleWishlistItem();
+  const handleToggleWishlist = () => {
+    toggleWishlist(
+      {
+        productId: product.id,
+      },
+      {
+        onSuccess: () => {
+          toast.success(`${product?.name} has been added to cart`);
+        },
+        onError: (error) => {
+          toast.error(`Ohh!!! ${error.message}`);
+        },
+      }
+    );
+  };
   const [isHovered, setIsHovered] = useState(false);
   const showNewTag = isNewProduct(product.createdAt);
   const imageUrl = product.images?.[0]?.imageUrl || FALLBACK_IMAGE;
@@ -32,11 +50,14 @@ const ProductCard = ({ product }: { product: Product }) => {
       whileHover="hover"
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
-      className="h-full"
+      className="h-full rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-shadow duration-300 border border-gray-200"
     >
-      <div className="group relative h-full rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-hidden shadow-sm hover:shadow-2xl transition-shadow duration-300">
+      <div className="group relative h-full  dark:border-gray-700 bg-white dark:bg-gray-800 ">
         {/* IMAGE SECTION */}
-        <Link href={`/client/products/product-detail/${product.id}`} className="block">
+        <Link
+          href={`/client/products/product-detail/${product.id}`}
+          className="block"
+        >
           <div className="relative aspect-square bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-800 dark:via-gray-850 dark:to-gray-900 overflow-hidden">
             <Image
               src={imageUrl}
@@ -71,23 +92,7 @@ const ProductCard = ({ product }: { product: Product }) => {
                       // TODO: Add to wishlist logic
                     }}
                   >
-                    <Heart size={20} />
-                  </motion.button>
-                  <motion.button
-                    className="w-11 h-11 rounded-full bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm shadow-xl flex items-center justify-center text-gray-700 dark:text-gray-300 hover:bg-[var(--cyan-400)] hover:text-white transition-colors"
-                    initial={{ scale: 0, y: 20 }}
-                    animate={{ scale: 1, y: 0 }}
-                    exit={{ scale: 0, y: 20 }}
-                    transition={{ delay: 0.1 }}
-                    whileHover={{ scale: 1.15 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      // TODO: Quick add to cart logic
-                    }}
-                  >
-                    <ShoppingCart size={20} />
+                    <Heart onClick={() => handleToggleWishlist()} size={20} />
                   </motion.button>
                   <motion.button
                     className="w-11 h-11 rounded-full bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm shadow-xl flex items-center justify-center text-gray-700 dark:text-gray-300 hover:bg-[var(--cyan-400)] hover:text-white transition-colors"
@@ -127,12 +132,12 @@ const ProductCard = ({ product }: { product: Product }) => {
         <Link href={`/client/products/product-detail/${product.id}`}>
           <div className="p-5 flex flex-col gap-3">
             {/* PRODUCT NAME */}
-            <h3
-              className="min-h-[48px] text-base font-semibold line-clamp-2 transition-colors text-gray-800 dark:text-gray-100 group-hover:text-[var(--cyan-500)] dark:group-hover:text-[var(--cyan-400)] leading-snug"
+            <h6
+              className=" min-h-[36px] transition-colors text-gray-800 dark:text-gray-100 group-hover:text-[var(--cyan-500)] dark:group-hover:text-[var(--cyan-400)] "
               title={product.name}
             >
               {product.name}
-            </h3>
+            </h6>
 
             {/* RATING */}
             <div className="flex items-center gap-2">
@@ -158,7 +163,7 @@ const ProductCard = ({ product }: { product: Product }) => {
 
             {/* PRICE */}
             <div className="flex items-center justify-between mt-1">
-              <p className="text-2xl font-bold text-gradient-primary">
+              <p className="text-2xl font-bold text-[#40BFFF]">
                 {finalMoney(Number(product.price))}
               </p>
             </div>

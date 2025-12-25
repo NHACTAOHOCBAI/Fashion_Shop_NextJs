@@ -33,9 +33,9 @@ const FilterGroup = ({
         onClick={() => setIsExpanded(!isExpanded)}
         className="w-full flex items-center justify-between mb-3 group"
       >
-        <h3 className="font-semibold text-gray-800 dark:text-gray-200 uppercase text-sm tracking-wide">
+        <h4 className="font-semibold text-gray-800 dark:text-gray-200 uppercase text-sm tracking-wide">
           {field}
-        </h3>
+        </h4>
         <motion.div
           animate={{ rotate: isExpanded ? 180 : 0 }}
           transition={{ duration: 0.3 }}
@@ -84,12 +84,14 @@ const CheckboxItem = ({ value, checked, onChange }: CheckboxItemProps) => {
       whileHover={{ x: 4 }}
       transition={{ duration: 0.2 }}
     >
-      <span className={cn(
-        "text-sm font-medium transition-colors",
-        checked
-          ? "text-[var(--cyan-700)] dark:text-[var(--cyan-300)]"
-          : "text-gray-700 dark:text-gray-300"
-      )}>
+      <span
+        className={cn(
+          "text-sm font-medium transition-colors",
+          checked
+            ? "text-[var(--cyan-700)] dark:text-[var(--cyan-300)]"
+            : "text-gray-700 dark:text-gray-300"
+        )}
+      >
         {value}
       </span>
       <Checkbox
@@ -120,9 +122,9 @@ const PriceGroup = ({ range, setRange }: PriceGroupProps) => {
         onClick={() => setIsExpanded(!isExpanded)}
         className="w-full flex items-center justify-between mb-3 group"
       >
-        <h3 className="font-semibold text-gray-800 dark:text-gray-200 uppercase text-sm tracking-wide">
+        <h4 className="font-semibold text-gray-800 dark:text-gray-200 uppercase text-sm tracking-wide">
           Price Range
-        </h3>
+        </h4>
         <motion.div
           animate={{ rotate: isExpanded ? 180 : 0 }}
           transition={{ duration: 0.3 }}
@@ -143,7 +145,7 @@ const PriceGroup = ({ range, setRange }: PriceGroupProps) => {
               <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
                 Range:
               </span>
-              <span className="text-sm font-bold text-[var(--cyan-600)] dark:text-[var(--cyan-400)]">
+              <span className="text-sm font-bold text-[#40BFFF] dark:text-[var(--cyan-400)]">
                 ${range[0].toFixed(2)} - ${range[1].toFixed(2)}
               </span>
             </div>
