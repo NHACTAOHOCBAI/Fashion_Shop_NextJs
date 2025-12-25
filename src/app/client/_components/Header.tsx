@@ -291,23 +291,25 @@ const Notification = ({ notifications }: { notifications: Notification[] }) => {
   return (
     <div className="w-[380px]">
       {/* Header */}
-      <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-800">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <h3 className="text-base font-semibold text-gray-800 dark:text-gray-200">
+      <div className="px-4 py-3 w-[360px] border-b border-gray-100 dark:border-gray-800">
+        <div className="flex items-center ">
+          <div className="flex items-center gap-2 justify-between ">
+            <h5 className="text-base font-semibold text-gray-800 dark:text-gray-200">
               Notifications
-            </h3>
+            </h5>
             {unreadCount > 0 && (
               <span className="px-2 py-0.5 text-xs font-semibold bg-[#40BFFF] text-white rounded-full">
                 {unreadCount}
               </span>
             )}
           </div>
-          {notifications.length > 0 && (
-            <button className="text-xs font-medium text-[#40BFFF] hover:text-[#33A0DD] transition-colors">
-              Mark all read
-            </button>
-          )}
+          <div className="ml-[50px]">
+            {notifications.length > 0 && (
+              <button className="text-xs font-medium text-[#40BFFF] hover:text-[#33A0DD] transition-colors">
+                Mark all read
+              </button>
+            )}
+          </div>
         </div>
       </div>
 

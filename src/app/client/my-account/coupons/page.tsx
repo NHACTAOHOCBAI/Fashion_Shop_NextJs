@@ -107,7 +107,9 @@ const CouponItem = ({ coupon }: CouponItemProps) => {
         </p>
       </div>
       <div className="py-3 px-4 flex-1">
-        <p className="font-semibold text-sm text-gray-800 dark:text-gray-100">{coupon.code}</p>
+        <p className="font-semibold text-sm text-gray-800 dark:text-gray-100">
+          {coupon.code}
+        </p>
         <p className="text-xs text-[#FF4858] font-semibold mt-0.5">
           {coupon.name || discountDisplay}
         </p>
@@ -212,14 +214,14 @@ const Coupons = () => {
               <Tag className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2">
+              <h6 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2">
                 My Coupons
                 {filteredCoupons.length > 0 && (
                   <span className="px-2 py-0.5 text-xs font-semibold bg-[#40BFFF] text-white rounded-full">
                     {filteredCoupons.length}
                   </span>
                 )}
-              </h1>
+              </h6>
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 Manage your coupons to get more discounts
               </p>
@@ -231,7 +233,9 @@ const Coupons = () => {
       {/* Tabs Content */}
       <div>
         {isLoading ? (
-          <p className="text-gray-500 dark:text-gray-400 text-center py-20">Loading coupons...</p>
+          <p className="text-gray-500 dark:text-gray-400 text-center py-20">
+            Loading coupons...
+          </p>
         ) : (
           <TabbedContent
             tabs={productTabs}

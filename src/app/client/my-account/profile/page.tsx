@@ -111,9 +111,9 @@ const MyProfile = () => {
               <User className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
+              <h6 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
                 My Profile
-              </h1>
+              </h6>
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 Manage your personal information
               </p>
@@ -161,7 +161,7 @@ const MyProfile = () => {
                         <Input
                           type="file"
                           accept="image/*"
-                          className="cursor-pointer text-sm file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 dark:file:bg-gray-700 dark:file:text-gray-300"
+                          className="cursor-pointer text-sm file:mr-3    file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 dark:file:bg-gray-700 dark:file:text-gray-300"
                           onChange={(e) => {
                             const file = e.target.files?.[0];
                             if (!file) return;

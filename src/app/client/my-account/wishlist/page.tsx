@@ -33,27 +33,29 @@ const MyWishlist = () => {
               <Heart className="w-5 h-5 text-white fill-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2">
+              <h6 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2">
                 My Wishlist
                 {hasWishlistItems && myWishlist.length > 0 && (
                   <span className="px-2 py-0.5 text-xs font-semibold bg-[#40BFFF] text-white rounded-full">
                     {myWishlist.length}
                   </span>
                 )}
-              </h1>
+              </h6>
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 {hasWishlistItems
-                  ? `${myWishlist.length} ${myWishlist.length === 1 ? 'item' : 'items'} saved for later`
-                  : 'Save your favorite items here'}
+                  ? `${myWishlist.length} ${
+                      myWishlist.length === 1 ? "item" : "items"
+                    } saved for later`
+                  : "Save your favorite items here"}
               </p>
             </div>
           </div>
-          {hasWishlistItems && (
+          {/* {hasWishlistItems && (
             <div className="flex items-center gap-1.5 text-xs text-[#40BFFF] font-medium">
               <Sparkles className="w-4 h-4" />
               <span>Your Collection</span>
             </div>
-          )}
+          )} */}
         </div>
       </div>
 

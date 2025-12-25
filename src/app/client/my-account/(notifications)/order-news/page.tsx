@@ -8,7 +8,6 @@ import {
 } from "@/hooks/queries/useNotification";
 import { cn } from "@/lib/utils";
 import { Bell, ShoppingBag, Tag } from "lucide-react";
-import Image from "next/image";
 
 const OrderNews = () => {
   const { data: myNotification } = useGetNotification({
@@ -113,17 +112,6 @@ export const OrderNewsItem = ({ notification }: OrderNewsItemProps) => {
 
         <p className="text-xs text-gray-400">{notification.time}</p>
       </div>
-
-      {/* Action (optional) */}
-      {!notification.isRead && (
-        <NormalButton
-          onClick={() => {
-            markOneAsRead({ id: notification.id });
-          }}
-        >
-          <p className="text-sm">Mark as read</p>
-        </NormalButton>
-      )}
     </div>
   );
 };
