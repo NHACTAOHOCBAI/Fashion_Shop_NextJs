@@ -319,11 +319,10 @@ export default function UpdateProduct() {
                   ))}
 
                   <Button
+                    className="w-full"
                     type="button"
                     variant="outline"
-                    onClick={() =>
-                      append({ quantity: 1, attributes: [], image: [] })
-                    }
+                    onClick={() => append({ attributes: [], image: [] })}
                   >
                     + Add Variant
                   </Button>

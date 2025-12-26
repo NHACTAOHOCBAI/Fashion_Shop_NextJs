@@ -7,7 +7,7 @@ export const StockItemSchema = z.object({
 });
 
 const StockInSchema = z.object({
-  productId: z.number(),
+  productId: z.number("Product is required"),
   note: z.string().optional(),
   items: z.array(StockItemSchema).min(1, "No stock item added"),
 });

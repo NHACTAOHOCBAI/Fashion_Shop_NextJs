@@ -110,7 +110,6 @@ const updateProduct = async ({
     images: File[];
     variantImages?: File[];
     variants?: {
-      quantity: number;
       attributes: { attributeCategoryId: number }[];
     }[];
   };

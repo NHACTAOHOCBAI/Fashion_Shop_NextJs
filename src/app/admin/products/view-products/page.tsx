@@ -18,11 +18,11 @@ export default function Products() {
   const router = useRouter();
   const { mutate: deleteItem } = useDeleteProduct();
   const handleViewDetail = (item: Product) => {
-    router.push(`/admin/products/detail-product`);
+    router.push(`/admin/products/detail-product/${item.id}`);
     localStorage.setItem("detailProduct", JSON.stringify(item));
   };
   const handleUpdateBtn = (item: Product) => {
-    router.push(`/admin/products/update-product`);
+    router.push(`/admin/products/update-product/${item.id}`);
     localStorage.setItem("updatedProduct", JSON.stringify(item));
   };
   const handleDeleteItem = (id: number) => {
@@ -63,7 +63,6 @@ export default function Products() {
           <Plus />
           Add Product
         </Button>
-        <Button>Test Notification</Button>
       </CrudTable>
     </>
   );

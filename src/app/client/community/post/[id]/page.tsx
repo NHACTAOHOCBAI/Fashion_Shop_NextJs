@@ -93,7 +93,7 @@ const PostDetailPage = () => {
 
           {/* Comment Section */}
           <div className="bg-white rounded-[16px] border border-gray-200 p-[24px] mt-[24px]">
-            <CommentSection postId={postId} currentUser={user} />
+            <CommentSection postId={postId} currentUser={user as User} />
           </div>
         </div>
       </section>

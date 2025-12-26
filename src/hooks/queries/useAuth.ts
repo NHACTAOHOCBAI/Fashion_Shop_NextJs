@@ -7,6 +7,8 @@ import {
   updateMyProfile,
 } from "@/services/auth.service";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 const useChangePassword = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -27,8 +29,15 @@ const useRegister = () => {
   });
 };
 const useLogout = () => {
+  const router = useRouter();
+
   return useMutation({
     mutationFn: logout,
+    onSuccess: () => {
+      router.push("/login"); // hoặc "/auth/login" tùy route của bạn,
+      toast.success("You has logout succesfully");
+      localStorage.clear();
+    },
   });
 };
 const useMyProfile = () =>

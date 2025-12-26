@@ -16,10 +16,12 @@ import {
   ChevronDown,
   MessageSquare,
   Package,
+  LogOut,
 } from "lucide-react";
 import * as React from "react";
 // Giả định sử dụng Next.js App Router hooks
 import { usePathname, useRouter } from "next/navigation";
+import { useLogout } from "@/hooks/queries/useAuth";
 
 // --- I. Dữ liệu Menu ---
 
@@ -217,7 +219,31 @@ const CollapsibleMenuSection: React.FC<CollapsibleMenuSectionProps> = ({
 };
 
 // --- III. Component cho mục menu đơn (Simple) ---
-
+const LogoutComponent = () => {
+  const { mutate: logout } = useLogout();
+  const handleClick = () => {
+    logout();
+  };
+  const isActive = false;
+  return (
+    <Button
+      variant="ghost"
+      onClick={handleClick}
+      className={`text-gray-700 dark:text-gray-300 w-full h-auto p-2.5 justify-start text-sm font-medium transition-colors rounded-md ${
+        isActive
+          ? "bg-[#40BFFF]/10 hover:bg-[#40BFFF]/15 text-[#40BFFF]"
+          : "hover:text-red-300 hover:bg-gray-100/70 dark:hover:bg-gray-700/50"
+      }`}
+    >
+      <div className="flex items-center justify-between w-full">
+        <div className="flex items-center gap-2.5">
+          <LogOut className={`h-4 w-4 ${isActive ? "text-[#40BFFF]" : ""}`} />
+          <span>Logout</span>
+        </div>
+      </div>
+    </Button>
+  );
+};
 interface SimpleMenuSectionProps {
   icon: React.ElementType;
   title: string;
@@ -325,6 +351,7 @@ export function MyAccountSidebar() {
             );
           }
         })}
+        <LogoutComponent />
       </div>
     </div>
   );

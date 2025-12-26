@@ -12,6 +12,7 @@ import {
   Bell,
   Heart,
   ListOrdered,
+  LogOut,
   Package,
   ShoppingBag,
   ShoppingCart,
@@ -26,6 +27,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { staggerContainer, staggerItemFast } from "@/lib/animations";
+import { useLogout } from "@/hooks/queries/useAuth";
 const accountMenus = [
   {
     href: "/client/my-account/order-news",
@@ -97,6 +99,10 @@ const Content = ({
 
 const Header = () => {
   // const { data: myNotification } = useGetNotification({ isRead: "false" });
+  const { mutate: logout } = useLogout();
+  const handleClick = () => {
+    logout();
+  };
   const router = useRouter();
   const { data: headerData } = useDepartments({});
   const [user, setUser] = useState<User>();
@@ -242,9 +248,12 @@ const Header = () => {
                     </motion.div>
                   ))}
                   <motion.div variants={staggerItemFast}>
-                    <div className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-[#40BFFF]/10 hover:text-[#40BFFF] dark:hover:text-[#40BFFF] transition-all duration-200 group">
+                    <div
+                      onClick={handleClick}
+                      className="cursor-pointer flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-red-200/10 hover:text-red-300 dark:hover:text-red-300 transition-all duration-200 group"
+                    >
                       <div className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center group-hover:bg-[#40BFFF]/20 transition-colors">
-                        <Package
+                        <LogOut
                           size={16}
                           className="group-hover:scale-110 transition-transform"
                         />

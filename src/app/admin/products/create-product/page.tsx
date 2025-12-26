@@ -333,9 +333,7 @@ export default function CreateProduct() {
                     type="button"
                     variant="outline"
                     className="w-full"
-                    onClick={() =>
-                      append({ quantity: 0, attributes: [], image: [] })
-                    }
+                    onClick={() => append({ attributes: [], image: [] })}
                   >
                     + Add Variant
                   </Button>

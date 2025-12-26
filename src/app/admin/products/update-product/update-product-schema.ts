@@ -7,7 +7,6 @@ const updateProductSchemaFn = (
   }[]
 ) => {
   const VariantSchema = z.object({
-    quantity: z.number().min(1, "Quantity must be at least 1"),
     image: z.array(z.instanceof(File)).min(1, "Variant image is required"),
 
     attributes: z

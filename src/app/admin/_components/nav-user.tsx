@@ -30,6 +30,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useSocket } from "@/providers/socketProvider";
 import { getMyNotifications } from "@/services/notification.service";
+import { useLogout } from "@/hooks/queries/useAuth";
 
 export function NavUser({
   user,
@@ -40,6 +41,10 @@ export function NavUser({
     avatar?: string;
   };
 }) {
+  const { mutate: logout } = useLogout();
+  const handleClick = () => {
+    logout();
+  };
   const { isMobile } = useSidebar();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -144,7 +149,7 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleClick()}>
               <LogOut />
               Log out
             </DropdownMenuItem>

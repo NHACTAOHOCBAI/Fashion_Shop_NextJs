@@ -56,9 +56,10 @@ const useLocalCreateProduct = () => {
   const [step, setStep] = useState<"info" | "variants">("info");
 
   function onSubmit(values: CreateProductFormType) {
+    console.log(values);
     const variants = values.variants.map((variant) => {
       return {
-        quantity: variant.quantity,
+        quantity: 0,
         attributes: variant.attributes.map((attributes) => {
           return {
             attributeCategoryId: attributes.valueId,

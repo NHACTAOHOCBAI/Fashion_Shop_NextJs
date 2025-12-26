@@ -110,11 +110,9 @@ const useLocalUpdateProduct = (productId: number) => {
   useEffect(() => {
     initial();
   }, [product]);
-
   /* ===== Submit ===== */
   const onSubmit = (values: FormType) => {
     const variants = values.variants.map((v) => ({
-      quantity: v.quantity,
       attributes: v.attributes.map((a) => ({
         attributeCategoryId: a.valueId, // ⚠️ backend chỉ cần valueId
       })),

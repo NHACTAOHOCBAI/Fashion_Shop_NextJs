@@ -171,7 +171,6 @@ export default function CreateCategory() {
                   )}
                 />
 
-                {/* Department */}
                 <FormField
                   control={form.control}
                   name="departmentId"
@@ -179,7 +178,11 @@ export default function CreateCategory() {
                     <FormItem>
                       <FormLabel>Department</FormLabel>
                       <FormControl>
-                        <Select disabled={isPending} value={field.value}>
+                        <Select
+                          disabled={isPending}
+                          value={field.value}
+                          onValueChange={field.onChange} // ⭐ QUAN TRỌNG
+                        >
                           <SelectTrigger className="w-full">
                             <SelectValue
                               placeholder={Placeholder.CategoryParent}

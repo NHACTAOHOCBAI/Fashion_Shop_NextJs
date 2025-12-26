@@ -9,6 +9,7 @@ import {
   FormItem,
   FormLabel,
   FormControl,
+  FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -34,6 +35,7 @@ export default function StockInForm() {
                   onChange={field.onChange}
                 />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -51,6 +53,7 @@ export default function StockInForm() {
               <FormControl>
                 <Textarea {...field} placeholder="Optional note..." />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
