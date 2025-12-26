@@ -12,6 +12,8 @@ import {
   updateComment,
   deleteComment,
   sharePost,
+  getAuthorProfile,
+  getAuthorPosts,
 } from "@/services/post.service";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -156,3 +158,23 @@ export const useSharePost = () => {
     },
   });
 };
+
+// Get author profile
+export const useAuthorProfile = (userId: number) =>
+  useQuery({
+    queryKey: ["author-profile", userId],
+    queryFn: () => getAuthorProfile(userId),
+    enabled: !!userId,
+  });
+
+// Get author's posts
+export const useAuthorPosts = (
+  userId: number,
+  page: number = 1,
+  limit: number = 20
+) =>
+  useQuery({
+    queryKey: ["author-posts", userId, page, limit],
+    queryFn: () => getAuthorPosts(userId, page, limit),
+    enabled: !!userId,
+  });

@@ -133,3 +133,40 @@ export const sharePost = async (id: number) => {
   };
   return response;
 };
+
+// Get author profile with statistics
+export const getAuthorProfile = async (userId: number) => {
+  const response = await axiosInstance.get(`/posts/author/${userId}`);
+  console.log('🔍 Author Profile Raw Response:', response);
+  console.log('🔍 Response Type:', typeof response);
+  console.log('🔍 Response Keys:', Object.keys(response || {}));
+
+  // Check if response is wrapped in a 'data' property
+  const data = (response as any)?.data || response;
+  console.log('🔍 Extracted Data:', data);
+
+  return data as {
+    id: number;
+    fullName: string;
+    avatar: string;
+    bio: string;
+    email: string;
+    createdAt: string;
+    stats: {
+      totalPosts: number;
+      totalLikes: number;
+    };
+  };
+};
+
+// Get author's posts with pagination
+export const getAuthorPosts = async (
+  userId: number,
+  page: number = 1,
+  limit: number = 20
+) => {
+  const response = (await axiosInstance.get(`/posts/author/${userId}/posts`, {
+    params: { page, limit },
+  })) as GetAllResponse<Post>;
+  return response.data;
+};
