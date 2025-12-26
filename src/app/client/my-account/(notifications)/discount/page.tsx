@@ -11,7 +11,11 @@ import { LoadMore } from "@/components/ui/load-more";
 import { ListSkeletons } from "@/components/skeletons/list-skeletons";
 import { motion, AnimatePresence } from "framer-motion";
 import { NotificationItem } from "../_components/NotificationItem";
-
+enum NotificationType {
+  DISCOUNT = "DISCOUNT",
+  ORDER = "ORDER",
+  REVIEW = "REVIEW",
+}
 const Discount = () => {
   const [page, setPage] = useState(1);
   const limit = 10;
@@ -37,7 +41,9 @@ const Discount = () => {
       }
 
       if (data.pagination) {
-        const totalPages = Math.ceil(data.pagination.total / data.pagination.limit);
+        const totalPages = Math.ceil(
+          data.pagination.total / data.pagination.limit
+        );
         setHasMore(data.pagination.page < totalPages);
       } else {
         setHasMore(false);

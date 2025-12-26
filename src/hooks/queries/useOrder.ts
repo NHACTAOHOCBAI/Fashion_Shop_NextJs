@@ -13,6 +13,7 @@ const useMyOrders = (params: OrderQueryParams) =>
   useQuery({
     queryKey: ["my-orders", params],
     queryFn: () => getMyOrders(params),
+    placeholderData: (previousData) => previousData,
   });
 // const useMyOrderById = (id: number) =>
 //   useQuery({

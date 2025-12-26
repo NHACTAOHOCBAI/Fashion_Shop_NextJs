@@ -94,9 +94,9 @@ export function BaseModal({
               </div>
             )}
             <div className="flex-1 min-w-0">
-              <DialogTitle className="text-xl font-semibold text-gray-800 dark:text-gray-100">
+              <h6 className="text-xs font-semibold text-gray-800 dark:text-gray-100">
                 {title}
-              </DialogTitle>
+              </h6>
               {description && (
                 <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                   {description}

@@ -23,32 +23,37 @@ export const OrderList = ({ status }: { status?: OrderStatus }) => {
   useEffect(() => {
     if (data?.data) {
       if (page === 1) {
-        // First page: replace all orders
         setAllOrders(data.data);
       } else {
-        // Subsequent pages: append to existing orders
         setAllOrders((prev) => [...prev, ...data.data]);
       }
 
-      // Check if there are more pages
       if (data.pagination) {
-        const totalPages = Math.ceil(data.pagination.total / data.pagination.limit);
+        const totalPages = Math.ceil(
+          data.pagination.total / data.pagination.limit
+        );
         setHasMore(data.pagination.page < totalPages);
       } else {
-        // If no pagination info, assume no more data
         setHasMore(false);
       }
 
       setLoadingMore(false);
     }
-  }, [data, page]);
+  }, [data, page, status]);
 
   // Reset pagination when status filter changes
   useEffect(() => {
     setPage(1);
     setAllOrders([]);
     setHasMore(true);
+    setLoadingMore(false);
   }, [status]);
+
+  useEffect(() => {
+    if (data?.data) {
+      setAllOrders(data.data);
+    }
+  }, [data]);
 
   const handleLoadMore = () => {
     setLoadingMore(true);

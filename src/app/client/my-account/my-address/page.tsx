@@ -177,9 +177,9 @@ const MyAddressItem = ({ address }: { address: Address }) => {
         </div>
       </div>
       <AlertDialog open={openDelete} onOpenChange={setOpenDelete}>
-        <AlertDialogContent>
+        <AlertDialogContent className="w-[500px]">
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirm delete?</AlertDialogTitle>
+            <h6>Confirm delete?</h6>
             <AlertDialogDescription>
               This action cannot be undone. This address will be permanently
               removed.

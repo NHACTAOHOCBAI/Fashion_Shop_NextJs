@@ -1,7 +1,6 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import ChatBox from "./ChatBox";
 import { X } from "lucide-react";
 import ChatbotWindow from "@/app/client/chatbot/ChatBotWindow";
 

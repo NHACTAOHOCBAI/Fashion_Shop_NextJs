@@ -15,7 +15,7 @@ export const askChat = async (question: string) => {
 
 export const getChatHistory = async () => {
   const response = (await axiosInstance.get("/chatbot/history")) as {
-    data: ChatMessage[];
+    data: BotMessage[];
   };
 
   return response.data;

@@ -13,6 +13,7 @@ interface Order {
   items: OrderItem[];
   createdAt: string;
   updatedAt: string;
+  shippingMethod: string;
 }
 interface OrderItem {
   id: number;

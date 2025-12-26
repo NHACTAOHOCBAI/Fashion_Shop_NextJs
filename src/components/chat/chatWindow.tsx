@@ -5,84 +5,163 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Send } from "lucide-react";
-import { askChat, getChatHistory } from "@/services/chatbot.service";
+import { Send, CheckCheck } from "lucide-react";
+import axiosInstance from "@/config/axios";
+import { socket } from "@/lib/socket2";
 
 /* ================= TYPES ================= */
-interface BotMessage {
-  id?: number;
+interface Message {
+  id: number;
   content: string;
   createdAt: string;
-  role: "user" | "assistant";
+  isSeen: boolean;
+  sender: {
+    id: number;
+    fullName: string;
+  };
+}
+
+interface ChatHeaderUser {
+  id: number;
+  fullName: string;
+  avatar?: string;
+}
+
+interface Props {
+  conversationId: number;
+  currentUserId: number;
+  headerUser: ChatHeaderUser;
 }
 
 /* ================= UTILS ================= */
-const shouldShowTime = (curr: BotMessage, prev?: BotMessage) => {
+const shouldShowTime = (curr: Message, prev?: Message) => {
   if (!prev) return true;
   const diff =
     new Date(curr.createdAt).getTime() - new Date(prev.createdAt).getTime();
-  return diff > 5 * 60 * 1000;
+  return diff > 5 * 60 * 1000; // 5 phút
 };
 
 /* ================= COMPONENT ================= */
-export default function ChatbotWindow() {
-  const [messages, setMessages] = useState<BotMessage[]>([]);
+export default function ChatWindow({
+  conversationId,
+  currentUserId,
+  headerUser,
+}: Props) {
+  const [messages, setMessages] = useState<Message[]>([]);
   const [text, setText] = useState("");
-  const [typing, setTyping] = useState(false);
+  const [typingUser, setTypingUser] = useState<number | null>(null);
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const typingTimeout = useRef<NodeJS.Timeout | null>(null);
 
-  /* ================= LOAD ================= */
+  /* ================= LOAD + SOCKET ================= */
   useEffect(() => {
-    getChatHistory().then(setMessages);
-  }, []);
+    if (!conversationId) return;
+
+    // Load history
+    axiosInstance
+      .get(`/chat/conversations/${conversationId}/messages`)
+      .then((res) => setMessages(res.data));
+
+    socket.emit("joinConversation", conversationId);
+
+    const onNewMessage = (msg: Message) => {
+      setMessages((prev) => {
+        if (prev.some((m) => m.id === msg.id)) return prev;
+        return [...prev, msg];
+      });
+    };
+
+    socket.on("newMessage", onNewMessage);
+
+    return () => {
+      socket.off("newMessage", onNewMessage);
+      socket.emit("leaveConversation", conversationId);
+    };
+  }, [conversationId]);
+
+  /* ================= TYPING ================= */
+  const onTyping = () => {
+    socket.emit("typing", {
+      conversationId,
+      userId: currentUserId,
+      isTyping: true,
+    });
+
+    if (typingTimeout.current) {
+      clearTimeout(typingTimeout.current);
+    }
+
+    typingTimeout.current = setTimeout(() => {
+      socket.emit("typing", {
+        conversationId,
+        userId: currentUserId,
+        isTyping: false,
+      });
+    }, 1000);
+  };
+
+  useEffect(() => {
+    const handler = ({
+      userId,
+      isTyping,
+    }: {
+      userId: number;
+      isTyping: boolean;
+    }) => {
+      if (userId === currentUserId) return;
+      setTypingUser(isTyping ? userId : null);
+    };
+
+    socket.on("typing", handler);
+
+    return () => {
+      socket.off("typing", handler);
+    };
+  }, [currentUserId]);
 
   /* ================= AUTO SCROLL ================= */
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, typing]);
+  }, [messages, typingUser]);
 
   /* ================= SEND ================= */
   const sendMessage = async () => {
     if (!text.trim()) return;
 
-    const userMsg: BotMessage = {
-      role: "user",
+    await axiosInstance.post("/chat/send", {
+      conversationId,
       content: text,
-      createdAt: new Date().toISOString(),
-    };
+    });
 
-    setMessages((prev) => [...prev, userMsg]);
     setText("");
-    setTyping(true);
-
-    const res = await askChat(userMsg.content);
-
-    const botMsg: BotMessage = {
-      role: "assistant",
-      content: res.answer,
-      createdAt: new Date().toISOString(),
-    };
-
-    setTyping(false);
-    setMessages((prev) => [...prev, botMsg]);
     inputRef.current?.focus();
   };
 
+  const lastMyMessage = [...messages]
+    .reverse()
+    .find((m) => m.sender.id === currentUserId);
+
   /* ================= UI ================= */
   return (
-    <div className="h-full max-h-[80vh] flex flex-col rounded-xl border bg-background">
+    <div className="h-full flex flex-col rounded-xl border bg-background">
       {/* ===== HEADER ===== */}
       <div className="h-14 border-b px-4 flex items-center gap-3 shrink-0">
         <Avatar>
-          <AvatarFallback>AI</AvatarFallback>
+          {headerUser.avatar ? (
+            <img
+              src={headerUser.avatar}
+              alt={headerUser.fullName}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <AvatarFallback>{headerUser.fullName.charAt(0)}</AvatarFallback>
+          )}
         </Avatar>
         <div>
-          <p className="text-sm font-medium">AI Assistant</p>
-          <p className="text-xs text-muted-foreground">
-            {typing ? "Typing..." : "Online"}
-          </p>
+          <p className="text-sm font-medium">{headerUser.fullName}</p>
+          <p className="text-xs text-muted-foreground">Đang hoạt động</p>
         </div>
       </div>
 
@@ -91,18 +170,18 @@ export default function ChatbotWindow() {
         <div className="space-y-3">
           {messages.map((m, i) => {
             const prev = messages[i - 1];
-            const isMe = m.role === "user";
+            const isMe = m.sender.id === currentUserId;
             const showTime = shouldShowTime(m, prev);
 
             return (
-              <div key={i} className="space-y-1">
+              <div key={m.id} className="space-y-1">
                 {showTime && (
                   <div className="text-center text-xs text-muted-foreground">
-                    {new Date(m.createdAt).toLocaleString("en-US", {
+                    {new Date(m.createdAt).toLocaleString("vi-VN", {
                       hour: "2-digit",
                       minute: "2-digit",
-                      month: "short",
                       day: "2-digit",
+                      month: "2-digit",
                     })}
                   </div>
                 )}
@@ -111,20 +190,28 @@ export default function ChatbotWindow() {
                   className={`flex ${isMe ? "justify-end" : "justify-start"}`}
                 >
                   <div
-                    className={`max-w-[65%] rounded-2xl px-4 py-2 text-sm leading-relaxed ${
-                      isMe ? "bg-primary text-primary-foreground" : "bg-muted"
-                    }`}
+                    className={`max-w-[65%] rounded-2xl px-4 py-2 text-sm leading-relaxed
+                      ${
+                        isMe ? "bg-primary text-primary-foreground" : "bg-muted"
+                      }`}
                   >
                     {m.content}
                   </div>
                 </div>
+
+                {isMe && lastMyMessage?.id === m.id && (
+                  <div className="flex justify-end text-xs text-muted-foreground gap-1">
+                    <CheckCheck className="h-4 w-4" />
+                    {m.isSeen ? "Đã xem" : "Đã gửi"}
+                  </div>
+                )}
               </div>
             );
           })}
 
-          {typing && (
+          {typingUser && (
             <div className="text-xs text-muted-foreground animate-pulse">
-              Typing...
+              Đang nhập...
             </div>
           )}
 
@@ -136,9 +223,12 @@ export default function ChatbotWindow() {
       <div className="h-14 border-t px-3 flex items-center gap-2 py-2 shrink-0">
         <Input
           ref={inputRef}
-          placeholder="Type a message..."
+          placeholder="Aa"
           value={text}
-          onChange={(e) => setText(e.target.value)}
+          onChange={(e) => {
+            setText(e.target.value);
+            onTyping();
+          }}
           onKeyDown={(e) => e.key === "Enter" && sendMessage()}
           className="rounded-full"
         />
