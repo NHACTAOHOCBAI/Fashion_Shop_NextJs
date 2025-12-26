@@ -89,7 +89,10 @@ export default function ChatWindow({
       isTyping: true,
     });
 
-    clearTimeout(typingTimeout.current);
+    if (typingTimeout.current) {
+      clearTimeout(typingTimeout.current);
+    }
+
     typingTimeout.current = setTimeout(() => {
       socket.emit("typing", {
         conversationId,
@@ -100,13 +103,22 @@ export default function ChatWindow({
   };
 
   useEffect(() => {
-    const handler = ({ userId, isTyping }: any) => {
+    const handler = ({
+      userId,
+      isTyping,
+    }: {
+      userId: number;
+      isTyping: boolean;
+    }) => {
       if (userId === currentUserId) return;
       setTypingUser(isTyping ? userId : null);
     };
 
     socket.on("typing", handler);
-    return () => socket.off("typing", handler);
+
+    return () => {
+      socket.off("typing", handler);
+    };
   }, [currentUserId]);
 
   /* ================= AUTO SCROLL ================= */
