@@ -5,6 +5,7 @@ import Image from "next/image";
 import { X, ImagePlus, Tag, Send, Loader2, Search } from "lucide-react";
 import { useCreatePost } from "@/hooks/queries/usePost";
 import { useProducts } from "@/hooks/queries/useProduct";
+import { toast } from "sonner";
 
 interface CreatePostModalProps {
   isOpen: boolean;
@@ -71,7 +72,7 @@ const CreatePostModal = ({
 
   const handleSubmit = () => {
     if (!content.trim()) {
-      alert("Please enter some content");
+      toast.error("Please enter some content");
       return;
     }
 
@@ -95,7 +96,7 @@ const CreatePostModal = ({
           onClose();
         },
         onError: (error: any) => {
-          alert(error?.message || "Failed to create post");
+          toast.success(error?.message || "Failed to create post");
         },
       }
     );
@@ -107,8 +108,8 @@ const CreatePostModal = ({
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-[20px]">
       <div className="bg-white rounded-[20px] w-full max-w-[600px] max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-[24px] border-b border-gray-200 sticky top-0 bg-white rounded-t-[20px]">
-          <h2 className="text-[24px] font-bold">Create Post</h2>
+        <div className="flex items-center justify-between px-[24px] py-[10px] border-b border-gray-200 sticky top-0 bg-white rounded-t-[20px]">
+          <h6 className="text-[16px] font-bold">Create Post</h6>
           <button
             onClick={onClose}
             className="p-[8px] hover:bg-gray-100 rounded-full transition-all duration-200"
@@ -305,24 +306,24 @@ const CreatePostModal = ({
           <button
             onClick={onClose}
             disabled={isPending}
-            className="px-[24px] py-[12px] border-2 border-gray-200 rounded-[12px] font-medium hover:bg-gray-50 transition-all duration-200 disabled:opacity-50"
+            className="text-[16px] px-[24px] py-[10px] border-2 border-gray-200 rounded-[12px] font-medium hover:bg-gray-50 transition-all duration-200 disabled:opacity-50"
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
             disabled={isPending || !content.trim()}
-            className="px-[24px] py-[12px] bg-[#40BFFF] text-white rounded-[12px] font-medium hover:bg-[#3AADEB] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-[8px]"
+            className="px-[24px] py-[10px] bg-[#40BFFF] text-white rounded-[12px] font-medium hover:bg-[#3AADEB] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-[8px]"
           >
             {isPending ? (
               <>
                 <Loader2 className="w-[18px] h-[18px] animate-spin" />
-                <span>Posting...</span>
+                <span className="text-[16px]">Posting...</span>
               </>
             ) : (
               <>
                 <Send className="w-[18px] h-[18px]" />
-                <span>Post</span>
+                <span className="text-[16px]">Post</span>
               </>
             )}
           </button>

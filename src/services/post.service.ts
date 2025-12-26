@@ -10,7 +10,7 @@ export const getPosts = async (params: PostQueryParams) => {
 
 // Get single post by ID
 export const getPostById = async (id: number) => {
-  const response = (await axiosInstance.get(`/posts/${id}`)) as Post;
+  const response = (await axiosInstance.get(`/posts/${id}`)).data as Post;
   return response;
 };
 
@@ -137,13 +137,13 @@ export const sharePost = async (id: number) => {
 // Get author profile with statistics
 export const getAuthorProfile = async (userId: number) => {
   const response = await axiosInstance.get(`/posts/author/${userId}`);
-  console.log('🔍 Author Profile Raw Response:', response);
-  console.log('🔍 Response Type:', typeof response);
-  console.log('🔍 Response Keys:', Object.keys(response || {}));
+  console.log("🔍 Author Profile Raw Response:", response);
+  console.log("🔍 Response Type:", typeof response);
+  console.log("🔍 Response Keys:", Object.keys(response || {}));
 
   // Check if response is wrapped in a 'data' property
   const data = (response as any)?.data || response;
-  console.log('🔍 Extracted Data:', data);
+  console.log("🔍 Extracted Data:", data);
 
   return data as {
     id: number;

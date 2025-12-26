@@ -171,7 +171,7 @@ const ProductCard = ({ product }: { product: Product }) => {
         </Link>
 
         {/* Hover border glow effect */}
-        <div className="absolute inset-0 border-2 border-transparent group-hover:border-[var(--cyan-400)] dark:group-hover:border-[var(--cyan-500)] rounded-2xl transition-all duration-300 pointer-events-none opacity-0 group-hover:opacity-100" />
+        <div className="absolute inset-0 border-2 border-transparent rounded-2xl transition-all duration-300 pointer-events-none opacity-0 group-hover:opacity-100" />
       </div>
     </motion.div>
   );

@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useCreateReview } from "@/hooks/queries/useReview";
+import { toast } from "sonner";
 
 interface Props {
   open: boolean;
@@ -36,7 +37,7 @@ export const ReviewModal = ({ open, onClose, orderId, variantId }: Props) => {
     const total = files.length + newFiles.length;
 
     if (total > 3) {
-      alert("Bạn chỉ có thể upload tối đa 3 ảnh");
+      toast.error("You can only upload up to 3 images");
       return;
     }
 

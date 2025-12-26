@@ -60,8 +60,7 @@ const CommunityPage = () => {
             <div className="col-span-3">
               <div className="bg-white rounded-[16px] p-[24px] sticky top-[20px]">
                 <div className="flex items-center gap-[10px] mb-[20px]">
-                  <Filter className="w-[24px] h-[24px] text-[#40BFFF]" />
-                  <h3 className="text-[20px] font-bold">Filters</h3>
+                  <h6 className="text-[20px] font-bold">Filters</h6>
                 </div>
 
                 <div className="space-y-[12px]">
@@ -92,7 +91,9 @@ const CommunityPage = () => {
 
                 {/* Search */}
                 <div className="mt-[24px]">
-                  <h3 className="text-[16px] font-bold mb-[12px]">Search Posts</h3>
+                  <h6 className="text-[16px] font-bold mb-[12px]">
+                    Search Posts
+                  </h6>
                   <div className="relative">
                     <Search className="absolute left-[14px] top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-gray-400" />
                     <input
@@ -126,10 +127,10 @@ const CommunityPage = () => {
                   </div>
 
                   {/* Pagination Logic Giữ Nguyên */}
-                   {postsData.pagination &&
+                  {postsData.pagination &&
                     postsData.pagination.total > postsData.pagination.limit && (
                       <div className="mt-[40px] flex justify-center gap-[12px]">
-                         {/* ... Phần Pagination giữ nguyên ... */}
+                        {/* ... Phần Pagination giữ nguyên ... */}
                       </div>
                     )}
                 </>

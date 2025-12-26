@@ -5,6 +5,7 @@ import { X, Tag, Send, Loader2, Search } from "lucide-react";
 import { useUpdatePost } from "@/hooks/queries/usePost";
 import { useProducts } from "@/hooks/queries/useProduct";
 import Image from "next/image";
+import { toast } from "sonner";
 
 interface UpdatePostModalProps {
   isOpen: boolean;
@@ -57,7 +58,7 @@ const UpdatePostModal = ({
 
   const handleSubmit = () => {
     if (!content.trim()) {
-      alert("Please enter some content");
+      toast.error("Please enter some content");
       return;
     }
 
@@ -76,7 +77,7 @@ const UpdatePostModal = ({
           onClose();
         },
         onError: (error: any) => {
-          alert(error?.message || "Failed to update post");
+          toast.error(error?.message || "Failed to update post");
         },
       }
     );
@@ -138,7 +139,8 @@ const UpdatePostModal = ({
           {post.images && post.images.length > 0 && (
             <div className="mt-[16px] p-[12px] bg-gray-50 border border-gray-200 rounded-[12px] text-[14px] text-gray-600">
               <p className="font-medium mb-[8px]">
-                Note: Post images cannot be updated. Original images will be kept.
+                Note: Post images cannot be updated. Original images will be
+                kept.
               </p>
               <div className="grid grid-cols-4 gap-[8px]">
                 {post.images.map((image) => (

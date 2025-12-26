@@ -2,7 +2,7 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, Loader2 } from "lucide-react";
-import { useSelector } from "react-redux"; 
+import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 
 import PostCard from "../../_components/PostCard";
@@ -14,13 +14,13 @@ const PostDetailPage = () => {
   const params = useParams();
   const router = useRouter();
   const postId = parseInt(params.id as string);
-  
+
   // Initialize auth on mount
   useAuthInit();
-  
+
   const reduxUser = useSelector((state: any) => state.auth.user);
   const [user, setUser] = useState<User | null>(null);
-  
+
   // Fallback to localStorage if Redux user is null
   useEffect(() => {
     if (reduxUser) {
@@ -76,7 +76,7 @@ const PostDetailPage = () => {
       <section className="bg-white border-b border-gray-200 py-[24px]">
         <div className="w-[1240px] mx-auto">
           <button
-            onClick={() => router.back()}
+            onClick={() => router.push("/client/community")}
             className="flex items-center gap-[12px] text-[16px] font-medium text-gray-700 hover:text-[#40BFFF] transition-all duration-200 group"
           >
             <ArrowLeft className="w-[20px] h-[20px] group-hover:-translate-x-1 transition-transform duration-200" />

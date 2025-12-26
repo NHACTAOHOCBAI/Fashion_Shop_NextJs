@@ -3,9 +3,24 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Send, Loader2, Clock, MoreHorizontal, Edit2, Trash2, MessageSquare, Sparkles } from "lucide-react";
-import { useComments, useAddComment, useUpdateComment, useDeleteComment } from "@/hooks/queries/usePost";
+import {
+  Send,
+  Loader2,
+  Clock,
+  MoreHorizontal,
+  Edit2,
+  Trash2,
+  MessageSquare,
+  Sparkles,
+} from "lucide-react";
+import {
+  useComments,
+  useAddComment,
+  useUpdateComment,
+  useDeleteComment,
+} from "@/hooks/queries/usePost";
 import { formatDistanceToNow } from "date-fns";
+import { toast } from "sonner";
 
 interface CommentSectionProps {
   postId: number;
@@ -17,7 +32,9 @@ const CommentSection = ({ postId, currentUser }: CommentSectionProps) => {
   const [page, setPage] = useState(1);
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [editingText, setEditingText] = useState("");
-  const [showMenuForComment, setShowMenuForComment] = useState<number | null>(null);
+  const [showMenuForComment, setShowMenuForComment] = useState<number | null>(
+    null
+  );
   const [isFocused, setIsFocused] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -48,7 +65,7 @@ const CommentSection = ({ postId, currentUser }: CommentSectionProps) => {
           setIsFocused(false);
         },
         onError: (error: any) => {
-          alert(error?.message || "Failed to add comment");
+          toast.error(error?.message || "Failed to add comment");
         },
       }
     );
@@ -88,7 +105,7 @@ const CommentSection = ({ postId, currentUser }: CommentSectionProps) => {
           setEditingText("");
         },
         onError: (error: any) => {
-          alert(error?.message || "Failed to update comment");
+          toast.error(error?.message || "Failed to update comment");
         },
       }
     );
@@ -104,25 +121,24 @@ const CommentSection = ({ postId, currentUser }: CommentSectionProps) => {
           setShowMenuForComment(null);
         },
         onError: (error: any) => {
-          alert(error?.message || "Failed to delete comment");
+          toast.error(error?.message || "Failed to delete comment");
         },
       }
     );
   };
 
   return (
-    <div className="mt-[40px]">
+    <div className="mt-[20px]">
       {/* Header with gradient */}
       <div className="flex items-center gap-[12px] mb-[32px]">
         <div className="w-[48px] h-[48px] bg-gradient-to-br from-[#40BFFF] to-[#5ECCFF] rounded-full flex items-center justify-center shadow-lg">
           <MessageSquare className="w-[24px] h-[24px] text-white" />
         </div>
         <div>
-          <h3 className="text-[26px] font-bold text-gray-800">
-            Comments
-          </h3>
+          <h6 className="text-[26px] font-bold text-gray-800">Comments</h6>
           <p className="text-[14px] text-gray-500">
-            {commentsData?.pagination?.total || 0} {commentsData?.pagination?.total === 1 ? 'comment' : 'comments'}
+            {commentsData?.pagination?.total || 0}{" "}
+            {commentsData?.pagination?.total === 1 ? "comment" : "comments"}
           </p>
         </div>
       </div>
@@ -130,11 +146,13 @@ const CommentSection = ({ postId, currentUser }: CommentSectionProps) => {
       {/* Add Comment Form */}
       {currentUser && (
         <form onSubmit={handleSubmit} className="mb-[36px]">
-          <div className={`flex gap-[16px] p-[20px] rounded-[20px] border-2 transition-all duration-300 ${
-            isFocused
-              ? "border-[#40BFFF] bg-gradient-to-br from-blue-50 to-cyan-50 shadow-lg"
-              : "border-gray-200 bg-white hover:border-gray-300"
-          }`}>
+          <div
+            className={`flex gap-[16px] p-[20px] rounded-[20px] border-2 ${
+              isFocused
+                ? "border-[#40BFFF]  shadow-lg"
+                : "border-gray-200 bg-white hover:border-gray-300"
+            }`}
+          >
             {/* Avatar */}
             <div className="flex-shrink-0">
               <div className="w-[48px] h-[48px] rounded-full overflow-hidden bg-gradient-to-br from-[#40BFFF] to-[#5ECCFF] flex items-center justify-center ring-2 ring-white shadow-md">
@@ -162,13 +180,17 @@ const CommentSection = ({ postId, currentUser }: CommentSectionProps) => {
                 onChange={(e) => setCommentText(e.target.value)}
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => !commentText && setIsFocused(false)}
-                placeholder={`Share your thoughts, ${currentUser.fullName.split(' ')[0]}...`}
-                className="w-full p-[16px] border-0 bg-transparent rounded-[12px] resize-none focus:outline-none transition-all duration-200 min-h-[80px] text-[15px] placeholder:text-gray-400"
+                placeholder={`Share your thoughts, ${
+                  currentUser.fullName.split(" ")[0]
+                }...`}
+                className="w-full p-[16px] border-0 bg-transparent rounded-[12px] resize-none focus:outline-none min-h-[80px] text-[15px] placeholder:text-gray-400"
               />
 
-              <div className={`mt-[12px] flex items-center justify-between transition-all duration-300 ${
-                isFocused || commentText ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'
-              }`}>
+              <div
+                className={`mt-[12px] flex items-center justify-between ${
+                  isFocused || commentText ? "block" : "hidden"
+                }`}
+              >
                 <p className="text-[13px] text-gray-500">
                   {commentText.length > 0 && `${commentText.length} characters`}
                 </p>
@@ -180,7 +202,7 @@ const CommentSection = ({ postId, currentUser }: CommentSectionProps) => {
                         setCommentText("");
                         setIsFocused(false);
                       }}
-                      className="px-[20px] py-[10px] border border-gray-200 rounded-[12px] font-medium hover:bg-gray-50 transition-all duration-200 text-[14px]"
+                      className="px-[20px] py-[10px] border border-gray-200 rounded-[12px] font-medium hover:bg-gray-50 text-[14px]"
                     >
                       Cancel
                     </button>
@@ -188,17 +210,17 @@ const CommentSection = ({ postId, currentUser }: CommentSectionProps) => {
                   <button
                     type="submit"
                     disabled={isSubmitting || !commentText.trim()}
-                    className="flex items-center gap-[8px] px-[24px] py-[10px] bg-gradient-to-r from-[#40BFFF] to-[#5ECCFF] text-white rounded-[12px] font-medium hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
+                    className="flex items-center gap-[8px] px-[24px] py-[10px] bg-gradient-to-r from-[#40BFFF] to-[#5ECCFF] text-white rounded-[12px] font-medium hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSubmitting ? (
                       <>
-                        <Loader2 className="w-[18px] h-[18px] animate-spin" />
+                        <Loader2 className="w-[18px] h-[18px]" />
                         <span>Posting...</span>
                       </>
                     ) : (
                       <>
                         <Send className="w-[18px] h-[18px]" />
-                        <span>Comment</span>
+                        <span className="text-[16px]">Comment</span>
                       </>
                     )}
                   </button>
@@ -273,7 +295,9 @@ const CommentSection = ({ postId, currentUser }: CommentSectionProps) => {
                             <button
                               onClick={() =>
                                 setShowMenuForComment(
-                                  showMenuForComment === comment.id ? null : comment.id
+                                  showMenuForComment === comment.id
+                                    ? null
+                                    : comment.id
                                 )
                               }
                               className="p-[6px] hover:bg-white rounded-full transition-all duration-200"
@@ -296,7 +320,9 @@ const CommentSection = ({ postId, currentUser }: CommentSectionProps) => {
                                   className="w-full flex items-center gap-[10px] px-[14px] py-[10px] hover:bg-red-50 text-[13px] text-red-600 transition-all duration-200 disabled:opacity-50"
                                 >
                                   <Trash2 className="w-[14px] h-[14px]" />
-                                  <span>{isDeleting ? "Deleting..." : "Delete"}</span>
+                                  <span>
+                                    {isDeleting ? "Deleting..." : "Delete"}
+                                  </span>
                                 </button>
                               </div>
                             )}
@@ -357,26 +383,12 @@ const CommentSection = ({ postId, currentUser }: CommentSectionProps) => {
           </>
         ) : (
           <div className="text-center py-[60px]">
-            <div className="w-[80px] h-[80px] bg-gradient-to-br from-[#40BFFF]/10 to-[#5ECCFF]/10 rounded-full flex items-center justify-center mx-auto mb-[20px]">
-              <Sparkles className="w-[36px] h-[36px] text-[#40BFFF]" />
-            </div>
             <h4 className="text-[18px] font-semibold text-gray-800 mb-[8px]">
               No comments yet
             </h4>
             <p className="text-[15px] text-gray-500 mb-[24px]">
               Be the first to share your thoughts!
             </p>
-            {currentUser && (
-              <button
-                onClick={() => {
-                  setIsFocused(true);
-                  textareaRef.current?.focus();
-                }}
-                className="px-[32px] py-[12px] bg-gradient-to-r from-[#40BFFF] to-[#5ECCFF] text-white rounded-[12px] font-medium hover:shadow-lg transition-all duration-200 transform hover:scale-105"
-              >
-                Write a comment
-              </button>
-            )}
           </div>
         )}
       </div>

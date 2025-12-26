@@ -277,11 +277,11 @@ const Checkout = () => {
   // Hàm tổng hợp dữ liệu Checkout
   const handleCheckout = useCallback(() => {
     if (!selectedAddress) {
-      alert("Please select a shipping address.");
+      toast.error("Please select a shipping address.");
       return;
     }
     if (!products || products.length === 0) {
-      alert("Your cart is empty.");
+      toast.error("Your cart is empty.");
       return;
     }
 

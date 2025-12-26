@@ -12,6 +12,7 @@ import {
   Bell,
   Heart,
   ListOrdered,
+  Package,
   ShoppingBag,
   ShoppingCart,
   Tag,
@@ -39,7 +40,7 @@ const accountMenus = [
   {
     href: "/client/my-account/orders",
     label: "Orders",
-    icon: ListOrdered,
+    icon: Package,
   },
   {
     href: "/client/my-account/coupons",
@@ -240,6 +241,17 @@ const Header = () => {
                       </Link>
                     </motion.div>
                   ))}
+                  <motion.div variants={staggerItemFast}>
+                    <div className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-[#40BFFF]/10 hover:text-[#40BFFF] dark:hover:text-[#40BFFF] transition-all duration-200 group">
+                      <div className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center group-hover:bg-[#40BFFF]/20 transition-colors">
+                        <Package
+                          size={16}
+                          className="group-hover:scale-110 transition-transform"
+                        />
+                      </div>
+                      <span className="font-medium">Logout</span>
+                    </div>
+                  </motion.div>
                 </motion.div>
               </motion.div>
             </PopoverContent>
@@ -283,6 +295,14 @@ const Header = () => {
                 </li>
               </SubCatgories>
             ))}
+            <li>
+              <Link
+                href="/client/community"
+                className="text-base font-medium text-gray-700 dark:text-gray-300 hover:text-[#40BFFF] transition-colors"
+              >
+                Community
+              </Link>
+            </li>
           </ul>
         </nav>
       </div>
@@ -329,9 +349,9 @@ const Notification = ({ notifications }: { notifications: Notification[] }) => {
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <Bell className="w-4 h-4 text-[#40BFFF] flex-shrink-0" />
-            <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 whitespace-nowrap">
+            <h6 className="text-sm font-semibold text-gray-800 dark:text-gray-200 whitespace-nowrap">
               Notifications
-            </h3>
+            </h6>
             {unreadCount > 0 && (
               <span className="px-1.5 py-0.5 text-[10px] font-bold bg-[#40BFFF] text-white rounded-full flex-shrink-0">
                 {unreadCount}
@@ -339,7 +359,7 @@ const Notification = ({ notifications }: { notifications: Notification[] }) => {
             )}
           </div>
           {notifications.length > 0 && (
-            <button className="text-xs font-medium text-[#40BFFF] hover:text-[#33A0DD] transition-colors">
+            <button className="text-xs font-medium text-[#40BFFF] hover:text-[#33A0DD] transition-colors mr-[20px]">
               Mark all read
             </button>
           )}

@@ -65,7 +65,7 @@ const PostCard = ({ post, currentUserId }: PostCardProps) => {
           className="flex items-center gap-[12px] group"
         >
           {/* Avatar */}
-          <div className="w-[48px] h-[48px] rounded-full overflow-hidden bg-gradient-to-br from-[#40BFFF] to-[#5ECCFF] flex items-center justify-center group-hover:shadow-lg transition-all duration-200">
+          <div className="w-[48px] h-[48px] rounded-full overflow-hidden bg-gradient-to-br from-[#40BFFF] to-[#5ECCFF] flex items-center justify-center  transition-all duration-200">
             {post.user.avatar ? (
               <Image
                 src={post.user.avatar}
@@ -105,12 +105,6 @@ const PostCard = ({ post, currentUserId }: PostCardProps) => {
 
             {showMoreMenu && (
               <div className="absolute right-0 top-full mt-[8px] bg-white border border-gray-200 rounded-[12px] shadow-lg py-[8px] min-w-[150px] z-10">
-                <Link
-                  href={`/client/community/edit/${post.id}`}
-                  className="block px-[16px] py-[10px] hover:bg-gray-50 text-[14px] transition-all duration-200"
-                >
-                  Edit Post
-                </Link>
                 <button
                   onClick={handleDelete}
                   disabled={isDeleting}
@@ -151,7 +145,7 @@ const PostCard = ({ post, currentUserId }: PostCardProps) => {
                 src={image.imageUrl}
                 alt={`Post image ${index + 1}`}
                 fill
-                className="object-cover hover:scale-105 transition-transform duration-300"
+                className="object-cover  transition-transform duration-300"
               />
               {index === 3 && post.images.length > 4 && (
                 <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
@@ -220,10 +214,11 @@ const PostCard = ({ post, currentUserId }: PostCardProps) => {
           <Heart
             className={`w-[20px] h-[20px] transition-all duration-200 group-hover:scale-110 ${
               isLiked
-                ? "fill-[#FF4858] text-[#FF4858]"
-                : "text-gray-600 group-hover:text-[#FF4858]"
+                ? "fill-[#FF4858] stroke-[#FF4858]"
+                : "stroke-gray-600 group-hover:stroke-[#FF4858]"
             }`}
           />
+
           <span className={isLiked ? "text-[#FF4858]" : "text-gray-700"}>
             {post.totalLikes} {post.totalLikes === 1 ? "Like" : "Likes"}
           </span>
