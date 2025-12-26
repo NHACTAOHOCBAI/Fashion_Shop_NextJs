@@ -22,7 +22,7 @@ const resetPassword = async (data: {
 
 const login = async (data: { email: string; password: string }) => {
   const response = await axiosInstance.post("/auth/login", data);
-  return response.data as { user: User };
+  return response.data as { user: User; token?: string; access_token?: string };
 };
 ``;
 const register = async (data: {

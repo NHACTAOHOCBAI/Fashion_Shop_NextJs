@@ -40,9 +40,13 @@ export function LoginForm({}: React.ComponentProps<"div">) {
   });
   async function onSubmit(values: z.infer<typeof LoginSchema>) {
     login(values, {
-      onSuccess: ({ user }) => {
-        dispatch(setCredentials({ user: user }));
+      onSuccess: ({ user, token, access_token }) => {
+        const authToken = token || access_token;
+        dispatch(setCredentials({ user: user, token: authToken }));
         localStorage.setItem("user", JSON.stringify(user));
+        if (authToken) {
+          localStorage.setItem("token", authToken);
+        }
         toast.success("Login success", {
           description: formatDateTimeWithAt(new Date()),
         });

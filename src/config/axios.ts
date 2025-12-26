@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { store } from '@/store';
+
 const axiosInstance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_BE_BASE_URL,
     headers: {
@@ -6,12 +8,18 @@ const axiosInstance = axios.create({
     },
     withCredentials: true
 });
-// Add a request interceptor
+
+// Add a request interceptor to include JWT token
 axiosInstance.interceptors.request.use(function (config) {
-    // Do something before request is sent
+    const state = store.getState();
+    const token = state.auth.token;
+    
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    
     return config;
 }, function (error) {
-    // Do something with request error
     return Promise.reject(error);
 },
 );

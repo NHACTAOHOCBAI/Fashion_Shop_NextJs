@@ -11,8 +11,9 @@ import {
   Tag,
   Clock,
 } from "lucide-react";
-import { useToggleLike, useDeletePost, useSharePost } from "@/hooks/queries/usePost";
+import { useToggleLike, useDeletePost } from "@/hooks/queries/usePost";
 import { formatDistanceToNow } from "date-fns";
+import SharePostModal from "./SharePostModal";
 
 interface PostCardProps {
   post: Post;
@@ -21,9 +22,9 @@ interface PostCardProps {
 
 const PostCard = ({ post, currentUserId }: PostCardProps) => {
   const [showMoreMenu, setShowMoreMenu] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
   const { mutate: toggleLike, isPending: isLiking } = useToggleLike();
   const { mutate: deletePost, isPending: isDeleting } = useDeletePost();
-  const { mutate: sharePost, isPending: isSharing } = useSharePost();
 
   const isOwnPost = currentUserId === post.user?.id;
   const isLiked = post.isLikedByCurrentUser;
@@ -39,11 +40,7 @@ const PostCard = ({ post, currentUserId }: PostCardProps) => {
   };
 
   const handleShare = () => {
-    sharePost(post.id, {
-      onSuccess: (data) => {
-        alert(`Post shared! Total shares: ${data.totalShares}`);
-      },
-    });
+    setShowShareModal(true);
   };
 
   const formatDate = (date: string) => {
@@ -247,16 +244,22 @@ const PostCard = ({ post, currentUserId }: PostCardProps) => {
         {/* Share Button */}
         <button
           onClick={handleShare}
-          disabled={isSharing}
-          className="flex items-center gap-[8px] text-[14px] font-medium hover:text-[#40BFFF] transition-all duration-200 group disabled:opacity-50"
+          className="flex items-center gap-[8px] text-[14px] font-medium hover:text-[#40BFFF] transition-all duration-200 group"
         >
           <Share2 className="w-[18px] h-[18px] text-gray-600 group-hover:text-[#40BFFF] group-hover:scale-110 transition-all duration-200" />
           <span className="text-gray-700 group-hover:text-[#40BFFF]">
             {post.totalShares > 0 && `${post.totalShares} `}
-            {isSharing ? "Sharing..." : "Share"}
+            Share
           </span>
         </button>
       </div>
+
+      {/* Share Modal */}
+      <SharePostModal
+        post={post}
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
+      />
     </div>
   );
 };

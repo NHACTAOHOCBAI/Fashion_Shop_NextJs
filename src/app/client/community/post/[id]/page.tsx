@@ -2,21 +2,40 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, Loader2 } from "lucide-react";
-// 1. Thay thế import store cũ bằng useSelector của Redux
 import { useSelector } from "react-redux"; 
+import { useEffect, useState } from "react";
 
 import PostCard from "../../_components/PostCard";
 import CommentSection from "../../_components/CommentSection";
 import { usePost } from "@/hooks/queries/usePost";
+import { useAuthInit } from "@/hooks/useAuthInit";
 
 const PostDetailPage = () => {
   const params = useParams();
   const router = useRouter();
   const postId = parseInt(params.id as string);
-
-  // 2. Sửa cách lấy user từ Redux store
-  // Giả định bạn đã config reducer tên là 'auth' trong store chung
-  const user = useSelector((state: any) => state.auth.user);
+  
+  // Initialize auth on mount
+  useAuthInit();
+  
+  const reduxUser = useSelector((state: any) => state.auth.user);
+  const [user, setUser] = useState<User | null>(null);
+  
+  // Fallback to localStorage if Redux user is null
+  useEffect(() => {
+    if (reduxUser) {
+      setUser(reduxUser);
+    } else {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        try {
+          setUser(JSON.parse(storedUser));
+        } catch {
+          setUser(null);
+        }
+      }
+    }
+  }, [reduxUser]);
 
   const { data: post, isLoading, error } = usePost(postId);
 
