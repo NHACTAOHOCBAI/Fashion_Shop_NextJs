@@ -47,35 +47,43 @@ export function CouponList({ discountType }: CouponListProps) {
 
   // Initialize or append coupons when data changes
   useEffect(() => {
-    if (data?.data) {
-      if (page === 1) {
-        setAllCoupons(data.data);
-      } else {
-        setAllCoupons((prev) => [...prev, ...data.data]);
-      }
+    if (!data?.data) return;
 
-      if (data.pagination) {
-        const totalPages = Math.ceil(data.pagination.total / data.pagination.limit);
-        setHasMore(data.pagination.page < totalPages);
-      } else {
-        setHasMore(false);
-      }
-
-      setLoadingMore(false);
+    if (page === 1) {
+      setAllCoupons(data.data);
+    } else {
+      setAllCoupons((prev) => [...prev, ...data.data]);
     }
-  }, [data, page]);
+
+    if (data.pagination) {
+      const totalPages = Math.ceil(
+        data.pagination.total / data.pagination.limit
+      );
+      setHasMore(data.pagination.page < totalPages);
+    } else {
+      setHasMore(false);
+    }
+
+    setLoadingMore(false);
+  }, [page, data]);
 
   // Reset pagination when filter changes
   useEffect(() => {
     setPage(1);
     setAllCoupons([]);
     setHasMore(true);
+    setLoadingMore(false);
   }, [discountType]);
 
   const handleLoadMore = () => {
     setLoadingMore(true);
     setPage((prev) => prev + 1);
   };
+  useEffect(() => {
+    if (data?.data) {
+      setAllCoupons(data.data);
+    }
+  }, [data]);
 
   // Initial loading
   if (isLoading && page === 1) {
@@ -108,8 +116,7 @@ export function CouponList({ discountType }: CouponListProps) {
   const renderCouponItem = (coupon: Coupon) => {
     const usedCount = coupon.usageCount || 0;
     const totalLimit = coupon.usageLimit || 1;
-    const progressValue =
-      totalLimit > 0 ? (usedCount / totalLimit) * 100 : 0;
+    const progressValue = totalLimit > 0 ? (usedCount / totalLimit) * 100 : 0;
     const remainingUsage =
       coupon.usageLimitPerUser > 0 ? `x${coupon.usageLimitPerUser}` : "∞";
 

@@ -24,7 +24,7 @@ export function ProductSearchResultItem({
     >
       <Link
         href={`/client/products/product-detail/${product.id}`}
-        className="group flex gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-xl hover:shadow-lg hover:border-[#40BFFF]/30 transition-all duration-200 bg-white dark:bg-gray-800"
+        className="group flex gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-xl  hover:border-[#40BFFF]/30 transition-all duration-200 bg-white dark:bg-gray-800"
       >
         {/* Product Image */}
         <div className="relative flex-shrink-0">
@@ -41,9 +41,9 @@ export function ProductSearchResultItem({
         {/* Product Details */}
         <div className="flex flex-col justify-between flex-1 min-w-0">
           <div className="space-y-2">
-            <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-100 line-clamp-2 group-hover:text-[#40BFFF] transition-colors">
+            <h5 className="text-sm font-semibold text-gray-800 dark:text-gray-100 line-clamp-2 group-hover:text-[#40BFFF] transition-colors">
               {product.name}
-            </h3>
+            </h5>
 
             <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
               <span className="font-medium">{product.brand.name}</span>

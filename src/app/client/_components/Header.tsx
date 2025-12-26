@@ -231,7 +231,10 @@ const Header = () => {
                         className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-[#40BFFF]/10 hover:text-[#40BFFF] dark:hover:text-[#40BFFF] transition-all duration-200 group"
                       >
                         <div className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center group-hover:bg-[#40BFFF]/20 transition-colors">
-                          <Icon size={16} className="group-hover:scale-110 transition-transform" />
+                          <Icon
+                            size={16}
+                            className="group-hover:scale-110 transition-transform"
+                          />
                         </div>
                         <span className="font-medium">{label}</span>
                       </Link>
@@ -246,18 +249,20 @@ const Header = () => {
 
       {/* Main Header - Logo & Navigation */}
       <div className="w-[1240px] mx-auto py-4 flex items-center">
-        <Link
-          href="/client"
-          className="text-2xl font-bold text-gray-800 dark:text-gray-100"
-        >
-          LOGO HERE
-        </Link>
+        <Image
+          src="/images/logo.png"
+          alt="Logo"
+          width={1000}
+          height={1000}
+          priority
+          className=" object-cover w-[200px] h-[40px]"
+        />
 
         <nav className="flex-1 ml-12">
           <ul className="flex items-center gap-8">
             <li>
               <Link
-                href="/client"
+                href="/client/home"
                 className="text-base font-medium text-gray-700 dark:text-gray-300 hover:text-[#40BFFF] transition-colors"
               >
                 Home
@@ -294,7 +299,7 @@ const SubCatgories = ({ children, content }: SubCatgoriesProps) => {
       {children}
       <div
         className="
-        top-[105px]
+        top-[110px]
           select-none
           absolute z-10
           bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-6
