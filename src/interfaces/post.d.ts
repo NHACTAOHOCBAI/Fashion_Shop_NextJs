@@ -4,6 +4,7 @@ interface Post {
   user: User;
   totalLikes: number;
   totalComments: number;
+  totalShares: number;
   createdAt: string;
   updatedAt: string;
   images: PostImage[];
@@ -51,6 +52,10 @@ interface UpdatePostDto {
 }
 
 interface CreateCommentDto {
+  content: string;
+}
+
+interface UpdateCommentDto {
   content: string;
 }
 

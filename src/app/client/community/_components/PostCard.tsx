@@ -11,7 +11,7 @@ import {
   Tag,
   Clock,
 } from "lucide-react";
-import { useToggleLike, useDeletePost } from "@/hooks/queries/usePost";
+import { useToggleLike, useDeletePost, useSharePost } from "@/hooks/queries/usePost";
 import { formatDistanceToNow } from "date-fns";
 
 interface PostCardProps {
@@ -23,6 +23,7 @@ const PostCard = ({ post, currentUserId }: PostCardProps) => {
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const { mutate: toggleLike, isPending: isLiking } = useToggleLike();
   const { mutate: deletePost, isPending: isDeleting } = useDeletePost();
+  const { mutate: sharePost, isPending: isSharing } = useSharePost();
 
   const isOwnPost = currentUserId === post.user?.id;
   const isLiked = post.isLikedByCurrentUser;
@@ -35,6 +36,14 @@ const PostCard = ({ post, currentUserId }: PostCardProps) => {
     if (confirm("Are you sure you want to delete this post?")) {
       deletePost(post.id);
     }
+  };
+
+  const handleShare = () => {
+    sharePost(post.id, {
+      onSuccess: (data) => {
+        alert(`Post shared! Total shares: ${data.totalShares}`);
+      },
+    });
   };
 
   const formatDate = (date: string) => {
@@ -54,9 +63,12 @@ const PostCard = ({ post, currentUserId }: PostCardProps) => {
     <div className="bg-white rounded-[16px] border border-gray-200 p-[24px] hover:shadow-lg transition-all duration-300">
       {/* Header: User Info + Actions */}
       <div className="flex items-start justify-between mb-[20px]">
-        <div className="flex items-center gap-[12px]">
+        <Link
+          href={`/client/profile/${post.user.id}`}
+          className="flex items-center gap-[12px] group"
+        >
           {/* Avatar */}
-          <div className="w-[48px] h-[48px] rounded-full overflow-hidden bg-gradient-to-br from-[#40BFFF] to-[#5ECCFF] flex items-center justify-center">
+          <div className="w-[48px] h-[48px] rounded-full overflow-hidden bg-gradient-to-br from-[#40BFFF] to-[#5ECCFF] flex items-center justify-center group-hover:shadow-lg transition-all duration-200">
             {post.user.avatar ? (
               <Image
                 src={post.user.avatar}
@@ -74,13 +86,15 @@ const PostCard = ({ post, currentUserId }: PostCardProps) => {
 
           {/* Name & Time */}
           <div>
-            <p className="font-semibold text-[16px]">{post.user.fullName}</p>
+            <p className="font-semibold text-[16px] group-hover:text-[#40BFFF] transition-colors duration-200">
+              {post.user.fullName}
+            </p>
             <div className="flex items-center gap-[6px] text-[14px] text-gray-500">
               <Clock className="w-[14px] h-[14px]" />
               <span>{formatDate(post.createdAt)}</span>
             </div>
           </div>
-        </div>
+        </Link>
 
         {/* More Menu */}
         {isOwnPost && (
@@ -199,43 +213,48 @@ const PostCard = ({ post, currentUserId }: PostCardProps) => {
       )}
 
       {/* Actions: Like, Comment, Share */}
-      <div className="flex items-center justify-between pt-[16px] border-t border-gray-200">
-        <div className="flex items-center gap-[24px]">
-          {/* Like Button */}
-          <button
-            onClick={handleLike}
-            disabled={isLiking}
-            className="flex items-center gap-[8px] text-[14px] font-medium hover:text-[#FF4858] transition-all duration-200 group disabled:opacity-50"
-          >
-            <Heart
-              className={`w-[20px] h-[20px] transition-all duration-200 group-hover:scale-110 ${
-                isLiked
-                  ? "fill-[#FF4858] text-[#FF4858]"
-                  : "text-gray-600 group-hover:text-[#FF4858]"
-              }`}
-            />
-            <span className={isLiked ? "text-[#FF4858]" : "text-gray-700"}>
-              {post.totalLikes} {post.totalLikes === 1 ? "Like" : "Likes"}
-            </span>
-          </button>
+      <div className="flex items-center gap-[24px] pt-[16px] border-t border-gray-200">
+        {/* Like Button */}
+        <button
+          onClick={handleLike}
+          disabled={isLiking}
+          className="flex items-center gap-[8px] text-[14px] font-medium hover:text-[#FF4858] transition-all duration-200 group disabled:opacity-50"
+        >
+          <Heart
+            className={`w-[20px] h-[20px] transition-all duration-200 group-hover:scale-110 ${
+              isLiked
+                ? "fill-[#FF4858] text-[#FF4858]"
+                : "text-gray-600 group-hover:text-[#FF4858]"
+            }`}
+          />
+          <span className={isLiked ? "text-[#FF4858]" : "text-gray-700"}>
+            {post.totalLikes} {post.totalLikes === 1 ? "Like" : "Likes"}
+          </span>
+        </button>
 
-          {/* Comment Button */}
-          <Link
-            href={`/client/community/post/${post.id}`}
-            className="flex items-center gap-[8px] text-[14px] font-medium hover:text-[#40BFFF] transition-all duration-200 group"
-          >
-            <MessageCircle className="w-[20px] h-[20px] text-gray-600 group-hover:text-[#40BFFF] group-hover:scale-110 transition-all duration-200" />
-            <span className="text-gray-700 group-hover:text-[#40BFFF]">
-              {post.totalComments}{" "}
-              {post.totalComments === 1 ? "Comment" : "Comments"}
-            </span>
-          </Link>
-        </div>
+        {/* Comment Button */}
+        <Link
+          href={`/client/community/post/${post.id}`}
+          className="flex items-center gap-[8px] text-[14px] font-medium hover:text-[#40BFFF] transition-all duration-200 group"
+        >
+          <MessageCircle className="w-[20px] h-[20px] text-gray-600 group-hover:text-[#40BFFF] group-hover:scale-110 transition-all duration-200" />
+          <span className="text-gray-700 group-hover:text-[#40BFFF]">
+            {post.totalComments}{" "}
+            {post.totalComments === 1 ? "Comment" : "Comments"}
+          </span>
+        </Link>
 
         {/* Share Button */}
-        <button className="flex items-center gap-[8px] text-[14px] font-medium text-gray-600 hover:text-[#40BFFF] transition-all duration-200 group">
-          <Share2 className="w-[18px] h-[18px] group-hover:scale-110 transition-all duration-200" />
-          <span>Share</span>
+        <button
+          onClick={handleShare}
+          disabled={isSharing}
+          className="flex items-center gap-[8px] text-[14px] font-medium hover:text-[#40BFFF] transition-all duration-200 group disabled:opacity-50"
+        >
+          <Share2 className="w-[18px] h-[18px] text-gray-600 group-hover:text-[#40BFFF] group-hover:scale-110 transition-all duration-200" />
+          <span className="text-gray-700 group-hover:text-[#40BFFF]">
+            {post.totalShares > 0 && `${post.totalShares} `}
+            {isSharing ? "Sharing..." : "Share"}
+          </span>
         </button>
       </div>
     </div>

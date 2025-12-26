@@ -103,3 +103,33 @@ export const getPostsByProduct = async (
   })) as GetAllResponse<Post>;
   return response.data;
 };
+
+// Update comment
+export const updateComment = async (
+  postId: number,
+  commentId: number,
+  data: UpdateCommentDto
+) => {
+  const response = (await axiosInstance.put(
+    `/posts/${postId}/comments/${commentId}`,
+    data
+  )) as { message: string; comment: PostComment };
+  return response;
+};
+
+// Delete comment
+export const deleteComment = async (postId: number, commentId: number) => {
+  const response = (await axiosInstance.delete(
+    `/posts/${postId}/comments/${commentId}`
+  )) as { message: string };
+  return response;
+};
+
+// Share a post
+export const sharePost = async (id: number) => {
+  const response = (await axiosInstance.post(`/posts/${id}/share`)) as {
+    message: string;
+    totalShares: number;
+  };
+  return response;
+};
