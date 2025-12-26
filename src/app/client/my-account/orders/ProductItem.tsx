@@ -42,9 +42,7 @@ export const ProductItem = ({ item, orderStatus, orderId }: Props) => {
                 {variantAttributeValues.map((a) => (
                   <MyTag key={a.id} value={a.attributeCategory.value} />
                 ))}
-                <span className="px-2 py-0.5 text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded">
-                  x{item.quantity}
-                </span>
+                <MyTag value={`x${item.quantity}`}></MyTag>
               </div>
             </div>
             {item.isReviewed && (

@@ -96,21 +96,33 @@ export const OrderItem = ({ order }: { order: Order }) => {
           </div>
         </div>
 
-        {/* Expected Delivery (if shipped) */}
-        {(status === OrderStatus.SHIPPED || status === OrderStatus.PROCESSING) && (
+        {/* Expected Delivery (if shipped or processing) */}
+        {(status === OrderStatus.SHIPPED ||
+          status === OrderStatus.PROCESSING) && (
           <div className="mt-3 flex items-center gap-2 text-sm">
             <Clock className="w-4 h-4 text-[#40BFFF]" />
             <span className="text-gray-600 dark:text-gray-400">
               Expected delivery:
             </span>
             <span className="font-medium text-gray-900 dark:text-white">
-              {new Date(
-                new Date(order.createdAt).getTime() + 5 * 24 * 60 * 60 * 1000
-              ).toLocaleDateString("en-US", {
-                weekday: "short",
-                month: "short",
-                day: "numeric",
-              })}
+              {(() => {
+                const minDays = order.shippingMethod === "standard" ? 10 : 5;
+                const maxDays = order.shippingMethod === "standard" ? 15 : 10;
+
+                const randomDays =
+                  Math.floor(Math.random() * (maxDays - minDays + 1)) + minDays;
+
+                const expectedDate = new Date(
+                  new Date(order.createdAt).getTime() +
+                    randomDays * 24 * 60 * 60 * 1000
+                );
+
+                return expectedDate.toLocaleDateString("en-US", {
+                  weekday: "short",
+                  month: "short",
+                  day: "numeric",
+                });
+              })()}
             </span>
           </div>
         )}
@@ -120,7 +132,7 @@ export const OrderItem = ({ order }: { order: Order }) => {
       <div>
         <ProductItem item={firstItem} orderStatus={status} orderId={order.id} />
 
-      {/* Collapsible Additional Products */}
+        {/* Collapsible Additional Products */}
         {restItems.length > 0 && (
           <>
             {open && (

@@ -15,6 +15,7 @@ import {
   Heart,
   ChevronDown,
   MessageSquare,
+  Package,
 } from "lucide-react";
 import * as React from "react";
 // Giả định sử dụng Next.js App Router hooks
@@ -73,7 +74,7 @@ const menuData: MenuSection[] = [
     isCollapsible: true,
   },
   {
-    icon: ListOrdered,
+    icon: Package,
     title: "Orders",
     href: "/account/orders",
     items: [
@@ -176,9 +177,7 @@ const CollapsibleMenuSection: React.FC<CollapsibleMenuSectionProps> = ({
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-2.5">
               <Icon
-                className={`h-4 w-4 ${
-                  isParentActive ? "text-[#40BFFF]" : ""
-                }`}
+                className={`h-4 w-4 ${isParentActive ? "text-[#40BFFF]" : ""}`}
               />
               <span>{title}</span>
             </div>
@@ -251,9 +250,7 @@ const SimpleMenuSection: React.FC<SimpleMenuSectionProps> = ({
     >
       <div className="flex items-center justify-between w-full">
         <div className="flex items-center gap-2.5">
-          <Icon
-            className={`h-4 w-4 ${isActive ? "text-[#40BFFF]" : ""}`}
-          />
+          <Icon className={`h-4 w-4 ${isActive ? "text-[#40BFFF]" : ""}`} />
           <span>{title}</span>
         </div>
       </div>
@@ -294,7 +291,9 @@ export function MyAccountSidebar() {
           </AvatarFallback>
         </Avatar>
         <div className="flex-1 min-w-0 relative z-10">
-          <h3 className="text-base font-semibold truncate">{user?.fullName || "User"}</h3>
+          <h6 className="text-base font-semibold truncate">
+            {user?.fullName || "User"}
+          </h6>
           <p className="text-xs text-white/90 truncate">{user?.email}</p>
         </div>
       </div>
