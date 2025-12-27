@@ -53,16 +53,6 @@ export const attributeColumns = (
         <DataTableColumnHeader column={column} title="Name" />
       ),
     },
-    // {
-    //   accessorKey: "updatedAt",
-    //   header: ({ column }) => (
-    //     <DataTableColumnHeader column={column} title="Updated At" />
-    //   ),
-    //   cell: ({ row }) => {
-    //     const updatedAt = row.original.updatedAt;
-    //     return shorthandFormatDateTime(new Date(updatedAt));
-    //   },
-    // },
     {
       id: "actions",
       cell: ({ row }) => {
@@ -77,12 +67,6 @@ export const attributeColumns = (
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(String(item.id))}
-              >
-                Copy ID
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => handleUpdateBtn(item)}>
                 Update Attribute
               </DropdownMenuItem>
