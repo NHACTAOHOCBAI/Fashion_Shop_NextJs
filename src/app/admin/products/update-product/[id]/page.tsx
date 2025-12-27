@@ -242,6 +242,7 @@ export default function UpdateProduct() {
                       </CardHeader>
 
                       <CardContent className="space-y-4">
+                        {/* Image Upload */}
                         <FormField
                           control={form.control}
                           name={`variants.${index}.image`}
@@ -254,13 +255,14 @@ export default function UpdateProduct() {
                           )}
                         />
 
+                        {/* Attributes */}
                         {attributes.map((attr) => (
                           <FormField
                             key={attr.attributeName}
                             control={form.control}
                             name={`variants.${index}.attributes`}
                             render={({ field }) => {
-                              // tìm valueId đang được chọn cho nhóm attribute này
+                              // Tìm valueId cho attribute này
                               const selected = field.value?.find((v: any) =>
                                 attr.values.some((val) => val.id === v.valueId)
                               )?.valueId;
@@ -274,7 +276,6 @@ export default function UpdateProduct() {
                                         selected ? String(selected) : undefined
                                       }
                                       onValueChange={(v) => {
-                                        // giữ lại các attribute khác
                                         const others =
                                           field.value?.filter(
                                             (a: any) =>
@@ -285,9 +286,7 @@ export default function UpdateProduct() {
 
                                         field.onChange([
                                           ...others,
-                                          {
-                                            valueId: Number(v),
-                                          },
+                                          { valueId: Number(v) },
                                         ]);
                                       }}
                                     >
@@ -318,6 +317,7 @@ export default function UpdateProduct() {
                     </Card>
                   ))}
 
+                  {/* Add Variant */}
                   <Button
                     className="w-full"
                     type="button"
@@ -328,6 +328,7 @@ export default function UpdateProduct() {
                   </Button>
                 </div>
 
+                {/* Navigation Buttons */}
                 <div className="flex justify-between mt-6">
                   <Button
                     type="button"
