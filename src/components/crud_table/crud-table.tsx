@@ -129,9 +129,9 @@ export default function CrudTable<T extends { id: number }>({
       </div>
       {useDelete && (
         <AlertDialog open={openDelete} onOpenChange={setOpenDelete}>
-          <AlertDialogContent>
+          <AlertDialogContent className="w-[500px]">
             <AlertDialogHeader>
-              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <h6>Are you absolutely sure?</h6>
               <AlertDialogDescription>
                 This action cannot be undone. It will permanently delete the
                 selected items.
