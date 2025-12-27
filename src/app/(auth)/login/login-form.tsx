@@ -33,7 +33,7 @@ export function LoginForm({}: React.ComponentProps<"div">) {
     login(values, {
       onSuccess: ({ user, token, access_token }) => {
         const authToken = token || access_token;
-        dispatch(setCredentials({ user: user, token: authToken as string }));
+        dispatch(setCredentials({ user: user }));
         localStorage.setItem("user", JSON.stringify(user));
         if (authToken) {
           localStorage.setItem("token", authToken);

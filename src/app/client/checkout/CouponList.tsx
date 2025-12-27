@@ -43,7 +43,9 @@ const CouponList = ({
   availableCoupons,
 }: CouponListProps) => {
   const allCoupons = availableCoupons || [];
-  const activeCouponsCount = allCoupons.filter((c) => c.status === "active").length;
+  const activeCouponsCount = allCoupons.filter(
+    (c) => c.status === "active"
+  ).length;
 
   // Group coupons by type
   const freeShippingCoupons = allCoupons.filter(
@@ -89,8 +91,8 @@ const CouponList = ({
       let tagValue: string;
       let tagColor = "text-red-500";
 
-      if (coupon.status === "expired") {
-        tagValue = "Expired";
+      if (coupon.status === "disabled") {
+        tagValue = "disabled";
       } else if (coupon.status === "scheduled") {
         tagValue = "Upcoming";
         tagColor = "text-yellow-600";
@@ -165,9 +167,7 @@ const CouponList = ({
           {coupon.usageLimit > 0 && (
             <>
               <Progress
-                className={`mt-2.5 h-1.5 ${
-                  isActive ? "" : "opacity-50"
-                }`}
+                className={`mt-2.5 h-1.5 ${isActive ? "" : "opacity-50"}`}
                 value={progressValue}
               />
               <p className="text-[10px] text-gray-500 dark:text-gray-400 mt-1">
@@ -206,9 +206,7 @@ const CouponList = ({
     return (
       <div>
         <div className="flex items-center gap-2 mb-4">
-          <div className={`p-2 rounded-lg ${color} bg-opacity-10`}>
-            {icon}
-          </div>
+          <div className={`p-2 rounded-lg ${color} bg-opacity-10`}>{icon}</div>
           <h3 className={`font-semibold text-base ${color}`}>
             {title} ({coupons.length})
           </h3>
@@ -230,7 +228,9 @@ const CouponList = ({
       open={open}
       onOpenChange={setOpen}
       title="Choose Coupon"
-      description={`${activeCouponsCount} active coupon${activeCouponsCount !== 1 ? 's' : ''} available`}
+      description={`${activeCouponsCount} active coupon${
+        activeCouponsCount !== 1 ? "s" : ""
+      } available`}
       icon={<Tag size={20} />}
       maxWidth="max-w-2xl"
       footer={

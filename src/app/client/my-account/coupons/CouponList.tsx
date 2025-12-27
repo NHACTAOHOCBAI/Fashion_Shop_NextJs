@@ -182,9 +182,10 @@ export function CouponList({ discountType }: CouponListProps) {
             </p>
           </div>
 
-          {parseFloat(coupon.minOrderAmount) > 0 && (
+          {parseFloat(String(coupon.minOrderAmount)) > 0 && (
             <p className="text-[10px] font-medium text-[#40BFFF] mt-1.5">
-              Min. Order: ${parseFloat(coupon.minOrderAmount).toFixed(2)}
+              Min. Order: $
+              {parseFloat(String(coupon.minOrderAmount)).toFixed(2)}
             </p>
           )}
         </div>

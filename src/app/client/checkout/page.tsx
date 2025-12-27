@@ -118,7 +118,7 @@ const calculateOrderSummary = (
 
   // Đảm bảo coupon đang active và minOrderAmount được đáp ứng
   if (selectedCoupon && selectedCoupon.status === "active") {
-    const minOrderAmount = parseFloat(selectedCoupon.minOrderAmount);
+    const minOrderAmount = parseFloat(String(selectedCoupon.minOrderAmount));
 
     if (subtotal >= minOrderAmount) {
       if (
@@ -127,7 +127,7 @@ const calculateOrderSummary = (
       ) {
         // Giảm giá không được lớn hơn Subtotal
         const calculatedDiscount =
-          subtotal * (selectedCoupon.discountValue / 100);
+          subtotal * (selectedCoupon.discountValue || 0 / 100);
         discountAmount =
           calculatedDiscount > subtotal ? subtotal : calculatedDiscount;
       } else if (
@@ -136,9 +136,9 @@ const calculateOrderSummary = (
       ) {
         // Giảm giá cố định không được lớn hơn Subtotal
         discountAmount =
-          selectedCoupon.discountValue > subtotal
+          selectedCoupon.discountValue || 0 > subtotal
             ? subtotal
-            : selectedCoupon.discountValue;
+            : selectedCoupon.discountValue || 0;
       } else if (selectedCoupon.discountType === "free_shipping") {
         // Miễn phí vận chuyển
         shippingFee = 0;
@@ -635,8 +635,8 @@ const Checkout = () => {
                             <MyTag
                               value={
                                 <p className="text-xs text-red-500">
-                                  {coupon.status === "expired"
-                                    ? "Expired"
+                                  {coupon.status === "disabled"
+                                    ? "disabled"
                                     : "Inactive"}
                                 </p>
                               }
