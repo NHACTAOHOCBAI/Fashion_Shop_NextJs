@@ -33,10 +33,10 @@ export default function AdminChatPage() {
   }, []);
   const activeConversation = list.find((c) => c.id === active);
   return (
-    <div className="flex h-screen bg-gray-100 border">
+    <div className="flex h-screen bg-gray-100 border rounded-2xl overflow-hidden">
       {/* ===== SIDEBAR ===== */}
       <div className="w-[320px] bg-white border-r flex flex-col">
-        <div className="p-4 border-b font-semibold text-lg">Khách hàng</div>
+        <div className="p-4 border-b font-semibold text-lg">Customers</div>
 
         <div className="flex-1 overflow-y-auto p-2 space-y-1">
           {list.map((c) => {
@@ -81,7 +81,7 @@ export default function AdminChatPage() {
                   </div>
 
                   <p className="text-sm text-gray-500 truncate">
-                    Nhấn để xem hội thoại
+                    Press to view
                   </p>
                 </div>
               </div>
@@ -100,7 +100,7 @@ export default function AdminChatPage() {
           />
         ) : (
           <div className="h-full flex items-center justify-center text-gray-400">
-            Chọn một cuộc hội thoại
+            No conversation
           </div>
         )}
       </div>

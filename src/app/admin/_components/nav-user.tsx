@@ -6,6 +6,7 @@ import {
   ChevronsUpDown,
   CreditCard,
   LogOut,
+  MessageSquare,
   Sparkles,
   UserRound,
 } from "lucide-react";
@@ -142,6 +143,12 @@ export function NavUser({
                 <Link href={"/admin/my-account"} className="flex gap-[10px]">
                   <UserRound />
                   My Account
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link href={"/admin/chat"} className="flex gap-[10px]">
+                  <MessageSquare />
+                  Chat
                 </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
