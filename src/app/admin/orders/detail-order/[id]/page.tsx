@@ -91,7 +91,7 @@ export default function OrderDetailPage() {
     );
 
   const subtotal = order.items.reduce(
-    (sum, item) => sum + Number(item.price) * item.quantity,
+    (sum: number, item: any) => sum + Number(item.price) * item.quantity,
     0
   );
 
@@ -213,7 +213,7 @@ export default function OrderDetailPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {order.items.map((item) => (
+                {order.items.map((item: any) => (
                   <TableRow key={item.id}>
                     <TableCell>
                       <Image
@@ -231,7 +231,7 @@ export default function OrderDetailPage() {
                         </p>
                         <div className="flex flex-wrap gap-1">
                           {item.variant?.variantAttributeValues?.map(
-                            (v, idx) => (
+                            (v: any, idx: number) => (
                               <Badge
                                 key={idx}
                                 variant="outline"

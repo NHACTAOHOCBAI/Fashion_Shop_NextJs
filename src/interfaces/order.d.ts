@@ -1,4 +1,4 @@
-interface Order {
+export interface Order {
   id: number;
   recipientName: string;
   recipientPhone: string;

@@ -1,6 +1,7 @@
 import UpdateOrderSchema from "./update-order-schema";
 import { OrderStatus } from "@/constants/status.enum";
 import { useUpdateOrder } from "@/hooks/queries/useOrder";
+import { Order } from "@/interfaces/order";
 import { formatDateTimeWithAt } from "@/lib/formatDate";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useMemo } from "react";

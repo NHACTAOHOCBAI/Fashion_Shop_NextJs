@@ -27,6 +27,7 @@ import { DialogSkeleton } from "@/components/skeleton/dialog-skeleton";
 import useLocalUpdateOrder, {
   ORDER_STATUS_LABEL,
 } from "./use-local-update-order";
+import { Order } from "@/interfaces/order";
 
 interface UpdateOrderDialogProps {
   open: boolean;

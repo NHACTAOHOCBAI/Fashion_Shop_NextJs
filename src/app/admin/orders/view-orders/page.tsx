@@ -5,6 +5,7 @@ import { orderColumns } from "@/app/admin/orders/view-orders/order-columns";
 import CrudTable from "@/components/crud_table/crud-table";
 import { Button } from "@/components/ui/button";
 import { useOrders, useDeleteOrderByAdmin } from "@/hooks/queries/useOrder";
+import { Order } from "@/interfaces/order";
 import { formatDateTimeWithAt } from "@/lib/formatDate";
 import { Plus } from "lucide-react";
 import React from "react";

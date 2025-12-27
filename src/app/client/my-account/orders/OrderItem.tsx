@@ -19,6 +19,7 @@ import {
 import { OrderStatus } from "@/constants/status.enum";
 import { Button } from "@/components/ui/button";
 import { formatDate, formatCurrency } from "@/lib/utils";
+import { Order } from "@/interfaces/order";
 
 export const OrderItem = ({ order }: { order: Order }) => {
   const status = order.status as OrderStatus;

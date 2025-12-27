@@ -2,6 +2,7 @@
 import { OrderAction } from "@/app/client/my-account/orders/constant";
 import { Button } from "@/components/ui/button";
 import { useConfirmOrder, useDeleteOrder } from "@/hooks/queries/useOrder";
+import { Order } from "@/interfaces/order";
 import { useRouter } from "next/navigation";
 
 type Props = {
