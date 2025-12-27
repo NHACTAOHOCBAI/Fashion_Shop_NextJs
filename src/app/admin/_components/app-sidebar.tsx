@@ -12,19 +12,11 @@ import { NavMain } from "@/app/admin/_components/nav-main";
 import { NavUser } from "@/app/admin/_components/nav-user";
 import { ICONS } from "@/constants/icon.enum";
 import { Boxes, Tag } from "lucide-react";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const [user, setUser] = React.useState<User>();
-  React.useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (error) {
-        console.error("Invalid user data in localStorage");
-      }
-    }
-  }, []);
+  const { user } = useSelector((state: RootState) => state.auth);
   const data = {
     user: {
       name: user?.fullName,

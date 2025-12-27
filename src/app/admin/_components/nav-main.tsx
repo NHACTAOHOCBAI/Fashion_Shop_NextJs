@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import { ChevronRight } from "lucide-react"
+import { ChevronRight } from "lucide-react";
 
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible"
+} from "@/components/ui/collapsible";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -16,27 +16,37 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from "@/components/ui/sidebar"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+} from "@/components/ui/sidebar";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import Image from "next/image";
 
 export function NavMain({
   items,
 }: {
   items: {
-    title: string
-    icon?: React.ReactNode
-    isActive?: boolean
+    title: string;
+    icon?: React.ReactNode;
+    isActive?: boolean;
     items?: {
-      title: string
-      url: string
-    }[]
-  }[]
+      title: string;
+      url: string;
+    }[];
+  }[];
 }) {
-  const pathname = usePathname()
+  const pathname = usePathname();
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Platform</SidebarGroupLabel>
+      <SidebarGroupLabel className="h-auto">
+        <Image
+          src="/images/logo.png"
+          alt="Logo"
+          width={1000}
+          height={1000}
+          priority
+          className=" object-cover w-[200px] h-[100px]"
+        />
+      </SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <Collapsible
@@ -57,7 +67,10 @@ export function NavMain({
                 <SidebarMenuSub>
                   {item.items?.map((subItem) => (
                     <SidebarMenuSubItem key={subItem.title}>
-                      <SidebarMenuSubButton isActive={pathname.includes(subItem.url)} asChild>
+                      <SidebarMenuSubButton
+                        isActive={pathname.includes(subItem.url)}
+                        asChild
+                      >
                         <Link href={subItem.url}>
                           <span>{subItem.title}</span>
                         </Link>
@@ -71,5 +84,5 @@ export function NavMain({
         ))}
       </SidebarMenu>
     </SidebarGroup>
-  )
+  );
 }

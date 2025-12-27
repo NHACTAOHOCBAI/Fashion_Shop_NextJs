@@ -2,12 +2,14 @@ import {
   changePassword,
   getMyProfile,
   login,
-  logout,
+  logoutService,
   register,
   updateMyProfile,
 } from "@/services/auth.service";
+import { logout, setCredentials } from "@/store/authSlice";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
 import { toast } from "sonner";
 const useChangePassword = () => {
   const queryClient = useQueryClient();
@@ -30,13 +32,13 @@ const useRegister = () => {
 };
 const useLogout = () => {
   const router = useRouter();
-
+  const dispatch = useDispatch();
   return useMutation({
-    mutationFn: logout,
+    mutationFn: logoutService,
     onSuccess: () => {
       router.push("/login"); // hoặc "/auth/login" tùy route của bạn,
       toast.success("You has logout succesfully");
-      localStorage.clear();
+      dispatch(logout());
     },
   });
 };
@@ -46,10 +48,12 @@ const useMyProfile = () =>
     queryFn: () => getMyProfile(),
   });
 const useUpdateMyProfile = () => {
+  const dispatch = useDispatch();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: updateMyProfile,
-    onSuccess: () => {
+    onSuccess: (data) => {
+      dispatch(setCredentials({ user: data }));
       queryClient.invalidateQueries({ queryKey: ["getMyProfile"] });
     },
   });

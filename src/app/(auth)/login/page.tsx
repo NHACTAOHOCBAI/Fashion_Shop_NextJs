@@ -1,12 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { LoginForm } from "@/app/(auth)/login/login-form";
-import Loading from "@/app/client/_components/Loading";
 import Loading2 from "@/app/client/_components/Loading2";
-import { loginWithGoogle } from "@/services/auth.service";
 import Link from "next/link";
 
 export default function LoginPage() {

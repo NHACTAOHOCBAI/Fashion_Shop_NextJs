@@ -36,7 +36,7 @@ const register = async (data: {
   });
   return response.data;
 };
-const logout = async () => {
+const logoutService = async () => {
   const response = await axiosInstance.post("/auth/logout");
   return response;
 };
@@ -54,7 +54,7 @@ const updateMyProfile = async (data: { fullName: string; image?: File }) => {
       "Content-Type": "multipart/form-data",
     },
   });
-  return response.data;
+  return response.data as User;
 };
 const changePassword = async (data: {
   oldPassword: string;
@@ -68,7 +68,7 @@ export {
   login,
   getMyProfile,
   updateMyProfile,
-  logout,
+  logoutService,
   register,
   changePassword,
   forgotPassword,

@@ -61,10 +61,11 @@ export default function AdminMyAccountPage() {
         image: avatarFile as File,
       },
       {
-        onSuccess: () =>
+        onSuccess: () => {
           toast.success("Profile updated", {
             description: formatDateTimeWithAt(new Date()),
-          }),
+          });
+        },
       }
     );
   };
@@ -85,6 +86,9 @@ export default function AdminMyAccountPage() {
         onSuccess: () => {
           toast.success("Password changed successfully");
           passwordForm.reset();
+        },
+        onError: () => {
+          toast.error("Password changed failed");
         },
       }
     );

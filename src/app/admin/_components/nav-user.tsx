@@ -46,7 +46,6 @@ export function NavUser({
     logout();
   };
   const { isMobile } = useSidebar();
-  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const socket = useSocket();
   useEffect(() => {
@@ -56,7 +55,6 @@ export function NavUser({
         if (item.isRead === false) return total + 1;
         return total;
       }, 0);
-      setNotifications(res.data);
       setUnreadCount(unreadCount);
     };
 
@@ -66,7 +64,6 @@ export function NavUser({
     if (!socket) return;
 
     socket.on("notification:new", (data: Notification) => {
-      setNotifications((prev) => [data, ...prev]);
       setUnreadCount((c) => c + 1);
     });
 
