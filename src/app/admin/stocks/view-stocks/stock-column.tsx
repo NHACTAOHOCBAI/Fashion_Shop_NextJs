@@ -1,9 +1,11 @@
 import { DataTableColumnHeader } from "@/components/table/data-table-column-header";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import dayjs from "dayjs";
 import type { ColumnDef } from "@tanstack/react-table";
 import convertAlias from "@/lib/convertAlias";
+import { Eye } from "lucide-react";
 
 /* ===================== COLUMNS ===================== */
 
@@ -92,6 +94,31 @@ export const stockColumns = (): ColumnDef<Stock>[] => {
       ),
       cell: ({ row }) =>
         dayjs(row.original.createdAt).format("DD/MM/YYYY HH:mm"),
+    },
+
+    // ================= ACTIONS =================
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => {
+        const stock = row.original;
+
+        const handleViewDetail = () => {
+          window.location.href = `/admin/stocks/detail-stock/${stock.id}`;
+        };
+
+        return (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleViewDetail}
+            className="gap-2"
+          >
+            <Eye className="h-4 w-4" />
+            View Detail
+          </Button>
+        );
+      },
     },
   ];
 };

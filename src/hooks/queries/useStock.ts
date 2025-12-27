@@ -1,4 +1,4 @@
-import { createStock, getStocks } from "@/services/stock.service";
+import { createStock, getStocks, getStockById } from "@/services/stock.service";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const useStocks = (params: QueryParams) =>
@@ -6,6 +6,14 @@ const useStocks = (params: QueryParams) =>
     queryKey: ["stocks", params],
     queryFn: () => getStocks(params),
   });
+
+const useGetStockById = (id: number) =>
+  useQuery({
+    queryKey: ["stock", id],
+    queryFn: () => getStockById(id),
+    enabled: !!id,
+  });
+
 const useCreateStock = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -15,4 +23,5 @@ const useCreateStock = () => {
     },
   });
 };
-export { useStocks, useCreateStock };
+
+export { useStocks, useGetStockById, useCreateStock };
