@@ -7,6 +7,8 @@ import { ProductOverview } from "./_components/ProductOverview";
 import { ProductStatsCards } from "./_components/ProductStatsCards";
 import { VariantsTable } from "./_components/VariantsTable";
 import { VariantCardGrid } from "./_components/VariantCardGrid";
+import { StockAnalytics } from "./_components/StockAnalytics";
+import { VariantStockManager } from "./_components/VariantStockManager";
 import { LayoutGrid, Table as TableIcon, BarChart3 } from "lucide-react";
 function getAllImageUrls(product: Product | undefined) {
   if (!product) return [];
@@ -61,7 +63,7 @@ export default function ProductDetailPage() {
           </TabsTrigger>
           <TabsTrigger value="analytics" className="gap-2">
             <BarChart3 className="h-4 w-4" />
-            Analytics
+            Stock
           </TabsTrigger>
         </TabsList>
 
@@ -80,33 +82,11 @@ export default function ProductDetailPage() {
           </div>
         </TabsContent>
 
-        {/* Analytics Tab */}
+        {/* Stock Management Tab */}
         <TabsContent value="analytics" className="space-y-6">
           <ProductStatsCards product={product} />
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="p-8 rounded-lg border-2 border-dashed border-muted-foreground/25 flex items-center justify-center">
-              <div className="text-center space-y-2">
-                <BarChart3 className="h-12 w-12 mx-auto text-muted-foreground/50" />
-                <p className="text-muted-foreground font-medium">
-                  Sales Analytics Chart
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  Coming soon...
-                </p>
-              </div>
-            </div>
-            <div className="p-8 rounded-lg border-2 border-dashed border-muted-foreground/25 flex items-center justify-center">
-              <div className="text-center space-y-2">
-                <BarChart3 className="h-12 w-12 mx-auto text-muted-foreground/50" />
-                <p className="text-muted-foreground font-medium">
-                  Stock Trends Chart
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  Coming soon...
-                </p>
-              </div>
-            </div>
-          </div>
+          <StockAnalytics product={product} />
+          <VariantStockManager variants={product.variants} />
         </TabsContent>
       </Tabs>
     </div>
