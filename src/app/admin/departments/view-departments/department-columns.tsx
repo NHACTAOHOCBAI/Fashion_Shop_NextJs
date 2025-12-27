@@ -75,6 +75,16 @@ export const departmentColumns = (
       ),
     },
     {
+      accessorKey: "createdAt",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Created At" />
+      ),
+      cell: ({ row }) => {
+        const createdAt = row.original.createdAt;
+        return shorthandFormatDateTime(new Date(createdAt));
+      },
+    },
+    {
       accessorKey: "updatedAt",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Updated At" />
@@ -98,12 +108,6 @@ export const departmentColumns = (
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(String(item.id))}
-              >
-                Copy ID
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => handleUpdateBtn(item)}>
                 Update Department
               </DropdownMenuItem>
