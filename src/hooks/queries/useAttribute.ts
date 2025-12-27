@@ -51,6 +51,7 @@ const useGetAttributeCategoryByCategory = (id: number) =>
     useQuery({
         queryKey: ['attributes', id],
         queryFn: () => getAttributeCategoryByCategory(id),
+        enabled: id > 0, // Skip query when categoryId is invalid
     });
 const useGetAttributeCategoryByCategorySlug = (id: number) =>
     useQuery({

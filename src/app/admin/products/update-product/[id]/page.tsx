@@ -286,6 +286,7 @@ export default function UpdateProduct() {
                                         field.onChange([
                                           ...others,
                                           {
+                                            attributeCategoryId: Number(v),
                                             valueId: Number(v),
                                           },
                                         ]);
