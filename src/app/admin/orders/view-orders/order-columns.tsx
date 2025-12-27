@@ -17,7 +17,7 @@ import {
 import { shorthandFormatDateTime } from "@/lib/formatDate";
 import { formatMoney } from "@/lib/formatMoney";
 import type { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, Eye } from "lucide-react";
 
 export const orderColumns = (
   handleUpdateBtn: (item: Order) => void,
@@ -151,11 +151,14 @@ export const orderColumns = (
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(String(item.id))}
+              onClick={() =>
+                (window.location.href = `/admin/orders/detail-order/${item.id}`)
+              }
+              className="gap-2"
             >
-              Copy ID
+              <Eye className="h-4 w-4" />
+              View Detail
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => handleUpdateBtn(item)}>
               Update Order
             </DropdownMenuItem>
