@@ -1,13 +1,18 @@
-import CreateCouponSchema from "@/app/admin/coupons/create-coupon/create-coupon-schema";
-import { useCreateCoupon } from "@/hooks/queries/useCoupon";
-import { formatDateTimeWithAt } from "@/lib/formatDate";
-import { zodResolver } from "@hookform/resolvers/zod";
+"use client";
+
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import z from "zod";
 
+import CreateCouponSchema from "./create-coupon-schema";
+import { useMutation } from "@tanstack/react-query";
+
+import { formatDateTimeWithAt } from "@/lib/formatDate";
+import { useCreateCoupon } from "@/hooks/queries/useCoupon";
+
 const useLocalCreateCoupon = (closeDialog: () => void) => {
-  const { mutate: createItem, isPending } = useCreateCoupon();
+  const { mutate: createCoupon, isPending } = useCreateCoupon();
 
   const form = useForm<z.infer<typeof CreateCouponSchema>>({
     resolver: zodResolver(CreateCouponSchema),
@@ -20,32 +25,39 @@ const useLocalCreateCoupon = (closeDialog: () => void) => {
       minOrderAmount: 0,
       usageLimit: 1,
       usageLimitPerUser: 1,
-      startDate: new Date().toISOString().slice(0, 10),
-      endDate: new Date().toISOString().slice(0, 10),
-      status: "active",
+      startDate: new Date().toISOString(),
+      endDate: new Date().toISOString(),
       targets: [],
     },
   });
 
-  function onSubmit(values: z.infer<typeof CreateCouponSchema>) {
-    createItem(values as any, {
+  const handleCancel = () => {
+    form.reset();
+    closeDialog();
+  };
+
+  const onSubmit = (values: z.infer<typeof CreateCouponSchema>) => {
+    const payload = {
+      ...values,
+      discountValue:
+        values.discountType === "free_shipping"
+          ? undefined
+          : values.discountValue,
+    };
+    console.log(payload);
+    createCoupon(payload, {
       onSuccess: () => {
         toast.success("Coupon has been created", {
           description: formatDateTimeWithAt(new Date()),
         });
+        handleCancel();
       },
-      onError: (error) => {
+      onError: (error: any) => {
         toast.error(`Ohh!!! ${error.message}`, {
           description: formatDateTimeWithAt(new Date()),
         });
       },
-      onSettled: handleCancel,
     });
-  }
-
-  const handleCancel = () => {
-    closeDialog();
-    form.reset();
   };
 
   return { form, onSubmit, isPending, handleCancel };
