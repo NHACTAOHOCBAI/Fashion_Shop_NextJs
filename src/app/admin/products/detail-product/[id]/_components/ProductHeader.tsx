@@ -44,9 +44,9 @@ export function ProductHeader({ product }: ProductHeaderProps) {
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div className="space-y-2">
           <div className="flex items-center gap-2">
-            <h1 className="text-3xl font-bold tracking-tight">
+            <h6 className="text-3xl font-bold tracking-tight">
               {product.name}
-            </h1>
+            </h6>
             <Badge
               variant="outline"
               className="bg-gradient-to-r from-cyan-50 to-blue-50 dark:from-cyan-950/30 dark:to-blue-950/30 border-cyan-200 dark:border-cyan-800"
@@ -59,30 +59,6 @@ export function ProductHeader({ product }: ProductHeaderProps) {
             <span>•</span>
             <span>{product.category.name}</span>
           </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" className="gap-2">
-            <Share2 className="h-4 w-4" />
-            Share
-          </Button>
-          <Button variant="outline" size="sm" className="gap-2">
-            <Copy className="h-4 w-4" />
-            Duplicate
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-2"
-            onClick={handleEdit}
-          >
-            <Edit className="h-4 w-4" />
-            Edit
-          </Button>
-          <Button variant="destructive" size="sm" className="gap-2">
-            <Trash2 className="h-4 w-4" />
-            Delete
-          </Button>
         </div>
       </div>
     </div>

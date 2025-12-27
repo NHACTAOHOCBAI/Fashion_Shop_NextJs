@@ -291,7 +291,7 @@ const Checkout = () => {
       paymentMethod: selectedPayment,
       couponId: selectedCouponId,
       orderItems: (products || []).map((item) => ({
-        variantId: item.variant.product.id, // Giả định dùng name là ID
+        variantId: item.variant.id, // Giả định dùng name là ID
         quantity: item.quantity,
       })),
       summary: {
