@@ -36,6 +36,12 @@ const getMyOrderById = async (id: number) => {
   };
   return response.data;
 };
+
+const getOrderById = async (id: number): Promise<Order> => {
+  const response = await axiosInstance.get(`/orders/${id}`);
+  return response.data;
+};
+
 const getOrders = async (params: QueryParams) => {
   const response = (await axiosInstance.get("/orders/all", {
     params,
@@ -66,6 +72,7 @@ export {
   placeOrder,
   getMyOrders,
   getMyOrderById,
+  getOrderById,
   getOrders,
   updateOrder,
   cancelOrder,

@@ -9,11 +9,16 @@ interface Order {
   status: OrderStatus;
   totalAmount: number;
   note: string;
-  user: User;
+  user?: User;
   items: OrderItem[];
   createdAt: string;
   updatedAt: string;
   shippingMethod: string;
+  paymentMethod?: string;
+  paymentStatus?: string;
+  shippingFee?: number;
+  discountAmount?: number;
+  couponCode?: string;
 }
 interface OrderItem {
   id: number;

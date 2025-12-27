@@ -4,6 +4,7 @@ import {
   confirmDelivery,
   getMyOrderById,
   getMyOrders,
+  getOrderById,
   getOrders,
   placeOrder,
   updateOrder,
@@ -29,6 +30,13 @@ const usePlaceOrder = () => {
     },
   });
 };
+const useGetOrderById = (id: number) =>
+  useQuery({
+    queryKey: ["order", id],
+    queryFn: () => getOrderById(id),
+    enabled: !!id,
+  });
+
 const useOrders = (params: OrderQueryParams) =>
   useQuery({
     queryKey: ["orders", params],
@@ -73,6 +81,7 @@ const useConfirmOrder = () => {
 export {
   useMyOrders,
   usePlaceOrder,
+  useGetOrderById,
   useOrders,
   useUpdateOrder,
   useDeleteOrder,
