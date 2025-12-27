@@ -20,6 +20,7 @@ import Link from "next/link";
 import { useRegister } from "@/hooks/queries/useAuth";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import Loading2 from "@/app/client/_components/Loading2";
 /* ================= REGISTER PAGE ================= */
 export default function RegisterPage() {
   return (
@@ -61,7 +62,7 @@ function RegisterForm() {
     resolver: zodResolver(RegisterSchema),
   });
   const router = useRouter();
-  const { mutate: register } = useRegister();
+  const { mutate: register, isPending } = useRegister();
   function onSubmit(values: z.infer<typeof RegisterSchema>) {
     register(
       {
@@ -79,7 +80,6 @@ function RegisterForm() {
       }
     );
   }
-
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -90,7 +90,7 @@ function RegisterForm() {
             <FormItem>
               <FormLabel>Full name</FormLabel>
               <FormControl>
-                <Input placeholder="John Doe" {...field} />
+                <Input disabled={isPending} placeholder="John Doe" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -104,7 +104,11 @@ function RegisterForm() {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="example@gmail.com" {...field} />
+                <Input
+                  disabled={isPending}
+                  placeholder="example@gmail.com"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -118,7 +122,12 @@ function RegisterForm() {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="********" {...field} />
+                <Input
+                  disabled={isPending}
+                  type="password"
+                  placeholder="********"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -126,6 +135,7 @@ function RegisterForm() {
         />
 
         <Button
+          onLoading={isPending}
           type="submit"
           className="w-full bg-[#40BFFF] hover:bg-[#40BFFF]/70"
         >

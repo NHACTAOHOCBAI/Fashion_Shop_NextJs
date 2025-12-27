@@ -10,7 +10,7 @@ export default function RegisterSuccessPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#f7f7f7]">
-      <Card className="w-full max-w-md shadow-lg">
+      <Card className="w-[400px] max-w-md shadow-lg">
         <CardHeader className="text-center space-y-2">
           <div className="flex justify-center">
             <CheckCircle className="h-14 w-14 text-green-500" />

@@ -24,6 +24,8 @@ import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
 export default function ForgotPasswordPage() {
   const [success, setSuccess] = useState(false);
@@ -47,10 +49,17 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow">
-        <h1 className="text-2xl font-semibold text-center mb-2">
+      <div className="w-[600px] max-w-md rounded-2xl bg-white p-6 shadow">
+        <Link
+          href={"/login"}
+          className="flex gap-[10px] items-center cursor-pointer hover:text-[#40BFFF]"
+        >
+          <ArrowLeft />
+          <p>Back to login </p>
+        </Link>
+        <h6 className="text-2xl font-semibold text-center mb-2 text-[#40BFFF]">
           Forgot Password
-        </h1>
+        </h6>
         <p className="text-sm text-muted-foreground text-center mb-6">
           Please enter your email to change password
         </p>
@@ -69,11 +78,7 @@ export default function ForgotPasswordPage() {
                   <FormItem>
                     <Label>Email</Label>
                     <FormControl>
-                      <Input
-                        type="email"
-                        placeholder="user@example.com"
-                        {...field}
-                      />
+                      <Input placeholder="user@example.com" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -82,7 +87,7 @@ export default function ForgotPasswordPage() {
 
               <Button
                 type="submit"
-                className="w-full"
+                className="w-full bg-[#40BFFF] hover:bg-[#40BFFF]/90"
                 disabled={form.formState.isSubmitting}
               >
                 {form.formState.isSubmitting ? "Loading..." : "Send"}

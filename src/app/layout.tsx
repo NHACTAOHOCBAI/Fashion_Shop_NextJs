@@ -1,15 +1,14 @@
 "use client";
-import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ReactQueryProviders } from "@/config/react-query.provider";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/config/theme.provider";
-import { ReduxProvider } from "@/providers/reduxProvider";
 import LoadingOverlay from "@/components/loading_overlay/loading-overlay";
 import { SocketProvider } from "@/providers/socketProvider";
-import { useEffect, useState } from "react";
-
+import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
+import { persistor, store } from "@/store";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -31,20 +30,22 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <SocketProvider>
-          <ReduxProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            >
-              <Toaster position="top-center" />
-              <ReactQueryProviders>
-                <LoadingOverlay />
-                {children}
-              </ReactQueryProviders>
-            </ThemeProvider>
-          </ReduxProvider>
+          <Provider store={store}>
+            <PersistGate loading={null} persistor={persistor}>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="system"
+                enableSystem
+                disableTransitionOnChange
+              >
+                <Toaster position="top-center" />
+                <ReactQueryProviders>
+                  <LoadingOverlay />
+                  {children}
+                </ReactQueryProviders>
+              </ThemeProvider>
+            </PersistGate>
+          </Provider>
         </SocketProvider>
       </body>
     </html>
