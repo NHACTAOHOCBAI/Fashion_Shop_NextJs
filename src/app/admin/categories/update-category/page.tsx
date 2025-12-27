@@ -136,7 +136,7 @@ const UpdateCategory = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Update Category</CardTitle>
+        <h5>Update Category</h5>
       </CardHeader>
       <CardContent>
         <Form {...form}>

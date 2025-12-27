@@ -109,7 +109,7 @@ export default function CreateCategory() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Create Category</CardTitle>
+        <h5>Create Category</h5>
       </CardHeader>
       <CardContent>
         <Form {...form}>

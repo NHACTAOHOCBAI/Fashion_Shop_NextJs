@@ -37,17 +37,10 @@ export default function Categories() {
       }
     );
   };
-  const handleViewItem = (item: Category) => {
-    router.push(`/admin/categories/view-category/${item.id}`);
-  };
   return (
     <>
       <CrudTable<Category>
-        columns={categoryColumns(
-          handleUpdateBtn,
-          handleDeleteItem,
-          handleViewItem
-        )}
+        columns={categoryColumns(handleUpdateBtn, handleDeleteItem)}
         useQuery={useCategories}
         useDelete={useDeleteCategories}
         filterPlaceholder="Filter category name..."

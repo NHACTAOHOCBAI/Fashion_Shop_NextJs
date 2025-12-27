@@ -18,8 +18,7 @@ import convertAlias from "@/lib/convertAlias";
 import { shorthandFormatDateTime } from "@/lib/formatDate";
 export const categoryColumns = (
   handleUpdateBtn: (item: Category) => void,
-  handleDeleteItem: (id: number) => void,
-  handleViewItem: (item: Category) => void
+  handleDeleteItem: (id: number) => void
 ): ColumnDef<Category>[] => {
   return [
     {
@@ -81,20 +80,14 @@ export const categoryColumns = (
       cell: ({ row }) => <span>{row.original.department.name}</span>,
     },
 
-    // ✅ Trạng thái
     {
-      accessorKey: "isActive",
-      enableSorting: false,
+      accessorKey: "createdAt",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Status" />
+        <DataTableColumnHeader column={column} title="Created At" />
       ),
       cell: ({ row }) => {
-        const active = row.original.isActive;
-        return (
-          <Badge variant={active ? "outline" : "secondary"}>
-            {active ? "Active" : "Inactive"}
-          </Badge>
-        );
+        const createdAt = row.original.createdAt;
+        return shorthandFormatDateTime(new Date(createdAt));
       },
     },
     {
@@ -122,10 +115,6 @@ export const categoryColumns = (
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => handleViewItem(item)}>
-                View Category
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => handleUpdateBtn(item)}>
                 Update Category
               </DropdownMenuItem>
