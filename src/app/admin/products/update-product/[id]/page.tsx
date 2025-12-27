@@ -286,7 +286,10 @@ export default function UpdateProduct() {
 
                                         field.onChange([
                                           ...others,
-                                          { valueId: Number(v) },
+                                          {
+                                            attributeCategoryId: Number(v),
+                                            valueId: Number(v),
+                                          },
                                         ]);
                                       }}
                                     >
