@@ -17,7 +17,7 @@ export default function Categories() {
   const router = useRouter();
   const { mutate: deleteItem } = useDeleteCategory();
   const handleUpdateBtn = (item: Category) => {
-    router.push(`/admin/categories/update-category`);
+    router.push(`/admin/categories/update-category/${item.id}`);
     localStorage.setItem("updatedCategory", JSON.stringify(item));
   };
   const handleDeleteItem = (id: number) => {

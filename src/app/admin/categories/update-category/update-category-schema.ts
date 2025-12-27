@@ -6,7 +6,10 @@ const UpdateCategorySchema = z.object({
   image: z
     .array(z.instanceof(File))
     .min(1, { message: "You must choose a image at least" }),
-  departmentId: z.string("Deparment is required"),
+  departmentId: z
+    .string("Department is required")
+    .min(1, "Department is required"),
+
   attributes: z
     .array(
       z.object({

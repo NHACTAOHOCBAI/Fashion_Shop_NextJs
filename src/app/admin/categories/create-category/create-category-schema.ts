@@ -6,7 +6,9 @@ const CreateCategorySchema = z.object({
   image: z
     .array(z.instanceof(File))
     .min(1, { message: "You must choose a image at least" }),
-  departmentId: z.string().min(1, "Department is required"),
+  departmentId: z
+    .string("Department is required")
+    .min(1, "Department is required"),
 
   attributes: z
     .array(

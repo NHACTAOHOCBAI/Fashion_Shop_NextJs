@@ -1,11 +1,14 @@
 "use client";
 
+import { useEffect } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { X } from "lucide-react";
+import { useParams } from "next/navigation";
 
-import CreateCategorySchema from "./create-category-schema";
+import UpdateCategorySchema from "@/app/admin/categories/update-category/update-category-schema";
+
 import { ImageUpload } from "@/components/image-upload/image-upload";
 import { Button } from "@/components/ui/button";
 import {
@@ -35,22 +38,36 @@ import { Textarea } from "@/components/ui/textarea";
 
 import { useDepartmentSelections } from "@/hooks/queries/useDepartment";
 import { useAttributeSelections } from "@/hooks/queries/useAttribute";
-import { useCreateCategory } from "@/hooks/queries/useCategory";
+import {
+  useGetCategoryById,
+  useUpdateCategory,
+} from "@/hooks/queries/useCategory";
+
 import { toast } from "sonner";
 import { formatDateTimeWithAt } from "@/lib/formatDate";
 
-export default function CreateCategory() {
-  const { mutate: createItem, isPending } = useCreateCategory();
+/* ========= Component ========= */
 
-  const form = useForm<z.infer<typeof CreateCategorySchema>>({
-    resolver: zodResolver(CreateCategorySchema),
+export default function UpdateCategory() {
+  const { id } = useParams<{ id: string }>();
+
+  const { mutate: updateItem, isPending } = useUpdateCategory();
+  const { data: category } = useGetCategoryById(Number(id)) as {
+    data: Category;
+  };
+
+  const form = useForm<z.infer<typeof UpdateCategorySchema>>({
+    resolver: zodResolver(UpdateCategorySchema),
     defaultValues: {
+      name: "",
+      description: "",
+      departmentId: "",
       image: [],
       attributes: [],
     },
   });
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, replace } = useFieldArray({
     control: form.control,
     name: "attributes",
   });
@@ -60,40 +77,93 @@ export default function CreateCategory() {
 
   const usedAttributeIds = form.watch("attributes")?.map((a) => a.attributeId);
 
-  function onSubmit(values: z.infer<typeof CreateCategorySchema>) {
-    const attributes = values.attributes?.flatMap((attr) =>
+  /* ===== Fill data ===== */
+  const initializeImage = async (images: string[]): Promise<File[]> => {
+    const files = await Promise.all(
+      images.map(async (image) => {
+        const response = await fetch(image);
+        const blob = await response.blob();
+
+        const file = new File([blob], "image", { type: blob.type });
+        (file as any).preview = image; // 👈 để ImageUpload dùng
+
+        return file;
+      })
+    );
+
+    return files;
+  };
+  useEffect(() => {
+    if (!category) return;
+
+    const load = async () => {
+      const groupedAttributes = Object.values(
+        category.attributeCategories.reduce((acc: any, cur) => {
+          const attrId = cur.attribute.id;
+          if (!acc[attrId]) acc[attrId] = { attributeId: attrId, values: [] };
+          acc[attrId].values.push(cur.value);
+          return acc;
+        }, {})
+      );
+
+      const imageFiles = category.imageUrl
+        ? await initializeImage([category.imageUrl])
+        : [];
+
+      form.reset({
+        name: category.name,
+        description: category.description,
+        departmentId: String(category.department.id),
+        image: imageFiles,
+        attributes: groupedAttributes as any,
+      });
+
+      replace(groupedAttributes as any);
+    };
+
+    load();
+  }, [category]);
+
+  /* ===== Submit ===== */
+
+  function onSubmit(values: z.infer<typeof UpdateCategorySchema>) {
+    const attributes = values?.attributes?.flatMap((attr) =>
       attr.values.map((v) => ({
         attributeId: attr.attributeId,
         value: v,
       }))
     );
 
-    createItem(
+    updateItem(
       {
-        name: values.name,
-        image: values.image[0],
-        departmentId: Number(values.departmentId),
-        description: values.description,
-        attributes: attributes || [],
+        id: category.id,
+        data: {
+          name: values.name,
+          image: values.image[0],
+          departmentId: Number(values.departmentId),
+          description: values.description,
+          attributes: attributes || [],
+        },
       },
       {
         onSuccess: () =>
-          toast.success("Category created", {
+          toast.success("Category updated", {
             description: formatDateTimeWithAt(new Date()),
           }),
         onError: (e) =>
           toast.error(e.message, {
             description: formatDateTimeWithAt(new Date()),
           }),
-        onSettled: () => form.reset(),
       }
     );
   }
 
+  /* ===== UI ===== */
+
   return (
     <Card className="w-full mx-auto">
       <CardHeader>
-        <CardTitle>Create Category</CardTitle>
+        <CardTitle>Update Category</CardTitle>
       </CardHeader>
 
       <CardContent>
@@ -180,7 +250,7 @@ export default function CreateCategory() {
               <div className="grid grid-cols-2 gap-4">
                 {fields.map((f, index) => (
                   <Card key={f.id}>
-                    <CardHeader className="flex flex-row justify-between">
+                    <CardHeader className="flex justify-between flex-row">
                       <CardTitle className="text-base">
                         Attribute {index + 1}
                       </CardTitle>
@@ -197,7 +267,6 @@ export default function CreateCategory() {
                     </CardHeader>
 
                     <CardContent className="space-y-3">
-                      {/* Attribute select */}
                       <FormField
                         name={`attributes.${index}.attributeId`}
                         control={form.control}
@@ -228,19 +297,16 @@ export default function CreateCategory() {
                                 </SelectContent>
                               </Select>
                             </FormControl>
-                            <FormMessage />
                           </FormItem>
                         )}
                       />
 
-                      {/* Values tag input */}
                       <FormField
                         name={`attributes.${index}.values`}
                         control={form.control}
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Values</FormLabel>
-
                             <div className="flex flex-wrap items-center gap-2 border rounded-md p-2 min-h-[44px]">
                               {field.value?.map((v, i) => (
                                 <span
@@ -263,7 +329,6 @@ export default function CreateCategory() {
                                   </button>
                                 </span>
                               ))}
-
                               <input
                                 type="text"
                                 placeholder="Add value..."
@@ -273,22 +338,18 @@ export default function CreateCategory() {
                                     e.preventDefault();
                                     const value = e.currentTarget.value.trim();
                                     if (!value) return;
-
                                     if (!field.value?.includes(value)) {
                                       field.onChange([
                                         ...(field.value || []),
                                         value,
                                       ]);
                                     }
-
                                     e.currentTarget.value = "";
                                   }
                                 }}
                                 disabled={isPending}
                               />
                             </div>
-
-                            <FormMessage />
                           </FormItem>
                         )}
                       />
@@ -308,18 +369,9 @@ export default function CreateCategory() {
               </Button>
             </div>
 
-            {/* Actions */}
             <div className="flex justify-end gap-3">
               <Button type="submit" onLoading={isPending}>
-                Create
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => form.reset()}
-                disabled={isPending}
-              >
-                Cancel
+                Update
               </Button>
             </div>
           </form>
