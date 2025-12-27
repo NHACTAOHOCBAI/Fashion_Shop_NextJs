@@ -18,7 +18,7 @@ export default function Stocks() {
         filterPlaceholder="Filter stock..."
       >
         <Button
-          onClick={() => router.replace("/admin/stocks/view-stocks")}
+          onClick={() => router.replace("/admin/stocks/in")}
           variant="outline"
           size="sm"
           className="h-8 ml-2"
