@@ -80,7 +80,7 @@ export const useDeleteByAdmin = () => {
 export const useDeleteManyByAdmin = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: deletePostsByAdmin,
+    mutationFn: ({ ids }: { ids: number[] }) => deletePostsByAdmin(ids),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["posts"] });
     },
