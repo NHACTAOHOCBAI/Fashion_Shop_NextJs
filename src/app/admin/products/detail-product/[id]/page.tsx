@@ -9,7 +9,8 @@ import { VariantsTable } from "./_components/VariantsTable";
 import { VariantCardGrid } from "./_components/VariantCardGrid";
 import { StockAnalytics } from "./_components/StockAnalytics";
 import { VariantStockManager } from "./_components/VariantStockManager";
-import { LayoutGrid, Table as TableIcon, BarChart3 } from "lucide-react";
+import { ReviewsTable } from "./_components/ReviewsTable";
+import { LayoutGrid, Table as TableIcon, BarChart3, MessageSquare } from "lucide-react";
 function getAllImageUrls(product: Product | undefined) {
   if (!product) return [];
   return [
@@ -52,7 +53,7 @@ export default function ProductDetailPage() {
 
       {/* Main Content with Tabs */}
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full max-w-md grid-cols-3">
+        <TabsList className="grid w-full max-w-2xl grid-cols-4">
           <TabsTrigger value="overview" className="gap-2">
             <LayoutGrid className="h-4 w-4" />
             Overview
@@ -64,6 +65,10 @@ export default function ProductDetailPage() {
           <TabsTrigger value="analytics" className="gap-2">
             <BarChart3 className="h-4 w-4" />
             Stock
+          </TabsTrigger>
+          <TabsTrigger value="reviews" className="gap-2">
+            <MessageSquare className="h-4 w-4" />
+            Reviews
           </TabsTrigger>
         </TabsList>
 
@@ -87,6 +92,11 @@ export default function ProductDetailPage() {
           <ProductStatsCards product={product} />
           <StockAnalytics product={product} />
           <VariantStockManager variants={product.variants} />
+        </TabsContent>
+
+        {/* Reviews Tab */}
+        <TabsContent value="reviews" className="space-y-6">
+          <ReviewsTable productId={product.id} />
         </TabsContent>
       </Tabs>
     </div>
