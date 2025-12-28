@@ -10,36 +10,48 @@ function decodeJWT(token: string) {
 }
 
 export function middleware(req: NextRequest) {
-  // const pathname = req.nextUrl.pathname;
-  // const token = req.cookies.get("access_token")?.value;
-  // // ❌ Chưa login
-  // if (!token) {
-  //   if (pathname.startsWith("/admin") || pathname.startsWith("/client")) {
-  //     return NextResponse.redirect(new URL("/login", req.url));
-  //   }
-  //   return NextResponse.next();
-  // }
+  console.log(13);
+  const { pathname } = req.nextUrl;
 
-  // const payload = decodeJWT(token);
-  // if (!payload || !payload.role) {
-  //   return NextResponse.redirect(new URL("/login", req.url));
-  // }
+  const token = req.cookies.get("access_token")?.value;
+  const user = token ? decodeJWT(token) : null;
+  const role = user?.role;
+  console.log(token);
+  console.log(user);
+  // ============================
+  // 1. Chưa đăng nhập
+  // ============================
+  if (!token) {
+    if (pathname.startsWith("/admin") || pathname.startsWith("/client")) {
+      return NextResponse.redirect(new URL("/login", req.url));
+    }
+    return NextResponse.next();
+  }
 
-  // const role = payload.role;
+  // ============================
+  // 2. Đã đăng nhập nhưng vào login
+  // ============================
+  if (pathname.startsWith("/login")) {
+    if (role === "admin")
+      return NextResponse.redirect(new URL("/admin/dashboard/", req.url));
+    if (role === "user")
+      return NextResponse.redirect(new URL("/client/home", req.url));
+  }
 
-  // // 👤 USER → client
-  // if (role === "role" && pathname.startsWith("/admin")) {
-  //   return NextResponse.redirect(new URL("/client", req.url));
-  // }
+  // ============================
+  // 3. Phân quyền theo role
+  // ============================
+  if (pathname.startsWith("/admin") && role !== "admin") {
+    return NextResponse.redirect(new URL("/403", req.url));
+  }
 
-  // // 👮 ADMIN / STAFF → admin
-  // if (role === "admin" && pathname.startsWith("/client")) {
-  //   return NextResponse.redirect(new URL("/admin", req.url));
-  // }
+  if (pathname.startsWith("/client") && role !== "user") {
+    return NextResponse.redirect(new URL("/403", req.url));
+  }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/client/:path*"],
+  matcher: ["/admin/:path*", "/client/:path*", "/login"],
 };
