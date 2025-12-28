@@ -33,7 +33,7 @@ export const OrderActions = ({ order, actions }: Props) => {
   };
 
   const handleCancel = () => cancelOrder(order.id);
-  const handleInbox = () => console.log("Inbox", order.id);
+  const handleInbox = () => router.push("/client/my-account/chat");
 
   const renderAction = (action: OrderAction) => {
     switch (action) {
@@ -51,7 +51,12 @@ export const OrderActions = ({ order, actions }: Props) => {
 
       case "rebuy":
         return (
-          <Button variant="outline" size="sm" onClick={handleRebuy} className="h-8">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleRebuy}
+            className="h-8"
+          >
             Rebuy
           </Button>
         );
@@ -70,7 +75,12 @@ export const OrderActions = ({ order, actions }: Props) => {
 
       case "inbox":
         return (
-          <Button variant="outline" size="sm" onClick={handleInbox} className="h-8">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleInbox}
+            className="h-8"
+          >
             Contact Seller
           </Button>
         );

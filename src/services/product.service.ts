@@ -1,9 +1,7 @@
 import axiosInstance from "@/config/axios";
 const getRelatedProducts = async (idProduct: number) => {
-  const response = (await axiosInstance.get(
-    `/products/related/${idProduct}`
-  )) as Product[];
-  return response;
+  const response = await axiosInstance.get(`/products/related/${idProduct}`);
+  return response.data as Product[];
 };
 const getProducts = async (params: ProductQueryParams) => {
   const query = {

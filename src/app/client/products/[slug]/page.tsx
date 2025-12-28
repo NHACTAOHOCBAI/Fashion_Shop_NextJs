@@ -21,7 +21,6 @@ import { X, Package } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useMemo, useState, useEffect } from "react";
-import { cn } from "@/lib/utils";
 import VoiceSearchModal from "@/app/client/products/_components/VoiceSearchModal";
 
 const formatToFilterData = (
@@ -161,7 +160,7 @@ const Products = () => {
       // brandIds,
       attributeCategoryIds,
       minPrice: priceRange[0],
-      maxPrice: priceRange[1],
+      maxPrice: priceRange[1] === 100 ? 999999999 : priceRange[1],
       page,
       limit: 9,
     };

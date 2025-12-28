@@ -22,7 +22,9 @@ import { useDispatch } from "react-redux";
 import { setCredentials } from "@/store/authSlice";
 import { connectSocket } from "@/lib/socket";
 import Link from "next/link";
+import { useSocket } from "@/providers/socketProvider";
 export function LoginForm({}: React.ComponentProps<"div">) {
+  const socket = useSocket();
   const dispatch = useDispatch();
   const router = useRouter();
   const { mutate: login, isPending } = useLogin();
@@ -42,6 +44,11 @@ export function LoginForm({}: React.ComponentProps<"div">) {
           description: formatDateTimeWithAt(new Date()),
         });
         connectSocket(user.id);
+        if (socket && user?.id) {
+          socket.emit("join", { userId: user.id });
+          console.log("joined room user:", user.id);
+        }
+
         router.push("/admin/users/view-users");
       },
       onError: (error) => {

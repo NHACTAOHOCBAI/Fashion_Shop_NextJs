@@ -28,6 +28,7 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { staggerContainer, staggerItemFast } from "@/lib/animations";
 import { useLogout } from "@/hooks/queries/useAuth";
+import { useGetNotification } from "@/hooks/queries/useNotification";
 const accountMenus = [
   {
     href: "/client/my-account/order-news",
@@ -103,6 +104,7 @@ const Header = () => {
   const handleClick = () => {
     logout();
   };
+  const { data } = useGetNotification({});
   const router = useRouter();
   const { data: headerData } = useDepartments({});
   const [user, setUser] = useState<User>();
@@ -120,30 +122,49 @@ const Header = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const socket = useSocket();
   useEffect(() => {
-    const fetchNotifications = async () => {
-      const res = await getMyNotifications({});
-      const unreadCount = res.data.reduce((total, item) => {
-        if (item.isRead === false) return total + 1;
-        return total;
-      }, 0);
-      setNotifications(res.data);
-      setUnreadCount(unreadCount);
-    };
+    if (!data?.data) {
+      setNotifications([]);
+      setUnreadCount(0);
+      return;
+    }
 
-    fetchNotifications();
-  }, []);
+    const unread = data.data.filter((n) => !n.isRead).length;
+    setNotifications(data.data);
+    setUnreadCount(unread);
+  }, [data?.data]);
+
   useEffect(() => {
+    console.log("co socket");
     if (!socket) return;
 
-    socket.on("notification:new", (data: Notification) => {
+    const handleNew = (data: Notification) => {
       setNotifications((prev) => [data, ...prev]);
       setUnreadCount((c) => c + 1);
-    });
+    };
+
+    const handleRead = (payload: { id: number }) => {
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === payload.id ? { ...n, isRead: true } : n))
+      );
+      setUnreadCount((c) => Math.max(0, c - 1));
+    };
+
+    const handleReadAll = () => {
+      setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
+      setUnreadCount(0);
+    };
+
+    socket.on("notification:new", handleNew);
+    socket.on("notification:read", handleRead);
+    socket.on("notification:read:all", handleReadAll);
 
     return () => {
-      socket.off("notification:new");
+      socket.off("notification:new", handleNew);
+      socket.off("notification:read", handleRead);
+      socket.off("notification:read:all", handleReadAll);
     };
   }, [socket]);
+
   // console.log(notifications);
   return (
     <header className="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm">
@@ -289,6 +310,14 @@ const Header = () => {
                 Home
               </Link>
             </li>
+            <li>
+              <Link
+                href="/client/home"
+                className="text-base font-medium text-gray-700 dark:text-gray-300 hover:text-[#40BFFF] transition-colors"
+              >
+                Redcommendation
+              </Link>
+            </li>
             {headerData?.data.map((department) => (
               <SubCatgories
                 key={department.name}
@@ -352,7 +381,7 @@ const Notification = ({ notifications }: { notifications: Notification[] }) => {
   const router = useRouter();
 
   return (
-    <div className="w-[380px]">
+    <div className="">
       {/* Header */}
       <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
         <div className="flex items-center justify-between gap-3">

@@ -14,7 +14,6 @@ import {
   CreditCard,
   MapPinHouse,
   Truck,
-  Check,
   ShoppingCart,
   Package2,
   CheckCircle2,
@@ -39,6 +38,7 @@ interface PaymentMethodOption {
   value: string;
   description: string;
   logo: string;
+  url: string;
 }
 
 interface OrderSummary {
@@ -72,12 +72,14 @@ const paymentMethodOptions: PaymentMethodOption[] = [
     description:
       "You will be redirected to the PayPal website to complete your purchase.",
     logo: "Logo A",
+    url: "/images/paypal.png",
   },
   {
     name: "Cash On Delivery (COD)",
     value: "cod",
     description: "Pay with cash upon delivery of your order.",
     logo: "Logo A",
+    url: "/images/COD.jpg",
   },
 ];
 
@@ -176,8 +178,6 @@ const Checkout = () => {
       quantity: product.quantity,
     };
   });
-  console.log(products);
-  console.log(test2);
   const { data: myCoupons } = useAvailable({
     items: test2 || [],
   });
@@ -266,12 +266,6 @@ const Checkout = () => {
   );
   const currentCoupon = myCoupons?.data.find(
     (coupon) => coupon.id === selectedCouponId
-  );
-  const selectedShippingInfo = shippingOptions.find(
-    (opt) => opt.value === selectedShipping
-  );
-  const selectedPaymentInfo = paymentMethodOptions.find(
-    (opt) => opt.value === selectedPayment
   );
 
   // Hàm tổng hợp dữ liệu Checkout
@@ -701,7 +695,14 @@ const Checkout = () => {
                             </p>
                           </div>
                         </div>
-                        <p className="ml-auto">Logo here</p>
+                        <Image
+                          src={option.url}
+                          alt="Logo"
+                          width={400}
+                          height={400}
+                          priority
+                          className=" object-cover w-[100px] h-[60px] border"
+                        />
                       </label>
                     );
                   })}

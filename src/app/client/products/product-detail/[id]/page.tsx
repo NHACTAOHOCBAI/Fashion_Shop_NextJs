@@ -95,6 +95,7 @@ const ReviewItem = ({
   };
   index?: number;
 }) => {
+  console.log(review);
   return (
     <motion.div
       className="rounded-2xl border border-gray-200 dark:border-gray-700 p-6 bg-white dark:bg-gray-800 shadow-sm hover:shadow-lg transition-all"
@@ -113,7 +114,7 @@ const ReviewItem = ({
               {review.user.name}
             </p>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              {shorthandFormatDateTime(review.createdAt)}
+              {shorthandFormatDateTime(new Date(review.createdAt))}
             </p>
           </div>
         </div>
@@ -459,22 +460,6 @@ const ProductDetail = () => {
                 />
               </div>
             </div>
-
-            {/* Trust Badges */}
-            <div className="grid grid-cols-3 gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
-              <div className="flex flex-col items-center text-center p-3 rounded-xl bg-gray-50 dark:bg-gray-700/50">
-                <TruckIcon className="w-6 h-6 text-[var(--cyan-500)] mb-2" />
-                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
-                  Free Shipping
-                </span>
-              </div>
-              <div className="flex flex-col items-center text-center p-3 rounded-xl bg-gray-50 dark:bg-gray-700/50">
-                <Shield className="w-6 h-6 text-[var(--cyan-500)] mb-2" />
-                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
-                  Secure Payment
-                </span>
-              </div>
-            </div>
           </motion.div>
         </motion.div>
 
@@ -494,7 +479,7 @@ const ProductDetail = () => {
           transition={{ delay: 0.5 }}
           className="mt-20"
         >
-          {/* <RelatedProducts idProduct={product.id} /> */}
+          <RelatedProducts idProduct={product.id} />
         </motion.div>
       </div>
     </div>
@@ -609,35 +594,35 @@ const ReviewPage = ({ idProduct }: { idProduct: number }) => {
   );
 };
 
-// const RelatedProducts = ({ idProduct }: { idProduct: number }) => {
-//   const { data: relatedProducts } = useRelatedProducts(idProduct);
-
-//   if (!relatedProducts || relatedProducts.length === 0) {
-//     return null;
-//   }
-
-//   return (
-//     <div>
-//       <motion.h2
-//         className="text-4xl font-bold text-center text-gray-800 dark:text-gray-100 mb-12"
-//         initial={{ opacity: 0, y: -20 }}
-//         animate={{ opacity: 1, y: 0 }}
-//       >
-//         Related Products
-//       </motion.h2>
-//       <motion.div
-//         className="grid grid-cols-4 gap-6"
-//         variants={staggerContainer}
-//         initial="hidden"
-//         animate="show"
-//       >
-//         {relatedProducts.slice(0, 4).map((item: any) => (
-//           <motion.div key={item.id} variants={staggerItem}>
-//             <ProductCard product={item} />
-//           </motion.div>
-//         ))}
-//       </motion.div>
-//     </div>
-//   );
-// };
+const RelatedProducts = ({ idProduct }: { idProduct: number }) => {
+  const { data: relatedProducts } = useRelatedProducts(idProduct);
+  console.log(relatedProducts);
+  if (!relatedProducts || relatedProducts.length === 0) {
+    return null;
+  }
+  console.log(relatedProducts);
+  return (
+    <div>
+      <motion.h2
+        className="text-4xl font-bold text-center text-gray-800 dark:text-gray-100 mb-12"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        Related Products
+      </motion.h2>
+      <motion.div
+        className="grid grid-cols-4 gap-6"
+        variants={staggerContainer}
+        initial="hidden"
+        animate="show"
+      >
+        {relatedProducts.map((item: any) => (
+          <motion.div key={item.id} variants={staggerItem}>
+            <ProductCard product={item} />
+          </motion.div>
+        ))}
+      </motion.div>
+    </div>
+  );
+};
 export default ProductDetail;

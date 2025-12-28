@@ -30,7 +30,7 @@ const ProductCard = ({ product }: { product: Product }) => {
       },
       {
         onSuccess: () => {
-          toast.success(`${product?.name} has been added to cart`);
+          toast.success(`You just liked the item`);
         },
         onError: (error) => {
           toast.error(`Ohh!!! ${error.message}`);
@@ -108,7 +108,11 @@ const ProductCard = ({ product }: { product: Product }) => {
                       // TODO: Quick view modal
                     }}
                   >
-                    <Eye size={20} />
+                    <Link
+                      href={`/client/products/product-detail/${product.id}`}
+                    >
+                      <Eye size={20} />
+                    </Link>
                   </motion.button>
                 </motion.div>
               )}

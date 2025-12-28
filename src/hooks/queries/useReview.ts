@@ -10,7 +10,7 @@ const useCreateReview = () => {
   return useMutation({
     mutationFn: createReview,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["reviews"] });
+      queryClient.invalidateQueries({ queryKey: ["reviews", "my-orders"] });
     },
   });
 };

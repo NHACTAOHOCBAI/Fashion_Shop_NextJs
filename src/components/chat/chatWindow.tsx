@@ -161,7 +161,6 @@ export default function ChatWindow({
         </Avatar>
         <div>
           <p className="text-sm font-medium">{headerUser.fullName}</p>
-          <p className="text-xs text-muted-foreground">Đang hoạt động</p>
         </div>
       </div>
 
@@ -202,7 +201,7 @@ export default function ChatWindow({
                 {isMe && lastMyMessage?.id === m.id && (
                   <div className="flex justify-end text-xs text-muted-foreground gap-1">
                     <CheckCheck className="h-4 w-4" />
-                    {m.isSeen ? "Đã xem" : "Đã gửi"}
+                    {m.isSeen ? "Seen" : "Sent"}
                   </div>
                 )}
               </div>
@@ -211,7 +210,7 @@ export default function ChatWindow({
 
           {typingUser && (
             <div className="text-xs text-muted-foreground animate-pulse">
-              Đang nhập...
+              Typing...
             </div>
           )}
 

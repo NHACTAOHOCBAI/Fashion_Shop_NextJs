@@ -35,7 +35,7 @@ const AddressList = ({
           </div>
           <div className="bg-[#FAFAFB] h-[2px] w-full mb-4" />
           <p className="text-center py-10 text-gray-500">
-            Bạn chưa có địa chỉ nào. Hãy thêm địa chỉ mới.
+            You have no addresses. Please add one
           </p>
           <div className="ml-auto mt-auto">
             <NormalButton onClick={() => setOpen(true)}>

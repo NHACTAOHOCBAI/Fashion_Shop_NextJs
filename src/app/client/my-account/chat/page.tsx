@@ -27,7 +27,7 @@ export default function ClientChatPage() {
         currentUserId={me.id}
         headerUser={{
           id: 0,
-          fullName: "Shop hỗ trợ",
+          fullName: "Shop",
         }}
       />
     </div>
