@@ -11,7 +11,7 @@ import {
 import { NavMain } from "@/app/admin/_components/nav-main";
 import { NavUser } from "@/app/admin/_components/nav-user";
 import { ICONS } from "@/constants/icon.enum";
-import { Boxes, Tag } from "lucide-react";
+import { Boxes, Tag, UsersRound } from "lucide-react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 
@@ -136,8 +136,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           },
         ],
       },
+      {
+        title: "Community",
+        icon: <UsersRound />,
+        items: [
+          {
+            title: "View Community",
+            url: "/admin/community/view-community",
+          },
+        ],
+      },
     ],
   };
+  // <UsersRound />;
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarContent>

@@ -19,11 +19,19 @@ const useAvailable = (data: {
     variantId: number;
     quantity: number;
   }[];
-}) =>
-  useQuery({
-    queryKey: ["available"],
+}) => {
+  // Create stable queryKey from items to avoid unnecessary refetches
+  const itemsKey = data.items
+    .map((item) => `${item.variantId}-${item.quantity}`)
+    .sort()
+    .join(",");
+
+  return useQuery({
+    queryKey: ["available", itemsKey],
     queryFn: () => getAvailable(data),
+    enabled: data.items.length > 0,
   });
+};
 // Lấy danh sách coupon (có thể truyền params lọc/pagination)
 const useCoupons = (params: QueryParams) =>
   useQuery({

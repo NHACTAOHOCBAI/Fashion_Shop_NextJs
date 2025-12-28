@@ -14,6 +14,8 @@ import {
   sharePost,
   getAuthorProfile,
   getAuthorPosts,
+  deletePostByAdmin,
+  deletePostsByAdmin,
 } from "@/services/post.service";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -66,7 +68,24 @@ export const useDeletePost = () => {
     },
   });
 };
-
+export const useDeleteByAdmin = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deletePostByAdmin,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+    },
+  });
+};
+export const useDeleteManyByAdmin = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deletePostsByAdmin,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+    },
+  });
+};
 // Toggle like
 export const useToggleLike = () => {
   const queryClient = useQueryClient();
@@ -94,7 +113,11 @@ export const useAddComment = () => {
 };
 
 // Get comments
-export const useComments = (postId: number, page: number = 1, limit: number = 20) =>
+export const useComments = (
+  postId: number,
+  page: number = 1,
+  limit: number = 20
+) =>
   useQuery({
     queryKey: ["comments", postId, page, limit],
     queryFn: () => getComments(postId, page, limit),
@@ -127,7 +150,9 @@ export const useUpdateComment = () => {
       data: UpdateCommentDto;
     }) => updateComment(postId, commentId, data),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["comments", variables.postId] });
+      queryClient.invalidateQueries({
+        queryKey: ["comments", variables.postId],
+      });
       queryClient.invalidateQueries({ queryKey: ["post", variables.postId] });
     },
   });
@@ -137,10 +162,17 @@ export const useUpdateComment = () => {
 export const useDeleteComment = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ postId, commentId }: { postId: number; commentId: number }) =>
-      deleteComment(postId, commentId),
+    mutationFn: ({
+      postId,
+      commentId,
+    }: {
+      postId: number;
+      commentId: number;
+    }) => deleteComment(postId, commentId),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["comments", variables.postId] });
+      queryClient.invalidateQueries({
+        queryKey: ["comments", variables.postId],
+      });
       queryClient.invalidateQueries({ queryKey: ["post", variables.postId] });
       queryClient.invalidateQueries({ queryKey: ["posts"] });
     },

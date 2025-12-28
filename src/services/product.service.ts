@@ -178,6 +178,12 @@ export const searchByVoice = async (file: File) => {
 
   return response.data;
 };
+
+const getPersonalizedRecommendations = async () => {
+  const response = await axiosInstance.get("/products/recommendations/personal");
+  return response.data as Product[];
+};
+
 export {
   getProducts,
   createProduct,
@@ -187,4 +193,5 @@ export {
   getProductById,
   getRelatedProducts,
   searchImage,
+  getPersonalizedRecommendations,
 };

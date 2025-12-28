@@ -127,9 +127,9 @@ const calculateOrderSummary = (
         selectedCoupon.discountType === "percentage" &&
         selectedCoupon.discountValue !== null
       ) {
-        // Giảm giá không được lớn hơn Subtotal
+        // Giảm giá phần trăm
         const calculatedDiscount =
-          subtotal * (selectedCoupon.discountValue || 0 / 100);
+          subtotal * (Number(selectedCoupon.discountValue) / 100);
         discountAmount =
           calculatedDiscount > subtotal ? subtotal : calculatedDiscount;
       } else if (
@@ -137,10 +137,8 @@ const calculateOrderSummary = (
         selectedCoupon.discountValue !== null
       ) {
         // Giảm giá cố định không được lớn hơn Subtotal
-        discountAmount =
-          selectedCoupon.discountValue || 0 > subtotal
-            ? subtotal
-            : selectedCoupon.discountValue || 0;
+        const fixedDiscount = Number(selectedCoupon.discountValue);
+        discountAmount = fixedDiscount > subtotal ? subtotal : fixedDiscount;
       } else if (selectedCoupon.discountType === "free_shipping") {
         // Miễn phí vận chuyển
         shippingFee = 0;
@@ -172,14 +170,18 @@ const Checkout = () => {
   const { mutate: placeOrder, isPending } = usePlaceOrder();
   const { data: myAddresses } = useMyAddress();
   const [products, setProducts] = useState<CartItem[] | undefined>();
-  const test2 = products?.map((product) => {
-    return {
+
+  // Memoize items để React Query nhận biết thay đổi
+  const checkoutItems = useMemo(() => {
+    if (!products || products.length === 0) return [];
+    return products.map((product) => ({
       variantId: product.variant.id,
       quantity: product.quantity,
-    };
-  });
+    }));
+  }, [products]);
+
   const { data: myCoupons } = useAvailable({
-    items: test2 || [],
+    items: checkoutItems,
   });
 
   // States

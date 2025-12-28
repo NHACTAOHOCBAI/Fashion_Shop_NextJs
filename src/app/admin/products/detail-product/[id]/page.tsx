@@ -48,7 +48,7 @@ export default function ProductDetailPage() {
   return (
     <div className="space-y-6 pb-8">
       {/* Header */}
-      <ProductHeader product={product} />
+      {/* <ProductHeader product={product} /> */}
 
       {/* Main Content with Tabs */}
       <Tabs defaultValue="overview" className="space-y-6">

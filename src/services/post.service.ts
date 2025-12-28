@@ -170,3 +170,18 @@ export const getAuthorPosts = async (
   })) as GetAllResponse<Post>;
   return response.data;
 };
+// BE con thieu
+export const deletePostsByAdmin = async (ids: number[]) => {
+  console.log(ids);
+  // const response = (await axiosInstance.delete(`/posts/${id}`)) as {
+  //   message: string;
+  // };
+  // return response;
+};
+export const deletePostByAdmin = async (id: number) => {
+  console.log(id);
+  // const response = (await axiosInstance.delete(`/posts/${id}`)) as {
+  //   message: string;
+  // };
+  // return response;
+};
