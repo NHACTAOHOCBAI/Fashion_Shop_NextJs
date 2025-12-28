@@ -1,3 +1,5 @@
+import axiosInstance from "@/config/axios";
+
 export interface HomeStatistics {
   totalProducts: number;
   totalCustomers: number;
@@ -5,6 +7,7 @@ export interface HomeStatistics {
     averageRating: number;
     totalRating: number;
   };
+  satisfactionRate: number;
 }
 /* ======================================================
   API 2: FEATURED REVIEWS
@@ -17,36 +20,8 @@ export interface HomeStatistics {
 ====================================================== */
 
 export const getFeaturedReviews = async () => {
-  return new Promise<Review[]>((resolve) => {
-    setTimeout(() => {
-      resolve([
-        {
-          id: 1,
-          rating: 5,
-          comment: "AI image search is amazing! Found exactly what I wanted.",
-          createdAt: new Date(),
-          user: {
-            id: 1,
-            fullName: "Sarah Anderson",
-          },
-        },
-        {
-          id: 2,
-          rating: 5,
-          comment: "Chatbot helped me choose the right size. Very convenient!",
-          createdAt: new Date(),
-          user: {
-            id: 2,
-            fullName: "Michael Johnson",
-          } as any,
-        },
-      ]);
-    }, 500);
-  });
-
-  // ✅ KHI BE XONG
-  // const response = await axiosInstance.get("/reviews/featured");
-  // return response.data.data;
+  const response = await axiosInstance.get("/reviews/top-rated");
+  return response.data;
 };
 export const getHomeStatistics = async () => {
   // 🔴 MOCK DATA
@@ -59,6 +34,7 @@ export const getHomeStatistics = async () => {
           averageRating: 4.8,
           totalRating: 5202,
         },
+        satisfactionRate: 99,
       });
     }, 400);
   });
