@@ -66,7 +66,7 @@ export default function ChatbotWindow() {
 
   /* ================= UI ================= */
   return (
-    <div className="flex flex-col h-full max-h-[80vh]">
+    <div className="flex flex-col h-full max-h-[80vh] min-h-[400px]">
       {/* ===== HEADER ===== */}
       <div className="h-14 border-b px-4 flex items-center gap-3 shrink-0">
         <Avatar>

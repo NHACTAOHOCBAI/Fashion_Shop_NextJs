@@ -90,10 +90,16 @@ const Products = () => {
   const { data: category } = useGetCategoryById(categoryId ? +categoryId : 0);
 
   // Sử dụng useMemo để tính toán filterData chỉ khi categoryAttributes thay đổi
-  const filterData = useMemo(
-    () => formatToFilterData(category?.attributeCategories || []),
-    [category?.attributeCategories]
-  );
+  const filterData = useMemo(() => {
+    if (!category || !category.isActive) return [];
+
+    const activeAttributeCategories =
+      category.attributeCategories?.filter(
+        (item) => item.isActive && item.attribute.isActive !== false
+      ) || [];
+
+    return formatToFilterData(activeAttributeCategories);
+  }, [category]);
 
   const [page, setPage] = useState(1);
   // Khởi tạo state filters với một đối tượng rỗng
