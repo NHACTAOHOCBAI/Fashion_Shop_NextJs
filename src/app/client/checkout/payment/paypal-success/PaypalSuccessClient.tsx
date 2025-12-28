@@ -26,8 +26,16 @@ export default function PaypalSuccessClient() {
       { token },
       {
         onSuccess: () => {
+          const orderId = sessionStorage.getItem("pendingOrderId");
+          sessionStorage.removeItem("pendingOrderId");
+
           toast.success("Payment successful!");
-          router.replace("/client/cart");
+
+          if (orderId) {
+            router.replace(`/client/order-complete?orderId=${orderId}`);
+          } else {
+            router.replace("/client/my-account/orders");
+          }
         },
         onError: () => {
           toast.error("Payment failed!");

@@ -14,6 +14,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Order } from "@/interfaces/order";
 import { shorthandFormatDateTime } from "@/lib/formatDate";
 import { formatMoney } from "@/lib/formatMoney";
 import type { ColumnDef } from "@tanstack/react-table";

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axiosInstance from "@/config/axios";
+import { Order } from "@/interfaces/order";
 import { AxiosResponse } from "axios";
 export enum PaymentMethod {
   COD = "cod",

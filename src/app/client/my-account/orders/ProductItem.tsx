@@ -6,6 +6,7 @@ import MyTag from "@/app/client/_components/MyTag";
 import { Button } from "@/components/ui/button";
 import { OrderStatus } from "@/constants/status.enum";
 import { ReviewModal } from "./ReviewModal";
+import { OrderItem } from "@/interfaces/order";
 
 interface Props {
   item: OrderItem;

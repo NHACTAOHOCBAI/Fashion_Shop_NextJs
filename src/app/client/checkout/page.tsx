@@ -325,6 +325,8 @@ const Checkout = () => {
           // order = response từ BE (phải có order.id)
           if (selectedPayment === "paypal") {
             try {
+              sessionStorage.setItem("pendingOrderId", order.id.toString());
+
               const res = await createPaypal({
                 orderId: order.id,
               });
@@ -339,7 +341,7 @@ const Checkout = () => {
 
           // ✅ COD / BANK
           toast.success("Order placed successfully!");
-          // router.push(`/orders/${order.id}`);
+          router.push(`/client/order-complete?orderId=${order.id}`);
         },
 
         onError: (error: any) => {

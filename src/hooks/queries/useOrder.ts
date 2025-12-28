@@ -16,11 +16,12 @@ const useMyOrders = (params: OrderQueryParams) =>
     queryFn: () => getMyOrders(params),
     placeholderData: (previousData) => previousData,
   });
-// const useMyOrderById = (id: number) =>
-//   useQuery({
-//     queryKey: ["my-order"],
-//     queryFn: () => getMyOrderById(id),
-//   });
+const useMyOrderById = (id: number) =>
+  useQuery({
+    queryKey: ["my-order", id],
+    queryFn: () => getMyOrderById(id),
+    enabled: !!id,
+  });
 const usePlaceOrder = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -80,6 +81,7 @@ const useConfirmOrder = () => {
 };
 export {
   useMyOrders,
+  useMyOrderById,
   usePlaceOrder,
   useGetOrderById,
   useOrders,

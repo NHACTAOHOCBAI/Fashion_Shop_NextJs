@@ -9,6 +9,7 @@ import { useState, useEffect } from "react";
 import { LoadMore } from "@/components/ui/load-more";
 import { ListSkeletons } from "@/components/skeletons/list-skeletons";
 import { motion, AnimatePresence } from "framer-motion";
+import { Order } from "@/interfaces/order";
 
 export const OrderList = ({ status }: { status?: OrderStatus }) => {
   const [page, setPage] = useState(1);
