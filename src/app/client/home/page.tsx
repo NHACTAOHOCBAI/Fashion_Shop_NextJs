@@ -38,6 +38,7 @@ import {
   buttonHover,
 } from "@/lib/animations";
 import { cn } from "@/lib/utils";
+import RecommendedProducts from "./_components/RecommendedProducts";
 
 const HomePage = () => {
   const { data: statistics } = useHomeStatistics();
@@ -351,6 +352,10 @@ const HomePage = () => {
           </div>
         </div>
       </section>
+
+      {/* SECTION: PERSONALIZED RECOMMENDATIONS */}
+      <RecommendedProducts />
+
       <div className="min-h-screen">
         {/* HERO SECTION */}
         <section className="bg-gradient-to-br from-[#40BFFF]/10 via-white to-[#FFD470]/10 py-[100px]">
@@ -837,15 +842,15 @@ const Review = ({ item }: { item: Review }) => {
           <AvatarImage
             className="object-cover rounded-full"
             src={item.user.avatar}
-            alt={item.user.name}
+            alt={item.user.fullName}
           />
           <AvatarFallback className="rounded-full bg-gradient-primary text-white">
-            {getInitials(item.user.name)}
+            {getInitials(item.user.fullName)}
           </AvatarFallback>
         </Avatar>
         <div>
           <p className="font-semibold text-base dark:text-white">
-            {item.user.name}
+            {item.user.fullName}
           </p>
         </div>
       </div>

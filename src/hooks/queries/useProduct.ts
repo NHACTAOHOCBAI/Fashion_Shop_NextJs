@@ -8,6 +8,7 @@ import {
   getRelatedProducts,
   searchImage,
   updateProduct,
+  getPersonalizedRecommendations,
 } from "@/services/product.service";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 const useSearchImage = (image: File | null, searchKey: number) =>
@@ -66,6 +67,14 @@ const useUpdateProduct = () => {
     },
   });
 };
+
+const usePersonalizedRecommendations = () =>
+  useQuery({
+    queryKey: ["personalized-recommendations"],
+    queryFn: getPersonalizedRecommendations,
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+  });
+
 export {
   useCreateProduct,
   useDeleteProducts,
@@ -76,4 +85,5 @@ export {
   useUpdateProduct,
   useRelatedProducts,
   useSearchImage,
+  usePersonalizedRecommendations,
 };
