@@ -44,4 +44,12 @@ const createReview = async (data: {
   });
   return response;
 };
-export { createReview, getReviewsByProductId };
+
+const deleteReview = async (reviewId: number) => {
+  const response = await axiosInstance.delete(`/reviews/${reviewId}`);
+  return response.data as {
+    message: string;
+  };
+};
+
+export { createReview, getReviewsByProductId, deleteReview };

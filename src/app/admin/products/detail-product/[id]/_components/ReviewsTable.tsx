@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -19,10 +20,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Search, Star } from "lucide-react";
-import { useGetReviewsByProduct } from "@/hooks/queries/useReview";
+import { Search, Star, Trash2 } from "lucide-react";
+import { useGetReviewsByProduct, useDeleteReview } from "@/hooks/queries/useReview";
 import { format } from "date-fns";
+import { toast } from "sonner";
 
 interface ReviewsTableProps {
   productId: number;
@@ -50,8 +62,31 @@ function StarRating({ rating }: { rating: number }) {
 export function ReviewsTable({ productId }: ReviewsTableProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [ratingFilter, setRatingFilter] = useState<RatingFilter>("all");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [reviewToDelete, setReviewToDelete] = useState<number | null>(null);
 
   const { data: reviews = [], isLoading } = useGetReviewsByProduct(productId);
+  const { mutate: deleteReview, isPending: isDeleting } = useDeleteReview(productId);
+
+  const handleDeleteClick = (reviewId: number) => {
+    setReviewToDelete(reviewId);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (reviewToDelete) {
+      deleteReview(reviewToDelete, {
+        onSuccess: () => {
+          toast.success("Review deleted successfully");
+          setDeleteDialogOpen(false);
+          setReviewToDelete(null);
+        },
+        onError: (error: any) => {
+          toast.error(`Error: ${error.message || "Failed to delete review"}`);
+        },
+      });
+    }
+  };
 
   const filteredReviews = useMemo(() => {
     return reviews.filter((review) => {
@@ -192,13 +227,14 @@ export function ReviewsTable({ productId }: ReviewsTableProps) {
                   <TableHead>Comment</TableHead>
                   <TableHead className="w-[200px]">Images</TableHead>
                   <TableHead className="w-[150px]">Date</TableHead>
+                  <TableHead className="w-[100px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredReviews.length === 0 ? (
                   <TableRow>
                     <TableCell
-                      colSpan={5}
+                      colSpan={6}
                       className="text-center text-muted-foreground py-8"
                     >
                       {reviews.length === 0
@@ -269,6 +305,16 @@ export function ReviewsTable({ productId }: ReviewsTableProps) {
                           {format(new Date(review.createdAt), "hh:mm a")}
                         </div>
                       </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeleteClick(review.id)}
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   ))
                 )}
@@ -277,6 +323,29 @@ export function ReviewsTable({ productId }: ReviewsTableProps) {
           </div>
         </CardContent>
       </Card>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Review</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this review? This action cannot be
+              undone and will permanently remove the review from the product.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              disabled={isDeleting}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {isDeleting ? "Deleting..." : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
