@@ -24,22 +24,6 @@ export const getFeaturedReviews = async () => {
   return response.data;
 };
 export const getHomeStatistics = async () => {
-  // 🔴 MOCK DATA
-  return new Promise<HomeStatistics>((resolve) => {
-    setTimeout(() => {
-      resolve({
-        totalProducts: 10234,
-        totalCustomers: 5341,
-        rating: {
-          averageRating: 4.8,
-          totalRating: 5202,
-        },
-        satisfactionRate: 99,
-      });
-    }, 400);
-  });
-
-  // ✅ KHI BE LÀM XONG
-  // const response = await axiosInstance.get("/statistics/home");
-  // return response.data;
+  const response = await axiosInstance.get("/admin/dashboard/statistics");
+  return response.data as HomeStatistics;
 };

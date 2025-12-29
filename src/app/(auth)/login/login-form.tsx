@@ -48,8 +48,8 @@ export function LoginForm({}: React.ComponentProps<"div">) {
           socket.emit("join", { userId: user.id });
           console.log("joined room user:", user.id);
         }
-
-        router.push("/admin/users/view-users");
+        if (user.role === "admin") router.push("/admin/overviews/dashboard");
+        else router.push("/client/home");
       },
       onError: (error) => {
         toast.error(`Ohh!!! ${error.message}`);
