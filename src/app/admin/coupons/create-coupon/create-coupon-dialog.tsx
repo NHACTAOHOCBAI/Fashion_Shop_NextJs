@@ -105,7 +105,7 @@ export function CreateCouponDialog({ open, setOpen }: Props) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-md max-h-[98vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Add Coupon</DialogTitle>
+          <h6>Add Coupon</h6>
           <DialogDescription>Enter coupon information below.</DialogDescription>
         </DialogHeader>
 
@@ -225,8 +225,17 @@ export function CreateCouponDialog({ open, setOpen }: Props) {
                 <FormItem>
                   <FormLabel>Usage Limit</FormLabel>
                   <FormControl>
-                    <Input type="number" {...field} />
+                    <Input
+                      type="number"
+                      value={field.value ?? ""}
+                      onChange={(e) =>
+                        field.onChange(
+                          e.target.value ? Number(e.target.value) : undefined
+                        )
+                      }
+                    />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -238,8 +247,17 @@ export function CreateCouponDialog({ open, setOpen }: Props) {
                 <FormItem>
                   <FormLabel>Usage Limit Per User</FormLabel>
                   <FormControl>
-                    <Input type="number" {...field} />
+                    <Input
+                      type="number"
+                      value={field.value ?? ""}
+                      onChange={(e) =>
+                        field.onChange(
+                          e.target.value ? Number(e.target.value) : undefined
+                        )
+                      }
+                    />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />

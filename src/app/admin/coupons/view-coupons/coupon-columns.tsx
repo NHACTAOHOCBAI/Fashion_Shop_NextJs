@@ -137,18 +137,6 @@ export const couponColumns = (
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(String(item.id))}
-            >
-              Copy ID
-            </DropdownMenuItem>
-
-            <DropdownMenuSeparator />
-
-            <DropdownMenuItem onClick={() => handleUpdateBtn(item)}>
-              Update Coupon
-            </DropdownMenuItem>
-
-            <DropdownMenuItem
               className="focus:text-red-500"
               onClick={() => handleDeleteItem(item.id)}
             >

@@ -60,7 +60,7 @@ export function UpdateOrderDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-md max-h-[95vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Update Order Status</DialogTitle>
+          <h6>Update Order Status</h6>
           <DialogDescription>
             You can only move the order to the next valid step.
           </DialogDescription>

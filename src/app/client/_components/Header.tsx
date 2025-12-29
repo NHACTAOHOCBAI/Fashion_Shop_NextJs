@@ -28,7 +28,10 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { staggerContainer, staggerItemFast } from "@/lib/animations";
 import { useLogout } from "@/hooks/queries/useAuth";
-import { useGetNotification } from "@/hooks/queries/useNotification";
+import {
+  useGetNotification,
+  useMarkAsRead,
+} from "@/hooks/queries/useNotification";
 const accountMenus = [
   {
     href: "/client/my-account/order-news",
@@ -371,7 +374,7 @@ const Notification = ({ notifications }: { notifications: Notification[] }) => {
   const myNotification = notifications.slice(0, 6);
   const unreadCount = notifications.filter((n) => !n.isRead).length;
   const router = useRouter();
-
+  const { mutate: markAsRead } = useMarkAsRead();
   return (
     <div className="">
       {/* Header */}
@@ -389,7 +392,10 @@ const Notification = ({ notifications }: { notifications: Notification[] }) => {
             )}
           </div>
           {notifications.length > 0 && (
-            <button className="text-xs font-medium text-[#40BFFF] hover:text-[#33A0DD] transition-colors mr-[20px]">
+            <button
+              onClick={() => markAsRead()}
+              className="text-xs font-medium text-[#40BFFF] hover:text-[#33A0DD] transition-colors mr-[20px]"
+            >
               Mark all read
             </button>
           )}
