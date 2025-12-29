@@ -310,14 +310,6 @@ const Header = () => {
                 Home
               </Link>
             </li>
-            <li>
-              <Link
-                href="/client/home"
-                className="text-base font-medium text-gray-700 dark:text-gray-300 hover:text-[#40BFFF] transition-colors"
-              >
-                Redcommendation
-              </Link>
-            </li>
             {headerData?.data.map((department) => (
               <SubCatgories
                 key={department.name}
