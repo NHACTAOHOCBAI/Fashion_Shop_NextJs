@@ -2,7 +2,14 @@ import axiosInstance from "@/config/axios";
 
 const getReviewsByProductId = async (productId: number) => {
   const response = await axiosInstance.get(`/reviews/product/${productId}`);
-  return response.data as {
+
+  // Transform data to ensure rating is a number (backend returns string)
+  const reviews = response.data.map((review: any) => ({
+    ...review,
+    rating: parseFloat(review.rating),
+  }));
+
+  return reviews as {
     id: number;
     rating: number;
     comment: string;
