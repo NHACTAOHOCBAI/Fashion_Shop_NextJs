@@ -4,16 +4,21 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  Heart,
   MessageCircle,
   Share2,
   MoreHorizontal,
   Tag,
   Clock,
 } from "lucide-react";
-import { useToggleLike, useDeletePost } from "@/hooks/queries/usePost";
+import {
+  useToggleReaction,
+  useToggleBookmark,
+  useDeletePost,
+} from "@/hooks/queries/usePost";
 import { formatDistanceToNow } from "date-fns";
 import SharePostModal from "./SharePostModal";
+import ReactionButton from "@/components/reactions/ReactionButton";
+import BookmarkButton from "@/components/reactions/BookmarkButton";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -36,14 +41,38 @@ const PostCard = ({ post, currentUserId }: PostCardProps) => {
   const [showShareModal, setShowShareModal] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
 
-  const { mutate: toggleLike, isPending: isLiking } = useToggleLike();
+  const { mutate: toggleReaction, isPending: isReacting } =
+    useToggleReaction();
+  const { mutate: toggleBookmark, isPending: isBookmarking } =
+    useToggleBookmark();
   const { mutate: deletePost, isPending: isDeleting } = useDeletePost();
 
   const isOwnPost = currentUserId === post.user?.id;
-  const isLiked = post.isLikedByCurrentUser;
 
-  const handleLike = () => {
-    toggleLike(post.id);
+  const handleReact = (postId: number, type: ReactionType) => {
+    toggleReaction(
+      { postId, type },
+      {
+        onError: (error: any) => {
+          toast.error(error?.message || "Failed to react");
+        },
+      }
+    );
+  };
+
+  const handleBookmark = (postId: number) => {
+    toggleBookmark(postId, {
+      onSuccess: (data) => {
+        toast.success(
+          data.action === "bookmarked"
+            ? "Post saved to bookmarks"
+            : "Post removed from bookmarks"
+        );
+      },
+      onError: (error: any) => {
+        toast.error(error?.message || "Failed to bookmark");
+      },
+    });
   };
 
   const handleDelete = () => {
@@ -217,44 +246,47 @@ const PostCard = ({ post, currentUserId }: PostCardProps) => {
       )}
 
       {/* Actions */}
-      <div className="flex items-center gap-[24px] pt-[16px] border-t border-gray-200">
-        <button
-          onClick={handleLike}
-          disabled={isLiking}
-          className="flex items-center gap-[8px] text-[14px] font-medium hover:text-[#FF4858]"
-        >
-          <Heart
-            className={`w-[20px] h-[20px] ${
-              isLiked
-                ? "fill-[#FF4858] stroke-[#FF4858]"
-                : "stroke-gray-600 hover:stroke-[#FF4858]"
-            }`}
+      <div className="flex items-center justify-between pt-[16px] border-t border-gray-200">
+        <div className="flex items-center gap-[16px]">
+          <ReactionButton
+            postId={post.id}
+            currentReaction={post.userReaction}
+            totalReactions={post.totalReactions || post.totalLikes}
+            reactionCounts={post.reactionCounts}
+            onReact={handleReact}
+            isPending={isReacting}
           />
-          <span className={isLiked ? "text-[#FF4858]" : "text-gray-700"}>
-            {post.totalLikes} {post.totalLikes === 1 ? "Like" : "Likes"}
-          </span>
-        </button>
 
-        <Link
-          href={`/client/community/post/${post.id}`}
-          className="flex items-center gap-[8px] text-[14px] font-medium hover:text-[#40BFFF]"
-        >
-          <MessageCircle className="w-[20px] h-[20px] text-gray-600" />
-          <span className="text-gray-700">
-            {post.totalComments}{" "}
-            {post.totalComments === 1 ? "Comment" : "Comments"}
-          </span>
-        </Link>
+          <Link
+            href={`/client/community/post/${post.id}`}
+            className="flex items-center gap-[8px] text-[14px] font-medium hover:text-[#40BFFF] px-3 py-1.5 rounded-lg hover:bg-gray-100"
+          >
+            <MessageCircle className="w-[18px] h-[18px] text-gray-600" />
+            <span className="text-gray-700">
+              {post.totalComments > 0 && `${post.totalComments} `}
+              Comment
+            </span>
+          </Link>
 
-        <button
-          onClick={handleShare}
-          className="flex items-center gap-[8px] text-[14px] font-medium hover:text-[#40BFFF]"
-        >
-          <Share2 className="w-[18px] h-[18px] text-gray-600" />
-          <span className="text-gray-700">
-            {post.totalShares > 0 && `${post.totalShares} `}Share
-          </span>
-        </button>
+          <button
+            onClick={handleShare}
+            className="flex items-center gap-[8px] text-[14px] font-medium hover:text-[#40BFFF] px-3 py-1.5 rounded-lg hover:bg-gray-100"
+          >
+            <Share2 className="w-[18px] h-[18px] text-gray-600" />
+            <span className="text-gray-700">
+              {post.totalShares > 0 && `${post.totalShares} `}
+              Share
+            </span>
+          </button>
+        </div>
+
+        <BookmarkButton
+          postId={post.id}
+          isBookmarked={post.isBookmarkedByCurrentUser}
+          onToggle={handleBookmark}
+          isPending={isBookmarking}
+          showLabel={false}
+        />
       </div>
 
       <SharePostModal

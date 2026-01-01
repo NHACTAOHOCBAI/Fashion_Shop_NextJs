@@ -1,106 +1,146 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import ChatWindow from "@/components/chat/chatWindow";
-import axiosInstance from "@/config/axios";
-import { useEffect, useState } from "react";
-
-interface Conversation {
-  id: number;
-  customer: User;
-  assignedAdmin: User;
-  status: string;
-  lastMessageAt: string;
-  createdAt: string;
-}
+import ConversationList from "@/components/chat/ConversationList";
+import {
+  useGetAllConversations,
+  useGetMessages,
+} from "@/hooks/queries/useChat";
+import { useMyProfile } from "@/hooks/queries/useAuth";
+import { Loader2, MessageSquare } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { socket } from "@/lib/socket2";
 
 export default function AdminChatPage() {
-  const [list, setList] = useState<Conversation[]>([]);
-  const [active, setActive] = useState<number | null>(null);
-  const [me, setMe] = useState<User | null>(null);
+  const [selectedConversationId, setSelectedConversationId] = useState<
+    number | null
+  >(null);
 
+  // Get current admin user
+  const { data: user, isLoading: userLoading } = useMyProfile();
+
+  // Get all conversations (admin only)
+  const {
+    data: conversations = [],
+    isLoading: conversationsLoading,
+    error: conversationsError,
+  } = useGetAllConversations();
+
+  // Get messages for selected conversation
+  const { data: messages, isLoading: messagesLoading } = useGetMessages(
+    selectedConversationId || 0,
+    !!selectedConversationId
+  );
+
+  // Auto-select first conversation
   useEffect(() => {
-    axiosInstance.get("/chat/admin/conversations").then((res) => {
-      setList(res.data);
-      if (res.data.length) {
-        setActive(res.data[0].id);
-      }
-    });
-  }, []);
+    if (conversations.length > 0 && !selectedConversationId) {
+      setSelectedConversationId(conversations[0].id);
+    }
+  }, [conversations, selectedConversationId]);
+
+  // Listen for conversation updates
   useEffect(() => {
-    axiosInstance.get("/auth/me").then((res) => {
-      setMe(res.data);
-    });
+    const handleConversationUpdate = (payload: any) => {
+      // Refresh conversations list when updates occur
+      // This is handled automatically by React Query refetchInterval
+    };
+
+    socket.on("conversationUpdated", handleConversationUpdate);
+
+    return () => {
+      socket.off("conversationUpdated", handleConversationUpdate);
+    };
   }, []);
-  const activeConversation = list.find((c) => c.id === active);
-  return (
-    <div className="flex h-screen bg-gray-100 border rounded-2xl overflow-hidden">
-      {/* ===== SIDEBAR ===== */}
-      <div className="w-[320px] bg-white border-r flex flex-col">
-        <div className="p-4 border-b font-semibold text-lg">Customers</div>
 
-        <div className="flex-1 overflow-y-auto p-2 space-y-1">
-          {list.map((c) => {
-            const isActive = c.id === active;
-            const user = c.customer;
+  // Handle conversation selection
+  const handleSelectConversation = (conversation: Conversation) => {
+    setSelectedConversationId(conversation.id);
+  };
 
-            return (
-              <div
-                key={c.id}
-                onClick={() => setActive(c.id)}
-                className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition
-                  ${isActive ? "bg-blue-50" : "hover:bg-gray-100"}`}
-              >
-                {/* Avatar */}
-                {user.avatar ? (
-                  <img
-                    src={user.avatar}
-                    alt={user.fullName}
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-semibold">
-                    {user.fullName.charAt(0)}
-                  </div>
-                )}
-
-                {/* Info */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex justify-between items-center">
-                    <p className="font-medium truncate">{user.fullName}</p>
-                    <span className="text-xs text-gray-400">
-                      {c.lastMessageAt
-                        ? new Date(c.lastMessageAt).toLocaleTimeString(
-                            "vi-VN",
-                            {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            }
-                          )
-                        : ""}
-                    </span>
-                  </div>
-
-                  <p className="text-sm text-gray-500 truncate">
-                    Press to view
-                  </p>
-                </div>
-              </div>
-            );
-          })}
+  // Loading state
+  if (userLoading || conversationsLoading) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-sm text-muted-foreground">
+            Loading conversations...
+          </p>
         </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (conversationsError || !user) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <Card className="p-8 max-w-md text-center">
+          <MessageSquare className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+          <h3 className="text-lg font-semibold mb-2">Unable to load chats</h3>
+          <p className="text-sm text-muted-foreground">
+            {conversationsError
+              ? "Failed to load conversations. Please try again."
+              : "Please make sure you are logged in as an admin."}
+          </p>
+        </Card>
+      </div>
+    );
+  }
+
+  // Get selected conversation data
+  const selectedConversation = conversations.find(
+    (c) => c.id === selectedConversationId
+  );
+
+  return (
+    <div className="flex h-screen bg-background border rounded-2xl overflow-hidden">
+      {/* ===== SIDEBAR - Conversation List ===== */}
+      <div className="w-[320px] bg-card border-r flex flex-col">
+        <div className="p-4 border-b">
+          <h2 className="font-semibold text-lg">Customer Support</h2>
+          <p className="text-xs text-muted-foreground mt-1">
+            {conversations.length} conversation
+            {conversations.length !== 1 ? "s" : ""}
+          </p>
+        </div>
+
+        <ConversationList
+          conversations={conversations}
+          selectedId={selectedConversationId || undefined}
+          onSelect={handleSelectConversation}
+          currentUserId={user.id}
+          isAdmin={true}
+        />
       </div>
 
       {/* ===== CHAT WINDOW ===== */}
       <div className="flex-1 p-4">
-        {active && me && activeConversation ? (
+        {selectedConversation && !messagesLoading ? (
           <ChatWindow
-            conversationId={activeConversation.id}
-            currentUserId={me.id}
-            headerUser={activeConversation.customer} // 👈 khách hàng
+            conversationId={selectedConversation.id}
+            currentUserId={user.id}
+            headerUser={{
+              id: selectedConversation.customer.id,
+              fullName: selectedConversation.customer.fullName,
+              avatar: selectedConversation.customer.avatar,
+            }}
+            initialMessages={messages || []}
           />
+        ) : messagesLoading ? (
+          <div className="h-full flex items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
         ) : (
-          <div className="h-full flex items-center justify-center text-gray-400">
-            No conversation
+          <div className="h-full flex items-center justify-center">
+            <div className="text-center">
+              <MessageSquare className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
+              <p className="text-sm text-muted-foreground">
+                Select a conversation to start chatting
+              </p>
+            </div>
           </div>
         )}
       </div>

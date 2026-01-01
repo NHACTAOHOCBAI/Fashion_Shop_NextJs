@@ -61,7 +61,7 @@ export const deletePost = async (id: number) => {
   return response;
 };
 
-// Toggle like on a post
+// Toggle like on a post (Deprecated - use toggleReaction instead)
 export const toggleLike = async (id: number) => {
   const response = (await axiosInstance.post(`/posts/${id}/like`)) as {
     message: string;
@@ -69,6 +69,42 @@ export const toggleLike = async (id: number) => {
     totalLikes: number;
   };
   return response;
+};
+
+// Toggle reaction on a post (Facebook-style reactions)
+export const toggleReaction = async (id: number, type: ReactionType) => {
+  const response = (await axiosInstance.post(`/posts/${id}/react`, {
+    type,
+  })) as {
+    message: string;
+    action: "added" | "changed" | "removed";
+    type?: ReactionType;
+    from?: ReactionType;
+    to?: ReactionType;
+    totalReactions: number;
+    reactionCounts: Record<ReactionType, number>;
+  };
+  return response;
+};
+
+// Toggle bookmark on a post
+export const toggleBookmark = async (id: number) => {
+  const response = (await axiosInstance.post(`/posts/${id}/bookmark`)) as {
+    message: string;
+    action: "bookmarked" | "removed";
+  };
+  return response;
+};
+
+// Get bookmarked posts for current user
+export const getBookmarkedPosts = async (
+  page: number = 1,
+  limit: number = 20
+) => {
+  const response = (await axiosInstance.get(`/posts/bookmarked/me`, {
+    params: { page, limit },
+  })) as GetAllResponse<Post>;
+  return response.data;
 };
 
 // Add comment to a post
@@ -123,6 +159,33 @@ export const deleteComment = async (postId: number, commentId: number) => {
     `/posts/${postId}/comments/${commentId}`
   )) as { message: string };
   return response;
+};
+
+// Add reply to a comment
+export const addReply = async (
+  postId: number,
+  commentId: number,
+  data: CreateReplyDto
+) => {
+  const response = (await axiosInstance.post(
+    `/posts/${postId}/comments/${commentId}/replies`,
+    data
+  )) as PostComment;
+  return response;
+};
+
+// Get replies for a comment
+export const getReplies = async (
+  postId: number,
+  commentId: number,
+  page: number = 1,
+  limit: number = 20
+) => {
+  const response = (await axiosInstance.get(
+    `/posts/${postId}/comments/${commentId}/replies`,
+    { params: { page, limit } }
+  )) as GetAllResponse<PostComment>;
+  return response.data;
 };
 
 // Share a post
