@@ -1,0 +1,10 @@
+{
+  "Common": {
+    "hello": "Xin chào",
+    "logout": "Đăng xuất"
+  },
+  "Home": {
+    "title": "Chào mừng đến với FShop",
+    "description": "Sàn thương mại thời trang của bạn"
+  }
+}
