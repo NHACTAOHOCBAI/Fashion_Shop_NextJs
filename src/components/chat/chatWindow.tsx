@@ -1,26 +1,16 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Send, CheckCheck } from "lucide-react";
-import axiosInstance from "@/config/axios";
+import { CheckCheck } from "lucide-react";
 import { socket } from "@/lib/socket2";
+import MessageBubble from "./MessageBubble";
+import MessageInput from "./MessageInput";
+import { useSendMessage, useMarkMessagesSeen } from "@/hooks/queries/useChat";
+import { toast } from "sonner";
 
 /* ================= TYPES ================= */
-interface Message {
-  id: number;
-  content: string;
-  createdAt: string;
-  isSeen: boolean;
-  sender: {
-    id: number;
-    fullName: string;
-  };
-}
-
 interface ChatHeaderUser {
   id: number;
   fullName: string;
@@ -31,14 +21,15 @@ interface Props {
   conversationId: number;
   currentUserId: number;
   headerUser: ChatHeaderUser;
+  initialMessages?: ChatMessage[];
 }
 
 /* ================= UTILS ================= */
-const shouldShowTime = (curr: Message, prev?: Message) => {
+const shouldShowTime = (curr: ChatMessage, prev?: ChatMessage) => {
   if (!prev) return true;
   const diff =
     new Date(curr.createdAt).getTime() - new Date(prev.createdAt).getTime();
-  return diff > 5 * 60 * 1000; // 5 phút
+  return diff > 5 * 60 * 1000; // 5 minutes
 };
 
 /* ================= COMPONENT ================= */
@@ -46,37 +37,64 @@ export default function ChatWindow({
   conversationId,
   currentUserId,
   headerUser,
+  initialMessages = [],
 }: Props) {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [text, setText] = useState("");
+  const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
   const [typingUser, setTypingUser] = useState<number | null>(null);
 
   const bottomRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
   const typingTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  const sendMessageMutation = useSendMessage();
+  const markSeenMutation = useMarkMessagesSeen();
 
   /* ================= LOAD + SOCKET ================= */
   useEffect(() => {
     if (!conversationId) return;
 
-    // Load history
-    axiosInstance
-      .get(`/chat/conversations/${conversationId}/messages`)
-      .then((res) => setMessages(res.data));
+    // Update messages if initialMessages changes
+    setMessages(initialMessages);
+  }, [initialMessages]);
+
+  useEffect(() => {
+    if (!conversationId) return;
 
     socket.emit("joinConversation", conversationId);
 
-    const onNewMessage = (msg: Message) => {
+    const onNewMessage = (msg: ChatMessage) => {
       setMessages((prev) => {
         if (prev.some((m) => m.id === msg.id)) return prev;
         return [...prev, msg];
       });
+
+      // Mark as seen if message is from other user
+      if (msg.sender.id !== currentUserId) {
+        markSeenMutation.mutate(conversationId);
+      }
+    };
+
+    const onSeen = () => {
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.sender.id === currentUserId ? { ...m, isSeen: true } : m
+        )
+      );
     };
 
     socket.on("newMessage", onNewMessage);
+    socket.on("seen", onSeen);
+
+    // Mark messages as seen when opening conversation
+    const unseenMessages = messages.filter(
+      (m) => !m.isSeen && m.sender.id !== currentUserId
+    );
+    if (unseenMessages.length > 0) {
+      markSeenMutation.mutate(conversationId);
+    }
 
     return () => {
       socket.off("newMessage", onNewMessage);
+      socket.off("seen", onSeen);
       socket.emit("leaveConversation", conversationId);
     };
   }, [conversationId]);
@@ -126,17 +144,27 @@ export default function ChatWindow({
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, typingUser]);
 
-  /* ================= SEND ================= */
-  const sendMessage = async () => {
-    if (!text.trim()) return;
-
-    await axiosInstance.post("/chat/send", {
-      conversationId,
-      content: text,
-    });
-
-    setText("");
-    inputRef.current?.focus();
+  /* ================= SEND MESSAGE ================= */
+  const handleSendMessage = async (
+    content: string,
+    files?: {
+      images?: File[];
+      voice?: File;
+      video?: File;
+    }
+  ) => {
+    try {
+      await sendMessageMutation.mutateAsync({
+        dto: {
+          conversationId,
+          content: content || undefined,
+        },
+        files,
+      });
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to send message");
+      throw error;
+    }
   };
 
   const lastMyMessage = [...messages]
@@ -185,22 +213,11 @@ export default function ChatWindow({
                   </div>
                 )}
 
-                <div
-                  className={`flex ${isMe ? "justify-end" : "justify-start"}`}
-                >
-                  <div
-                    className={`max-w-[65%] rounded-2xl px-4 py-2 text-sm leading-relaxed
-                      ${
-                        isMe ? "bg-primary text-primary-foreground" : "bg-muted"
-                      }`}
-                  >
-                    {m.content}
-                  </div>
-                </div>
+                <MessageBubble message={m} isMe={isMe} />
 
                 {isMe && lastMyMessage?.id === m.id && (
-                  <div className="flex justify-end text-xs text-muted-foreground gap-1">
-                    <CheckCheck className="h-4 w-4" />
+                  <div className="flex justify-end text-xs text-muted-foreground gap-1 items-center">
+                    <CheckCheck className="h-3 w-3" />
                     {m.isSeen ? "Seen" : "Sent"}
                   </div>
                 )}
@@ -210,7 +227,7 @@ export default function ChatWindow({
 
           {typingUser && (
             <div className="text-xs text-muted-foreground animate-pulse">
-              Typing...
+              {headerUser.fullName} is typing...
             </div>
           )}
 
@@ -219,22 +236,12 @@ export default function ChatWindow({
       </ScrollArea>
 
       {/* ===== INPUT ===== */}
-      <div className="h-14 border-t px-3 flex items-center gap-2 py-2 shrink-0">
-        <Input
-          ref={inputRef}
-          placeholder="Aa"
-          value={text}
-          onChange={(e) => {
-            setText(e.target.value);
-            onTyping();
-          }}
-          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-          className="rounded-full"
-        />
-        <Button size="icon" onClick={sendMessage} disabled={!text.trim()}>
-          <Send className="h-4 w-4" />
-        </Button>
-      </div>
+      <MessageInput
+        onSend={handleSendMessage}
+        onTyping={onTyping}
+        disabled={sendMessageMutation.isPending}
+        placeholder="Type a message..."
+      />
     </div>
   );
 }
