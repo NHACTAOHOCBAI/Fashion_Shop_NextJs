@@ -2,25 +2,17 @@
 
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import {
   Send,
   Loader2,
-  Clock,
-  MoreHorizontal,
-  Edit2,
-  Trash2,
   MessageSquare,
-  Sparkles,
 } from "lucide-react";
 import {
   useComments,
   useAddComment,
-  useUpdateComment,
-  useDeleteComment,
 } from "@/hooks/queries/usePost";
-import { formatDistanceToNow } from "date-fns";
 import { toast } from "sonner";
+import CommentItem from "./CommentItem";
 
 interface CommentSectionProps {
   postId: number;
@@ -30,18 +22,11 @@ interface CommentSectionProps {
 const CommentSection = ({ postId, currentUser }: CommentSectionProps) => {
   const [commentText, setCommentText] = useState("");
   const [page, setPage] = useState(1);
-  const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
-  const [editingText, setEditingText] = useState("");
-  const [showMenuForComment, setShowMenuForComment] = useState<number | null>(
-    null
-  );
   const [isFocused, setIsFocused] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const { data: commentsData, isLoading } = useComments(postId, page, 20);
   const { mutate: addComment, isPending: isSubmitting } = useAddComment();
-  const { mutate: updateComment, isPending: isUpdating } = useUpdateComment();
-  const { mutate: deleteComment, isPending: isDeleting } = useDeleteComment();
 
   useEffect(() => {
     if (textareaRef.current && isFocused) {
@@ -71,61 +56,6 @@ const CommentSection = ({ postId, currentUser }: CommentSectionProps) => {
     );
   };
 
-  const formatDate = (date: string) => {
-    try {
-      return formatDistanceToNow(new Date(date), { addSuffix: true });
-    } catch {
-      return date;
-    }
-  };
-
-  const handleEdit = (comment: PostComment) => {
-    setEditingCommentId(comment.id);
-    setEditingText(comment.content);
-    setShowMenuForComment(null);
-  };
-
-  const handleCancelEdit = () => {
-    setEditingCommentId(null);
-    setEditingText("");
-  };
-
-  const handleUpdateSubmit = (commentId: number) => {
-    if (!editingText.trim()) return;
-
-    updateComment(
-      {
-        postId,
-        commentId,
-        data: { content: editingText.trim() },
-      },
-      {
-        onSuccess: () => {
-          setEditingCommentId(null);
-          setEditingText("");
-        },
-        onError: (error: any) => {
-          toast.error(error?.message || "Failed to update comment");
-        },
-      }
-    );
-  };
-
-  const handleDelete = (commentId: number) => {
-    if (!confirm("Are you sure you want to delete this comment?")) return;
-
-    deleteComment(
-      { postId, commentId },
-      {
-        onSuccess: () => {
-          setShowMenuForComment(null);
-        },
-        onError: (error: any) => {
-          toast.error(error?.message || "Failed to delete comment");
-        },
-      }
-    );
-  };
 
   return (
     <div className="mt-[20px]">
@@ -240,132 +170,15 @@ const CommentSection = ({ postId, currentUser }: CommentSectionProps) => {
           </div>
         ) : commentsData?.data && commentsData.data.length > 0 ? (
           <>
-            {commentsData.data.map((comment, index) => {
-              const isOwnComment = currentUser?.id === comment.user.id;
-              const isEditing = editingCommentId === comment.id;
-
-              return (
-                <div
-                  key={comment.id}
-                  className="flex gap-[16px] animate-fade-in"
-                  style={{ animationDelay: `${index * 50}ms` }}
-                >
-                  {/* Avatar */}
-                  <Link
-                    href={`/client/profile/${comment.user.id}`}
-                    className="flex-shrink-0"
-                  >
-                    <div className="w-[44px] h-[44px] rounded-full overflow-hidden bg-gradient-to-br from-[#40BFFF] to-[#5ECCFF] flex items-center justify-center hover:shadow-xl hover:scale-110 transition-all duration-300 cursor-pointer ring-2 ring-white">
-                      {comment.user.avatar ? (
-                        <Image
-                          src={comment.user.avatar}
-                          alt={comment.user.fullName}
-                          width={44}
-                          height={44}
-                          className="object-cover"
-                        />
-                      ) : (
-                        <span className="text-white font-semibold text-[16px]">
-                          {comment.user.fullName.charAt(0).toUpperCase()}
-                        </span>
-                      )}
-                    </div>
-                  </Link>
-
-                  {/* Comment Content */}
-                  <div className="flex-1">
-                    <div className="bg-gradient-to-br from-[#F6F7F8] to-[#FAFBFC] rounded-[18px] p-[18px] relative hover:shadow-md transition-all duration-300 border border-gray-100">
-                      <div className="flex items-center justify-between gap-[8px] mb-[10px]">
-                        <div className="flex items-center gap-[10px] flex-wrap">
-                          <Link
-                            href={`/client/profile/${comment.user.id}`}
-                            className="font-semibold text-[15px] hover:text-[#40BFFF] transition-colors duration-200"
-                          >
-                            {comment.user.fullName}
-                          </Link>
-                          <div className="flex items-center gap-[6px] text-[12px] text-gray-500 bg-white px-[8px] py-[4px] rounded-full">
-                            <Clock className="w-[12px] h-[12px]" />
-                            <span>{formatDate(comment.createdAt)}</span>
-                          </div>
-                        </div>
-
-                        {/* Edit/Delete Menu */}
-                        {isOwnComment && !isEditing && (
-                          <div className="relative">
-                            <button
-                              onClick={() =>
-                                setShowMenuForComment(
-                                  showMenuForComment === comment.id
-                                    ? null
-                                    : comment.id
-                                )
-                              }
-                              className="p-[6px] hover:bg-white rounded-full transition-all duration-200"
-                            >
-                              <MoreHorizontal className="w-[16px] h-[16px] text-gray-600" />
-                            </button>
-
-                            {showMenuForComment === comment.id && (
-                              <div className="absolute right-0 top-full mt-[8px] bg-white border border-gray-200 rounded-[12px] shadow-xl py-[6px] min-w-[140px] z-10 animate-slide-down">
-                                <button
-                                  onClick={() => handleEdit(comment)}
-                                  className="w-full flex items-center gap-[10px] px-[14px] py-[10px] hover:bg-blue-50 text-[13px] transition-all duration-200 text-gray-700 hover:text-[#40BFFF]"
-                                >
-                                  <Edit2 className="w-[14px] h-[14px]" />
-                                  <span>Edit</span>
-                                </button>
-                                <button
-                                  onClick={() => handleDelete(comment.id)}
-                                  disabled={isDeleting}
-                                  className="w-full flex items-center gap-[10px] px-[14px] py-[10px] hover:bg-red-50 text-[13px] text-red-600 transition-all duration-200 disabled:opacity-50"
-                                >
-                                  <Trash2 className="w-[14px] h-[14px]" />
-                                  <span>
-                                    {isDeleting ? "Deleting..." : "Delete"}
-                                  </span>
-                                </button>
-                              </div>
-                            )}
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Editing Mode */}
-                      {isEditing ? (
-                        <div className="space-y-[12px]">
-                          <textarea
-                            value={editingText}
-                            onChange={(e) => setEditingText(e.target.value)}
-                            className="w-full p-[14px] border-2 border-[#40BFFF] bg-white rounded-[12px] resize-none focus:outline-none focus:ring-2 focus:ring-[#40BFFF]/20 transition-all duration-200 min-h-[80px] text-[15px]"
-                            autoFocus
-                          />
-                          <div className="flex gap-[8px]">
-                            <button
-                              onClick={() => handleUpdateSubmit(comment.id)}
-                              disabled={isUpdating || !editingText.trim()}
-                              className="px-[20px] py-[8px] bg-gradient-to-r from-[#40BFFF] to-[#5ECCFF] text-white rounded-[10px] text-[13px] font-medium hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                              {isUpdating ? "Saving..." : "Save"}
-                            </button>
-                            <button
-                              onClick={handleCancelEdit}
-                              disabled={isUpdating}
-                              className="px-[20px] py-[8px] border-2 border-gray-200 rounded-[10px] text-[13px] font-medium hover:bg-gray-50 transition-all duration-200 disabled:opacity-50"
-                            >
-                              Cancel
-                            </button>
-                          </div>
-                        </div>
-                      ) : (
-                        <p className="text-[15px] text-gray-800 leading-relaxed whitespace-pre-wrap">
-                          {comment.content}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+            {commentsData.data.map((comment: PostComment) => (
+              <CommentItem
+                key={comment.id}
+                comment={comment}
+                postId={postId}
+                currentUser={currentUser}
+                depth={0}
+              />
+            ))}
 
             {/* Load More */}
             {commentsData.pagination &&

@@ -6,8 +6,13 @@ import {
   updatePost,
   deletePost,
   toggleLike,
+  toggleReaction,
+  toggleBookmark,
+  getBookmarkedPosts,
   addComment,
   getComments,
+  addReply,
+  getReplies,
   getPostsByProduct,
   updateComment,
   deleteComment,
@@ -86,7 +91,7 @@ export const useDeleteManyByAdmin = () => {
     },
   });
 };
-// Toggle like
+// Toggle like (Deprecated - use useToggleReaction instead)
 export const useToggleLike = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -97,6 +102,39 @@ export const useToggleLike = () => {
     },
   });
 };
+
+// Toggle reaction (Facebook-style reactions)
+export const useToggleReaction = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ postId, type }: { postId: number; type: ReactionType }) =>
+      toggleReaction(postId, type),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: ["post", variables.postId] });
+    },
+  });
+};
+
+// Toggle bookmark
+export const useToggleBookmark = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: toggleBookmark,
+    onSuccess: (_, postId) => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: ["post", postId] });
+      queryClient.invalidateQueries({ queryKey: ["bookmarked-posts"] });
+    },
+  });
+};
+
+// Get bookmarked posts
+export const useBookmarkedPosts = (page: number = 1, limit: number = 20) =>
+  useQuery({
+    queryKey: ["bookmarked-posts", page, limit],
+    queryFn: () => getBookmarkedPosts(page, limit),
+  });
 
 // Add comment
 export const useAddComment = () => {
@@ -178,6 +216,45 @@ export const useDeleteComment = () => {
     },
   });
 };
+
+// Add reply to a comment
+export const useAddReply = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      postId,
+      commentId,
+      data,
+    }: {
+      postId: number;
+      commentId: number;
+      data: CreateReplyDto;
+    }) => addReply(postId, commentId, data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["replies", variables.postId, variables.commentId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["comments", variables.postId],
+      });
+      queryClient.invalidateQueries({ queryKey: ["post", variables.postId] });
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+    },
+  });
+};
+
+// Get replies for a comment
+export const useReplies = (
+  postId: number,
+  commentId: number,
+  page: number = 1,
+  limit: number = 20
+) =>
+  useQuery({
+    queryKey: ["replies", postId, commentId, page, limit],
+    queryFn: () => getReplies(postId, commentId, page, limit),
+    enabled: !!postId && !!commentId,
+  });
 
 // Share post
 export const useSharePost = () => {

@@ -17,6 +17,7 @@ import {
   MessageSquare,
   Package,
   LogOut,
+  Bookmark,
 } from "lucide-react";
 import * as React from "react";
 // Giả định sử dụng Next.js App Router hooks
@@ -105,8 +106,20 @@ const menuData: MenuSection[] = [
     href: "/account/wishlist",
     items: [
       {
-        label: "Coupons",
+        label: "Wishlist",
         href: "/client/my-account/wishlist",
+      },
+    ],
+    isCollapsible: false,
+  },
+  {
+    icon: Bookmark,
+    title: "Saved Posts",
+    href: "/account/bookmarks",
+    items: [
+      {
+        label: "Saved Posts",
+        href: "/client/my-account/bookmarks",
       },
     ],
     isCollapsible: false,
@@ -117,7 +130,7 @@ const menuData: MenuSection[] = [
     href: "/client/my-account/chat",
     items: [
       {
-        label: "Coupons",
+        label: "Chat",
         href: "/client/my-account/chat",
       },
     ],

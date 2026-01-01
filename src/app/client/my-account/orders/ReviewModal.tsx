@@ -103,7 +103,7 @@ export const ReviewModal = ({ open, onClose, orderId, variantId }: Props) => {
         <div className="space-y-1">
           <p className="text-sm font-medium">Comment</p>
           <Textarea
-            placeholder="Chia sẻ cảm nhận của bạn..."
+            placeholder="Share your thoughts..."
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             className="resize-none"
