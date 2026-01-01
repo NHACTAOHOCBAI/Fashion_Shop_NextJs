@@ -8,7 +8,6 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 
 export default function LoginPage() {
-  const t = useTranslations("HomePage");
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#f7f7f7]">
       <div className="w-[1200px] bg-white rounded-xl shadow-lg grid grid-cols-1 lg:grid-cols-2 overflow-hidden h-[640px]">
@@ -21,7 +20,6 @@ export default function LoginPage() {
         <div className="flex items-center justify-center p-10">
           <Card className="w-full max-w-md border-0 shadow-none">
             <CardHeader className="space-y-2">
-              <h1>{t("title")}</h1>
               <CardTitle className="text-3xl font-bold ">
                 Welcome to <span className=" text-[#40BFFF]">FShop</span>
               </CardTitle>

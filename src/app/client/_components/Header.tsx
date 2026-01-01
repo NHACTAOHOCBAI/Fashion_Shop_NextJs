@@ -10,6 +10,7 @@ import { useSocket } from "@/providers/socketProvider";
 import { getMyNotifications } from "@/services/notification.service";
 import {
   Bell,
+  Bookmark,
   Heart,
   ListOrdered,
   LogOut,
@@ -57,6 +58,11 @@ const accountMenus = [
     href: "/client/my-account/wishlist",
     label: "Wishlists",
     icon: Heart,
+  },
+  {
+    href: "/client/my-account/bookmarks",
+    label: "Bookmarks",
+    icon: Bookmark,
   },
 ];
 const formatTimeAgo = (date: Date | string) => {

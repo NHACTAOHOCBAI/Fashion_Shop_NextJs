@@ -38,20 +38,34 @@ const BookmarksPage = () => {
   const posts = data?.data || [];
   const total = data?.pagination?.total || 0;
   const hasMore = posts.length < total;
-
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center gap-3 mb-2">
-          <Bookmark className="w-6 h-6 text-[#40BFFF]" />
-          <h1 className="text-2xl font-bold">Saved Posts</h1>
+    <div className="space-y-6">
+      {/* Enhanced Header */}
+      <div className="bg-gradient-to-r from-[#40BFFF]/5 to-transparent rounded-lg p-4 border border-[#40BFFF]/10">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-[#40BFFF] flex items-center justify-center shadow-sm">
+              <Bookmark className="w-5 h-5 text-white fill-white" />
+            </div>
+            <div>
+              <h6 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2">
+                Saved Posts
+                {data && data.data.length > 0 && (
+                  <span className="px-2 py-0.5 text-xs font-semibold bg-[#40BFFF] text-white rounded-full">
+                    {data.data.length}
+                  </span>
+                )}
+              </h6>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                {data
+                  ? `${data.data.length} ${
+                      data.data.length === 1 ? "item" : "items"
+                    } saved for later`
+                  : "No posts saved yet"}
+              </p>
+            </div>
+          </div>
         </div>
-        <p className="text-gray-600">
-          {total > 0
-            ? `You have ${total} saved posts`
-            : "No posts saved yet"}
-        </p>
       </div>
 
       {/* Posts List */}
