@@ -1,0 +1,10 @@
+{
+  "Common": {
+    "hello": "Hello",
+    "logout": "Logout"
+  },
+  "Home": {
+    "title": "Welcome to FShop",
+    "description": "Your fashion marketplace"
+  }
+}

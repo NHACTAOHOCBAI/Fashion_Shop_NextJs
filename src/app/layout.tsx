@@ -1,4 +1,3 @@
-"use client";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ReactQueryProviders } from "@/config/react-query.provider";
@@ -9,6 +8,9 @@ import { SocketProvider } from "@/providers/socketProvider";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistor, store } from "@/store";
+import { NextIntlClientProvider } from "next-intl";
+import { getMessages } from "next-intl/server";
+import ClientProviders from "@/app/client-provider";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -19,7 +21,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -29,24 +31,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <SocketProvider>
-          <Provider store={store}>
-            <PersistGate loading={null} persistor={persistor}>
-              <ThemeProvider
-                attribute="class"
-                defaultTheme="system"
-                enableSystem
-                disableTransitionOnChange
-              >
-                <Toaster position="top-center" />
-                <ReactQueryProviders>
-                  <LoadingOverlay />
-                  {children}
-                </ReactQueryProviders>
-              </ThemeProvider>
-            </PersistGate>
-          </Provider>
-        </SocketProvider>
+        <NextIntlClientProvider>
+          <ClientProviders>{children}</ClientProviders>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

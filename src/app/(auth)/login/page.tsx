@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { LoginForm } from "@/app/(auth)/login/login-form";
 import Loading2 from "@/app/client/_components/Loading2";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 export default function LoginPage() {
   return (
