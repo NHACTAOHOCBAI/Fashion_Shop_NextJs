@@ -5,8 +5,21 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Send } from "lucide-react";
-import { askChat, getChatHistory } from "@/services/chatbot.service";
+import { Send, Trash2 } from "lucide-react";
+import { askChat, getChatHistory, clearChatHistory } from "@/services/chatbot.service";
+import ProductCard from "@/components/chat/ProductCard";
+import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 /* ================= UTILS ================= */
 const shouldShowTime = (curr: BotMessage, prev?: BotMessage) => {
@@ -57,6 +70,7 @@ export default function ChatbotWindow() {
     const botMsg: BotMessage = {
       role: "assistant",
       content: res.answer,
+      products: res.products || [],
       createdAt: new Date().toISOString(),
     };
 
@@ -64,20 +78,63 @@ export default function ChatbotWindow() {
     inputRef.current?.focus();
   };
 
+  /* ================= CLEAR HISTORY ================= */
+  const handleClearHistory = async () => {
+    try {
+      await clearChatHistory();
+      setMessages([]);
+      toast.success("Chat history cleared successfully");
+    } catch (error) {
+      toast.error("Failed to clear chat history");
+      console.error(error);
+    }
+  };
+
   /* ================= UI ================= */
   return (
     <div className="flex flex-col h-full max-h-[80vh] min-h-[400px]">
       {/* ===== HEADER ===== */}
-      <div className="h-14 border-b px-4 flex items-center gap-3 shrink-0">
-        <Avatar>
-          <AvatarFallback>AI</AvatarFallback>
-        </Avatar>
-        <div>
-          <p className="text-sm font-medium">AI Assistant</p>
-          <p className="text-xs text-muted-foreground">
-            {typing ? "Typing..." : "Online"}
-          </p>
+      <div className="h-14 border-b px-4 flex items-center justify-between shrink-0">
+        <div className="flex items-center gap-3">
+          <Avatar>
+            <AvatarFallback>AI</AvatarFallback>
+          </Avatar>
+          <div>
+            <p className="text-sm font-medium">AI Assistant</p>
+            <p className="text-xs text-muted-foreground">
+              {typing ? "Typing..." : "Online"}
+            </p>
+          </div>
         </div>
+        
+        {/* Clear History Button */}
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button 
+              variant="ghost" 
+              size="sm"
+              className="gap-2 mr-8"
+              disabled={messages.length === 0}
+            >
+              <Trash2 className="h-4 w-4" />
+              <span className="text-xs">Clear</span>
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Clear chat history?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete all your chat messages with the AI assistant.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleClearHistory}>
+                Clear
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
 
       {/* ===== MESSAGES ===== */}
@@ -104,12 +161,23 @@ export default function ChatbotWindow() {
                 <div
                   className={`flex ${isMe ? "justify-end" : "justify-start"}`}
                 >
-                  <div
-                    className={`max-w-[65%] rounded-2xl px-4 py-2 text-sm leading-relaxed ${
-                      isMe ? "bg-primary text-primary-foreground" : "bg-muted"
-                    }`}
-                  >
-                    {m.content}
+                  <div className={`max-w-[75%] space-y-3`}>
+                    <div
+                      className={`rounded-2xl px-4 py-2 text-sm leading-relaxed ${
+                        isMe ? "bg-primary text-primary-foreground" : "bg-muted"
+                      }`}
+                    >
+                      {m.content}
+                    </div>
+
+                    {/* Display Products if available */}
+                    {!isMe && m.products && m.products.length > 0 && (
+                      <div className="grid grid-cols-2 gap-2 mt-2">
+                        {m.products.map((product) => (
+                          <ProductCard key={product.id} product={product} />
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

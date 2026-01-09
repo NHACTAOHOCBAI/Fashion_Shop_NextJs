@@ -1,8 +1,21 @@
 // ============ Chatbot (AI) Interfaces ============
+interface ProductInfo {
+  id: number;
+  name: string;
+  price: number;
+  image_url: string;
+  category: string;
+}
+
 interface BotMessage {
   id?: number;
   role: "user" | "assistant";
   content: string;
+  products?: ProductInfo[];
+  recommendedProducts?: ProductInfo[]; // Backend trả về key này
+  metadata?: {
+    recommendedProducts?: ProductInfo[]; // Hoặc nested trong metadata
+  };
   createdAt?: string;
 }
 

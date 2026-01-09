@@ -3,6 +3,7 @@ import axiosInstance from "@/config/axios";
 export interface AskChatResponse {
   answer: string;
   products?: any[];
+  recommendedProducts?: any[]; // Backend có thể trả về key này
 }
 
 export const askChat = async (question: string) => {
@@ -10,7 +11,13 @@ export const askChat = async (question: string) => {
     question,
   })) as { data: AskChatResponse };
 
-  return response.data;
+  // Map recommendedProducts -> products nếu cần
+  const data = response.data;
+  if (data.recommendedProducts && !data.products) {
+    data.products = data.recommendedProducts;
+  }
+
+  return data;
 };
 
 export const getChatHistory = async () => {
@@ -18,7 +25,22 @@ export const getChatHistory = async () => {
     data: BotMessage[];
   };
 
-  return response.data;
+  // Map recommendedProducts -> products cho mỗi message
+  const messages = response.data.map(msg => {
+    // Xử lý các trường hợp backend có thể trả về
+    const products = 
+      msg.products || 
+      msg.recommendedProducts || 
+      msg.metadata?.recommendedProducts || 
+      [];
+    
+    return {
+      ...msg,
+      products: products
+    };
+  });
+
+  return messages;
 };
 
 export const clearChatHistory = async () => {

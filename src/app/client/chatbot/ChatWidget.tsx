@@ -23,7 +23,8 @@ export default function ChatWidget({ open, onClose }: Props) {
           <div className="relative rounded-2xl border bg-background shadow-xl max-h-[80vh] flex flex-col">
             <button
               onClick={onClose}
-              className="absolute right-3 top-3 text-muted-foreground hover:text-foreground"
+              className="absolute right-3 top-3 z-10 text-muted-foreground hover:text-foreground transition-colors rounded-full p-1 hover:bg-muted"
+              aria-label="Close chat"
             >
               <X className="h-4 w-4" />
             </button>
