@@ -18,15 +18,22 @@ import Image from "next/image";
 
 interface LiveChatPanelProps {
   livestreamId: number;
-  isHost: boolean;
-  socket: LivestreamSocket | null;
+  isHost?: boolean;
+  socket?: LivestreamSocket | null;
+  isPreviewMode?: boolean; // New prop for preview mode
 }
 
-export const LiveChatPanel = ({ livestreamId, isHost, socket }: LiveChatPanelProps) => {
+export const LiveChatPanel = ({ 
+  livestreamId, 
+  isHost = false, 
+  socket = null,
+  isPreviewMode = false 
+}: LiveChatPanelProps) => {
   const user = useSelector((state: RootState) => state.auth.user);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [messageInput, setMessageInput] = useState("");
   const [messages, setMessages] = useState<NewLiveMessageEvent[]>([]);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   const { data: initialMessages, isLoading } = useGetLivestreamMessages(
     livestreamId,
@@ -50,11 +57,17 @@ export const LiveChatPanel = ({ livestreamId, isHost, socket }: LiveChatPanelPro
         createdAt: msg.createdAt,
       }));
       setMessages(formatted);
+      setIsInitialLoad(false); // Mark initial load complete
     }
   }, [initialMessages]);
 
-  // Listen for new messages
+  // Listen for new messages (skip in preview mode)
   useEffect(() => {
+    if (isPreviewMode) {
+      console.log("[LiveChat] 👁️ Preview mode - skipping socket listeners");
+      return;
+    }
+
     if (!socket || !livestreamId) {
       console.warn("[LiveChat] ⚠️ No socket or livestreamId available");
       return;
@@ -99,12 +112,14 @@ export const LiveChatPanel = ({ livestreamId, isHost, socket }: LiveChatPanelPro
       socket.off("message_deleted", handleMessageDeleted);
       socket.off("message_pinned", handleMessagePinned);
     };
-  }, [socket, livestreamId]);
+  }, [socket, livestreamId, isPreviewMode]);
 
-  // Auto-scroll to bottom
+  // Auto-scroll to bottom only for new messages (not initial load) and not in preview mode
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    if (!isInitialLoad && !isPreviewMode && messages.length > 0) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, isInitialLoad, isPreviewMode]);
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
@@ -266,8 +281,8 @@ export const LiveChatPanel = ({ livestreamId, isHost, socket }: LiveChatPanelPro
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input form */}
-      {user ? (
+      {/* Input form - Hidden in preview mode */}
+      {!isPreviewMode && user ? (
         <div className="p-4 border-t border-gray-200 bg-gray-50">
           <form onSubmit={handleSendMessage} className="flex items-center gap-2">
             <input
@@ -290,13 +305,13 @@ export const LiveChatPanel = ({ livestreamId, isHost, socket }: LiveChatPanelPro
             {messageInput.length}/500 characters
           </p>
         </div>
-      ) : (
+      ) : !isPreviewMode && !user ? (
         <div className="p-4 border-t border-gray-200 bg-gray-50 text-center">
           <p className="text-sm text-gray-600">
             Please <a href="/login" className="text-cyan-600 hover:underline">log in</a> to chat
           </p>
         </div>
-      )}
+      ) : null}
     </div>
   );
 };

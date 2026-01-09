@@ -88,25 +88,27 @@ export default function EditLivestreamPage() {
       return;
     }
 
-    const isLive = livestream?.status === LivestreamStatus.Live;
-    const canEditBasicInfo = livestream?.status === LivestreamStatus.Scheduled || 
-                             livestream?.status === LivestreamStatus.Cancelled;
+    const canEdit = livestream?.status !== LivestreamStatus.Ended;
+
+    if (!canEdit) {
+      toast.error("Cannot edit an ended livestream");
+      return;
+    }
 
     try {
       // Use FormData if thumbnail file is present
       if (thumbnailFile) {
         const formDataToSend = new FormData();
 
-        if (canEditBasicInfo) {
-          formDataToSend.append("title", formData.title.trim());
-          
-          if (formData.description.trim()) {
-            formDataToSend.append("description", formData.description.trim());
-          }
+        // Always send all fields
+        formDataToSend.append("title", formData.title.trim());
+        
+        if (formData.description.trim()) {
+          formDataToSend.append("description", formData.description.trim());
+        }
 
-          if (formData.scheduledAt) {
-            formDataToSend.append("scheduledAt", new Date(formData.scheduledAt).toISOString());
-          }
+        if (formData.scheduledAt) {
+          formDataToSend.append("scheduledAt", new Date(formData.scheduledAt).toISOString());
         }
 
         formDataToSend.append("thumbnail", thumbnailFile);
@@ -114,45 +116,37 @@ export default function EditLivestreamPage() {
         if (formData.productIds.length > 0) {
           // Send as JSON string - backend will parse it
           formDataToSend.append("productIds", JSON.stringify(formData.productIds));
-        } else if (isLive) {
+        } else {
           formDataToSend.append("productIds", JSON.stringify([]));
         }
 
         await updateMutation.mutateAsync({ id: livestreamId, dto: formDataToSend });
       } else {
         // Use regular JSON if no thumbnail file
-        const dto: any = {};
+        const dto: any = {
+          title: formData.title.trim(),
+        };
 
-        // Basic info can only be edited when not LIVE
-        if (canEditBasicInfo) {
-          dto.title = formData.title.trim();
-          
-          if (formData.description.trim()) {
-            dto.description = formData.description.trim();
-          }
-
-          if (formData.scheduledAt) {
-            dto.scheduledAt = new Date(formData.scheduledAt).toISOString();
-          }
+        if (formData.description.trim()) {
+          dto.description = formData.description.trim();
         }
 
-        // Products can be edited even during LIVE
+        if (formData.scheduledAt) {
+          dto.scheduledAt = new Date(formData.scheduledAt).toISOString();
+        }
+
+        // Products
         if (formData.productIds.length > 0) {
           dto.productIds = formData.productIds;
-        } else if (isLive) {
+        } else {
           dto.productIds = [];
         }
 
         await updateMutation.mutateAsync({ id: livestreamId, dto });
       }
       
-      if (isLive) {
-        toast.success("Products updated successfully! You can now pin them during the stream.");
-        router.push(`/admin/livestreams/${livestreamId}/watch`);
-      } else {
-        toast.success("Livestream updated successfully!");
-        router.push(`/admin/livestreams/view-livestreams`);
-      }
+      toast.success("Livestream updated successfully!");
+      router.push("/admin/livestreams/view-livestreams");
     } catch (error: any) {
       toast.error(error.response?.data?.message || "An error occurred");
     }
@@ -195,8 +189,7 @@ export default function EditLivestreamPage() {
   }
 
   const isLive = livestream.status === LivestreamStatus.Live;
-  const canEditBasicInfo = livestream.status === LivestreamStatus.Scheduled || 
-                           livestream.status === LivestreamStatus.Cancelled;
+  const canEditBasicInfo = livestream.status !== LivestreamStatus.Ended; // Allow editing unless ended
   const canEditProducts = livestream.status !== LivestreamStatus.Ended;
 
   return (
@@ -231,8 +224,8 @@ export default function EditLivestreamPage() {
             <div className="text-sm text-blue-800 dark:text-blue-300">
               <p className="font-semibold mb-1">🔴 Livestream is LIVE</p>
               <p>
-                You can only add/remove <strong>Products</strong> during the live stream.
-                Title, description, and other settings are locked.
+                You can edit <strong>title, description, thumbnail, and products</strong> even during the live stream.
+                Changes will be reflected immediately to viewers.
               </p>
             </div>
           </div>

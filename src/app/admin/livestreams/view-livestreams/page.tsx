@@ -64,27 +64,69 @@ export default function AdminLivestreamsPage() {
   const endMutation = useEndLivestream();
 
   const handleDelete = async (id: number) => {
-    if (!confirm("Are you sure you want to cancel this livestream?")) return;
-
-    try {
-      await deleteMutation.mutateAsync(id);
-      toast.success("Livestream cancelled successfully");
-      refetch();
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "An error occurred");
-    }
+    // Use toast instead of confirm
+    const toastId = toast.error(
+      <div>
+        <p className="font-semibold">Are you sure you want to cancel this livestream?</p>
+        <div className="flex gap-2 mt-2">
+          <button
+            onClick={async () => {
+              toast.dismiss(toastId);
+              try {
+                await deleteMutation.mutateAsync(id);
+                toast.success("Livestream cancelled successfully");
+                refetch();
+              } catch (error: any) {
+                toast.error(error.response?.data?.message || "An error occurred");
+              }
+            }}
+            className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
+          >
+            Yes, Cancel
+          </button>
+          <button
+            onClick={() => toast.dismiss(toastId)}
+            className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
+          >
+            No
+          </button>
+        </div>
+      </div>,
+      { duration: Infinity }
+    );
   };
 
   const handleEnd = async (id: number) => {
-    if (!confirm("Are you sure you want to end this livestream?")) return;
-
-    try {
-      await endMutation.mutateAsync(id);
-      toast.success("Livestream ended successfully");
-      refetch();
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "An error occurred");
-    }
+    // Use toast instead of confirm
+    const toastId = toast.error(
+      <div>
+        <p className="font-semibold">Are you sure you want to end this livestream?</p>
+        <div className="flex gap-2 mt-2">
+          <button
+            onClick={async () => {
+              toast.dismiss(toastId);
+              try {
+                await endMutation.mutateAsync(id);
+                toast.success("Livestream ended successfully");
+                refetch();
+              } catch (error: any) {
+                toast.error(error.response?.data?.message || "An error occurred");
+              }
+            }}
+            className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
+          >
+            Yes, End Stream
+          </button>
+          <button
+            onClick={() => toast.dismiss(toastId)}
+            className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
+          >
+            No
+          </button>
+        </div>
+      </div>,
+      { duration: Infinity }
+    );
   };
 
   const copyStreamKey = (streamKey: string) => {
@@ -327,7 +369,7 @@ export default function AdminLivestreamsPage() {
                     )}
                     
                     {livestream.status !== LivestreamStatus.Live && (
-                      <Link href={`/client/livestreams/${livestream.id}`} target="_blank">
+                      <Link href={`/admin/livestreams/${livestream.id}/preview`}>
                         <button className="px-4 py-2 bg-cyan-100 text-cyan-700 dark:bg-cyan-900 dark:text-cyan-300 rounded-lg font-semibold hover:bg-cyan-200 dark:hover:bg-cyan-800 transition-colors flex items-center gap-2">
                           <Eye className="w-4 h-4" />
                           Preview
@@ -343,11 +385,12 @@ export default function AdminLivestreamsPage() {
                     </Link>
 
                     {(livestream.status === LivestreamStatus.Scheduled || 
-                      livestream.status === LivestreamStatus.Cancelled) && (
+                      livestream.status === LivestreamStatus.Cancelled ||
+                      livestream.status === LivestreamStatus.Live) && (
                       <Link href={`/admin/livestreams/${livestream.id}/edit`}>
                         <button className="px-4 py-2 bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 rounded-lg font-semibold hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors flex items-center gap-2">
                           <Edit className="w-4 h-4" />
-                          Edit
+                          {livestream.status === LivestreamStatus.Live ? "Edit Products" : "Edit"}
                         </button>
                       </Link>
                     )}
