@@ -20,6 +20,7 @@ import {
   TicketPercent,
   User,
   UserIcon,
+  Radio,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -334,6 +335,15 @@ const Header = () => {
                 className="text-base font-medium text-gray-700 dark:text-gray-300 hover:text-[#40BFFF] transition-colors"
               >
                 Community
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/client/livestreams"
+                className="text-base font-medium text-gray-700 dark:text-gray-300 hover:text-[#40BFFF] transition-colors flex items-center gap-2"
+              >
+                <Radio size={18} className="text-red-500" />
+                Livestream
               </Link>
             </li>
           </ul>

@@ -1,4 +1,6 @@
 interface Product {
+  thumbnail: string;
+  finalPrice: any;
   id: number;
   name: string;
   description: string;

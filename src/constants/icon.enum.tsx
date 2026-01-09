@@ -12,6 +12,7 @@ import {
   Newspaper,
   Package,
   Plus,
+  Radio,
   Shirt,
   SquarePen,
   Store,
@@ -50,5 +51,6 @@ export const ICONS = {
   OFFICE: <Building size={16} className="text-green-500" />,
   HOME: <Home size={16} className="text-blue-500" />,
   NOTIFICATION: <GoBell size={20} />,
+  LIVESTREAMS: <Radio />,
   // ORDER:<Package />
 };

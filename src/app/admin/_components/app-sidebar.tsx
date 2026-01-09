@@ -146,6 +146,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           },
         ],
       },
+      {
+        title: "Livestreams",
+        icon: ICONS.LIVESTREAMS,
+        items: [
+          {
+            title: "View Livestreams",
+            url: "/admin/livestreams/view-livestreams",
+          },
+          {
+            title: "Create Livestream",
+            url: "/admin/livestreams/create-livestream",
+          },
+        ],
+      },
     ],
   };
   // <UsersRound />;
