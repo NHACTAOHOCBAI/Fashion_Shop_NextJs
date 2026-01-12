@@ -7,15 +7,32 @@ interface ProductInfo {
   category: string;
 }
 
+interface BotMessageMetadata {
+  // For text messages
+  recommendedProducts?: ProductInfo[];
+  
+  // For image search
+  type?: "image" | "voice" | "image_response" | "voice_response";
+  hasImage?: boolean;
+  imageUrl?: string;
+  cloudinaryPublicId?: string;
+  
+  // For voice search
+  hasAudio?: boolean;
+  audioUrl?: string;
+  
+  // For responses
+  productsFound?: number;
+  products?: ProductInfo[];
+}
+
 interface BotMessage {
   id?: number;
   role: "user" | "assistant";
   content: string;
   products?: ProductInfo[];
-  recommendedProducts?: ProductInfo[]; // Backend trả về key này
-  metadata?: {
-    recommendedProducts?: ProductInfo[]; // Hoặc nested trong metadata
-  };
+  recommendedProducts?: ProductInfo[];
+  metadata?: BotMessageMetadata;
   createdAt?: string;
 }
 

@@ -18,7 +18,7 @@ export default function ChatWidget({ open, onClose }: Props) {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 30, scale: 0.95 }}
           transition={{ duration: 0.25 }}
-          className="fixed bottom-24 right-6 z-50 w-[360px] max-w-[95vw]"
+          className="fixed bottom-24 right-6 z-50 w-[420px] max-w-[95vw]"
         >
           <div className="relative rounded-2xl border bg-background shadow-xl max-h-[80vh] flex flex-col">
             <button

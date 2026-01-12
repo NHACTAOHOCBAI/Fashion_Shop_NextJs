@@ -15,6 +15,7 @@ const useSearchImage = (image: File | null, searchKey: number) =>
   useQuery({
     queryKey: ["products-image", searchKey],
     queryFn: () => searchImage(image),
+    enabled: image !== null, // Only run query if file is selected
   });
 const useProducts = (params: ProductQueryParams) =>
   useQuery({
